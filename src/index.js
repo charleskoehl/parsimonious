@@ -1,6 +1,5 @@
 'use strict'
 
-const Parse = require('parse')
 const pick = require('lodash/pick')
 const merge = require('lodash/merge')
 
@@ -8,8 +7,9 @@ const umk = {useMasterKey: true}
 
 class Parsimonious {
   
-  constructor() {
+  constructor(parse) {
     if(!Parsimonious.instance) {
+      this.parse = parse
       Parsimonious.instance = this
     }
     return Parsimonious.instance
@@ -48,7 +48,7 @@ class Parsimonious {
   }
   
   newQuery(className) {
-    return new Parse.Query(className)
+    new this.parse.Query(className)
   }
   
   getObjById(className, id, useMasterKey) {
@@ -61,7 +61,7 @@ class Parsimonious {
   
 }
 
-const instance = new Parsimonious()
+const instance = new Parsimonious(Parse)
 Object.freeze(instance)
 
 module.exports = instance
