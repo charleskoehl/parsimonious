@@ -54,4 +54,4 @@ Return Parse.User instance from user id
  * **Returns:** `Parse.User` — 
  
 ---
-Special thanks to @cstuncsik for his [es6-node-module-boilerplate](https://github.com/cstuncsik/es6-node-module-boilerplate)
+Special thanks to @github/cstuncsik for his [es6-node-module-boilerplate](https://github.com/cstuncsik/es6-node-module-boilerplate)
