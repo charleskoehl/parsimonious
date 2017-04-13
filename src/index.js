@@ -31,7 +31,7 @@ class Parsimonious {
    * @param {Parse.Object} parseObj
    * @param {array|string} keys
    */
-  objSetMulti(parseObj, dataObj, doMerge = false) {
+  objSetMulti(parseObj, dataObj, doMerge) {
     let key, newVal
     for (key in dataObj) {
       newVal = dataObj[key]
@@ -50,11 +50,11 @@ class Parsimonious {
     new Parse.Query(className)
   }
   
-  getObjById(className, id, useMasterKey = false) {
-    return this.newQuery('User').get(id, useMasterKey && umk)
+  getObjById(className, id, useMasterKey) {
+    return this.newQuery(className).get(id, useMasterKey && umk)
   }
   
-  getUserById(id, useMasterKey = false) {
+  getUserById(id, useMasterKey) {
     return this.getObjById('User', id, useMasterKey)
   }
   
