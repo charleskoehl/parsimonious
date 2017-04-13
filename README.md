@@ -1,5 +1,5 @@
 # parsimonious
-Parse utilities for Parse Server cloud code and JS SDK. Imports as a singleton instance.
+Utilities for Parse Server cloud code and JS SDK. Imports as a singleton instance.
 # Documentation
 
 ## `objPick(parseObj, keys)`
