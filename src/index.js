@@ -1,5 +1,7 @@
 import {merge, pick} from 'lodash'
 
+const _this = this
+
 const umk = {useMasterKey: true}
 
 export default {
@@ -11,7 +13,7 @@ export default {
    */
   objPick: (parseObj, keys) => {
     const keysArr = Array.isArray(keys) ? keys : keys.split(',')
-    return pick(toJsn(parseObj), keysArr)
+    return pick(_this.toJsn(parseObj), keysArr)
   },
   /**
    * Sets some columns on a Parse object from a js object..
@@ -31,6 +33,6 @@ export default {
   },
   toJsn: parseObj => parseObj && parseObj.toJSON(),
   newQuery: className => new Parse.Query(className),
-  getObjById: (className, id, useMasterKey = false) => newQuery('User').get(id, useMasterKey && umk),
-  getUserById: (id, useMasterKey = false) => getObjById('User', id, useMasterKey)
+  getObjById: (className, id, useMasterKey = false) => _this.newQuery('User').get(id, useMasterKey && umk),
+  getUserById: (id, useMasterKey = false) => _this.getObjById('User', id, useMasterKey)
 }
