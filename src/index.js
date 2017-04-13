@@ -1,3 +1,5 @@
+'use strict'
+
 const pick = require('lodash/pick')
 const merge = require('lodash/merge')
 
