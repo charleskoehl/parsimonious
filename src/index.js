@@ -63,4 +63,4 @@ class Parsimonious {
 const instance = new Parsimonious()
 Object.freeze(instance)
 
-export default instance
+module.exports = instance
