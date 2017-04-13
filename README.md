@@ -19,7 +19,6 @@ Set some columns on a Parse object from a javascript object Mutates the Parse ob
    * `parseObj` — `Parse.Object` — 
    * `keys` — `array|string` — 
    * `doMerge` — `bool` — - if true, each column value is shallow-merged with existing value
- * **Returns:** `Parse.Object` — 
 
 ## `toJsn(parseObj)`
 
