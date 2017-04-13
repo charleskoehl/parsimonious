@@ -1,5 +1,6 @@
 'use strict'
 
+const Parse = require('parse')
 const pick = require('lodash/pick')
 const merge = require('lodash/merge')
 
