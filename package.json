@@ -1,0 +1,24 @@
+{
+  "name": "parsimonious",
+  "description": "Utilities for use with parse-server cloud code and parse JS SDK",
+  "version": "1.0.0",
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "source-map-support": "^0.3.1"
+  },
+  "devDependencies": {
+    "babel": "^4.7.12",
+    "babel-eslint": "^2.0.2",
+    "chai": "^3.0.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.1.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-eslint": "^0.14.0",
+    "gulp-header": "^1.2.2",
+    "gulp-mocha": "^2.1.2",
+    "gulp-plumber": "^1.0.1",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-util": "^3.0.5",
+    "parse": "^1.9.2"
+  }
+}
