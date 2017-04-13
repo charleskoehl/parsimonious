@@ -8,9 +8,6 @@ const MyParse = global.Parse || require('parse')
 
 const umk = {useMasterKey: true}
 
-/**
- * Singleton class for using Parse in cloud code or client.
- */
 class Parsimonious {
   
   constructor() {
@@ -36,6 +33,7 @@ class Parsimonious {
    * Mutates the Parse object.
    * @param {Parse.Object} parseObj
    * @param {array|string} keys
+   * @param {bool} doMerge - if true, each column value is shallow-merged with existing value
    * @returns {Parse.Object}
    */
   objSetMulti(parseObj, dataObj, doMerge) {
@@ -72,7 +70,7 @@ class Parsimonious {
    * Return a Parse.Object instance from className and id
    * @param {string} className
    * @param {string} id
-   * @param {bool} useMasterKey (cloud code only)
+   * @param {bool} useMasterKey - cloud code only
    */
   getObjById(className, id, useMasterKey) {
     return this.newQuery(className).get(id, useMasterKey && umk)
@@ -81,7 +79,7 @@ class Parsimonious {
   /**
    * Return Parse.User instance from user id
    * @param {string} id
-   * @param {bool} useMasterKey (cloud code only)
+   * @param {bool} useMasterKey - cloud code only
    * @returns {Parse.User}
    */
   getUserById(id, useMasterKey) {

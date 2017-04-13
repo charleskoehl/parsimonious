@@ -1,12 +1,6 @@
 # parsimonious
-Parse utilities for Parse Server cloud code and JS SDK.
-
+Parse utilities for Parse Server cloud code and JS SDK. Imports as a singleton instance.
 # Documentation
-Imports as a singleton instance.
-
-## `class Parsimonious`
-
-Singleton class for using Parse in cloud code or client.
 
 ## `objPick(parseObj, keys)`
 
@@ -24,6 +18,7 @@ Set some columns on a Parse object from a javascript object Mutates the Parse ob
  * **Parameters:**
    * `parseObj` — `Parse.Object` — 
    * `keys` — `array|string` — 
+   * `doMerge` — `bool` — - if true, each column value is shallow-merged with existing value
  * **Returns:** `Parse.Object` — 
 
 ## `toJsn(parseObj)`
@@ -47,7 +42,7 @@ Return a Parse.Object instance from className and id
  * **Parameters:**
    * `className` — `string` — 
    * `id` — `string` — 
-   * `useMasterKey` — `bool` — (cloud code only)
+   * `useMasterKey` — `bool` — - cloud code only
 
 ## `getUserById(id, useMasterKey)`
 
@@ -55,5 +50,5 @@ Return Parse.User instance from user id
 
  * **Parameters:**
    * `id` — `string` — 
-   * `useMasterKey` — `bool` — (cloud code only)
+   * `useMasterKey` — `bool` — - cloud code only
  * **Returns:** `Parse.User` — 
