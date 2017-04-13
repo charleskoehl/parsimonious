@@ -61,7 +61,4 @@ class Parsimonious {
   
 }
 
-const instance = new Parsimonious(Parse)
-Object.freeze(instance)
-
-module.exports = instance
+module.exports = Parsimonious
