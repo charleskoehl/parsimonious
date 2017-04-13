@@ -1,4 +1,4 @@
-import { merge, pick } from 'lodash';
+import { merge, pick } from 'lodash'
 
 module.exports = {
   /**
@@ -8,23 +8,23 @@ module.exports = {
    * @returns {object}
    */
   objPick: (parseObj, keys) => {
-    const keysArr = Array.isArray(keys) ? keys : keys.split(',');
-    return pick(parseObj.toJSON(), keysArr);
+    const keysArr = Array.isArray(keys) ? keys : keys.split(',')
+    return pick(parseObj.toJSON(), keysArr)
   },
   /**
-   * Sets some columns on a Parse object from a js object.
+   * Sets some columns on a Parse object from a js object..
    * Mutates parseObj
    * @param {Parse.Object} parseObj
    * @param {array|string} keys
    */
   objSetMulti: (parseObj, dataObj, doMerge = false) => {
-    let key, newVal;
+    let key, newVal
     for (key in dataObj) {
-      newVal = dataObj[key];
+      newVal = dataObj[key]
       if (doMerge) {
-        newVal = merge(parseObj.get(key), newVal);
+        newVal = merge(parseObj.get(key), newVal)
       }
-      parseObj.set(key, newVal);
+      parseObj.set(key, newVal)
     }
   }
-};
+}
