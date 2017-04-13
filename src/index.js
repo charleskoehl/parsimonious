@@ -1,6 +1,6 @@
 import { merge, pick } from 'lodash'
 
-module.exports = {
+export default {
   /**
    * Get some columns from a Parse object and returns them in a js object
    * @param {Parse.Object} parseObj
