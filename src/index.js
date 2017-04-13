@@ -1,4 +1,5 @@
-import {merge, pick} from 'lodash'
+const pick = require('lodash/pick')
+const merge = require('lodash/merge')
 
 const umk = {useMasterKey: true}
 
