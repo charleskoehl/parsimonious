@@ -1,10 +1,10 @@
 {
   "name": "parsimonious",
   "description": "Utilities for use with parse-server cloud code and parse JS SDK",
-  "version": "1.0.0",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/charleskoehl/parsimonious.git"
+  "version": "1.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/charleskoehl/parsimonious.git"
   },
   "dependencies": {
     "lodash": "^4.17.4",
