@@ -7,8 +7,11 @@ const umk = {useMasterKey: true}
 
 class Parsimonious {
   
-  setParse(parse) {
-    this.parse = parse
+  constructor() {
+    if(!Parsimonious.instance) {
+      Parsimonious.instance = this
+    }
+    return Parsimonious.instance
   }
   
   /**
@@ -43,19 +46,21 @@ class Parsimonious {
     return parseObj && parseObj.toJSON()
   }
   
-  newQuery(className) {
-    const theClass = this.parse.Object.extend(className)
-    return new this.parse.Query(theClass)
+  newQuery(parse, className) {
+    new parse.Query(className)
   }
   
-  getObjById(className, id, useMasterKey) {
-    return this.newQuery(className).get(id, useMasterKey && umk)
+  getObjById(parse, className, id, useMasterKey) {
+    return this.newQuery(parse, className).get(id, useMasterKey && umk)
   }
   
-  getUserById(id, useMasterKey) {
-    return this.getObjById('User', id, useMasterKey)
+  getUserById(parse, id, useMasterKey) {
+    return this.getObjById(parse, 'User', id, useMasterKey)
   }
   
 }
 
-module.exports = new Parsimonious()
+const instance = new Parsimonious()
+Object.freeze(instance)
+
+module.exports = instance
