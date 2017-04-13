@@ -48,7 +48,7 @@ class Parsimonious {
   }
   
   newQuery(className) {
-    new Parse.Query(className)
+    return new Parse.Query(className)
   }
   
   getObjById(className, id, useMasterKey) {
