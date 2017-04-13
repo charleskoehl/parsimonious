@@ -1,7 +1,7 @@
 {
   "name": "parsimonious",
   "description": "Utilities for use with parse-server cloud code and parse JS SDK",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "main": "src/index.js",
   "repository": {
     "type": "git",
