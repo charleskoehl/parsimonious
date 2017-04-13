@@ -34,7 +34,6 @@ class Parsimonious {
    * @param {Parse.Object} parseObj
    * @param {array|string} keys
    * @param {bool} doMerge - if true, each column value is shallow-merged with existing value
-   * @returns {Parse.Object}
    */
   objSetMulti(parseObj, dataObj, doMerge) {
     let key, newVal
@@ -44,7 +43,6 @@ class Parsimonious {
         newVal = merge(parseObj.get(key), newVal)
       }
       parseObj.set(key, newVal)
-      return parseObj
     }
   }
   
@@ -91,4 +89,4 @@ class Parsimonious {
 const instance = new Parsimonious()
 Object.freeze(instance)
 
-module.exports = instance
+export default instance

@@ -52,3 +52,6 @@ Return Parse.User instance from user id
    * `id` — `string` — 
    * `useMasterKey` — `bool` — - cloud code only
  * **Returns:** `Parse.User` — 
+ 
+---
+Special thanks to Csaba Tuncsik for his [es6-node-module-boilerplate](https://github.com/cstuncsik/es6-node-module-boilerplate)
