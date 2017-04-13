@@ -23,7 +23,9 @@ gulp.task('compile',['lint'], function(){
   return gulp.src('src/**/*.js')
     .pipe(header("require('source-map-support').install();"))
     .pipe(sourcemap.init())
-    .pipe(compiler())
+    .pipe(compiler({
+      presets: ["airbnb", "es2015", "stage-0"]
+    }))
     .pipe(sourcemap.write("."))
     .pipe(gulp.dest("build/src"));
 });
