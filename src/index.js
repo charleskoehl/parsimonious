@@ -3,6 +3,9 @@
 const pick = require('lodash/pick')
 const merge = require('lodash/merge')
 
+// Active Parse instance is global.Parse in cloud code, or the cached require-ed Parse in clients:
+const MyParse = global.Parse || require('parse')
+
 const umk = {useMasterKey: true}
 
 class Parsimonious {
@@ -46,16 +49,16 @@ class Parsimonious {
     return parseObj && parseObj.toJSON()
   }
   
-  newQuery(parse, className) {
-    new parse.Query(className)
+  newQuery(className) {
+    return new MyParse.Query(className)
   }
   
-  getObjById(parse, className, id, useMasterKey) {
-    return this.newQuery(parse, className).get(id, useMasterKey && umk)
+  getObjById(className, id, useMasterKey) {
+    return this.newQuery(className).get(id, useMasterKey && umk)
   }
   
-  getUserById(parse, id, useMasterKey) {
-    return this.getObjById(parse, 'User', id, useMasterKey)
+  getUserById(id, useMasterKey) {
+    return this.getObjById('User', id, useMasterKey)
   }
   
 }
