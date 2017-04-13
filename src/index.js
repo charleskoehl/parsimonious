@@ -8,6 +8,9 @@ const MyParse = global.Parse || require('parse')
 
 const umk = {useMasterKey: true}
 
+/**
+ * Singleton class for using Parse in cloud code or client.
+ */
 class Parsimonious {
   
   constructor() {
@@ -18,7 +21,7 @@ class Parsimonious {
   }
   
   /**
-   * Get some columns from a Parse object and returns them in a js object
+   * Get some columns from a Parse object and return a javascript object
    * @param {Parse.Object} parseObj
    * @param {(string|string[])} keys
    * @returns {object}
@@ -29,10 +32,11 @@ class Parsimonious {
   }
   
   /**
-   * Sets some columns on a Parse object from a js object..
-   * Mutates parseObj
+   * Set some columns on a Parse object from a javascript object
+   * Mutates the Parse object.
    * @param {Parse.Object} parseObj
    * @param {array|string} keys
+   * @returns {Parse.Object}
    */
   objSetMulti(parseObj, dataObj, doMerge) {
     let key, newVal
@@ -42,21 +46,44 @@ class Parsimonious {
         newVal = merge(parseObj.get(key), newVal)
       }
       parseObj.set(key, newVal)
+      return parseObj
     }
   }
   
+  /**
+   * Return Parse.Object converted to JSON, or null if no Parse object passed.
+   * @param {Parse.Object} parseObj
+   * @returns {object}
+   */
   toJsn(parseObj) {
-    return parseObj && parseObj.toJSON()
+    return parseObj && parseObj.toJSON() || null
   }
   
+  /**
+   * Return a new Parse.Query instance from a Parse Object class name
+   * @param {string} className
+   * @returns {Parse.Query}
+   */
   newQuery(className) {
     return new MyParse.Query(className)
   }
   
+  /**
+   * Return a Parse.Object instance from className and id
+   * @param {string} className
+   * @param {string} id
+   * @param {bool} useMasterKey (cloud code only)
+   */
   getObjById(className, id, useMasterKey) {
     return this.newQuery(className).get(id, useMasterKey && umk)
   }
   
+  /**
+   * Return Parse.User instance from user id
+   * @param {string} id
+   * @param {bool} useMasterKey (cloud code only)
+   * @returns {Parse.User}
+   */
   getUserById(id, useMasterKey) {
     return this.getObjById('User', id, useMasterKey)
   }
