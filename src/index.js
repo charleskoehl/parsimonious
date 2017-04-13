@@ -7,12 +7,8 @@ const umk = {useMasterKey: true}
 
 class Parsimonious {
   
-  constructor(parse) {
-    if(!Parsimonious.instance) {
-      this.parse = parse
-      Parsimonious.instance = this
-    }
-    return Parsimonious.instance
+  setParse(parse) {
+    this.parse = parse
   }
   
   /**
@@ -62,4 +58,4 @@ class Parsimonious {
   
 }
 
-module.exports = Parsimonious
+module.exports = new Parsimonious()
