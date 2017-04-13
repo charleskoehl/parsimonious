@@ -48,7 +48,8 @@ class Parsimonious {
   }
   
   newQuery(className) {
-    new this.parse.Query(className)
+    const theClass = this.parse.Object.extend(className)
+    return new this.parse.Query(theClass)
   }
   
   getObjById(className, id, useMasterKey) {
