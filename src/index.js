@@ -1,10 +1,11 @@
 'use strict'
 
+const Parse = require('parse')
 const pick = require('lodash/pick')
 const merge = require('lodash/merge')
 
 // Active Parse instance is global.Parse in cloud code, or the cached require-ed Parse in clients:
-const MyParse = global.Parse || require('parse')
+const MyParse = global.Parse || Parse
 
 const umk = {useMasterKey: true}
 
@@ -32,17 +33,19 @@ class Parsimonious {
    * Set some columns on a Parse object from a javascript object
    * Mutates the Parse object.
    * @param {Parse.Object} parseObj
-   * @param {array|string} keys
+   * @param {object} dataObj
    * @param {bool} doMerge - if true, each column value is shallow-merged with existing value
    */
   objSetMulti(parseObj, dataObj, doMerge) {
-    let key, newVal
-    for (key in dataObj) {
-      newVal = dataObj[key]
-      if (doMerge) {
-        newVal = merge(parseObj.get(key), newVal)
+    if(this.isPFObject(parseObj) && typeof dataObj === 'object') {
+      let key, newVal
+      for (key in dataObj) {
+        newVal = dataObj[key]
+        if (doMerge) {
+          newVal = merge(parseObj.get(key), newVal)
+        }
+        parseObj.set(key, newVal)
       }
-      parseObj.set(key, newVal)
     }
   }
   
@@ -52,7 +55,7 @@ class Parsimonious {
    * @returns {object}
    */
   toJsn(parseObj) {
-    return this.isParseThing(parseObj, 'Object') && parseObj.toJSON() || null
+    return this.isPFObject(parseObj) && parseObj.toJSON() || null
   }
   
   /**
@@ -85,13 +88,12 @@ class Parsimonious {
   }
   
   /**
-   * Return true of thing is instance of parseClass
+   * Return true if thing is a Parse.Object
    * @param {*} thing
-   * @param {string} parseClass
    * @returns {boolean}
    */
-  isParseThing(thing, parseClass) {
-    return thing instanceof MyParse[parseClass]
+  isPFObject(thing) {
+    return typeof thing === 'object' && typeof thing.toJSON === 'function'
   }
   
 }
