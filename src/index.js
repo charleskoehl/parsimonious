@@ -1,6 +1,7 @@
 'use strict'
 
 const Parse = require('parse')
+const autoBind = require('auto-bind')
 const pick = require('lodash/pick')
 const merge = require('lodash/merge')
 
@@ -13,6 +14,7 @@ class Parsimonious {
   
   constructor() {
     if(!Parsimonious.instance) {
+      autoBind(this)
       Parsimonious.instance = this
     }
     return Parsimonious.instance
