@@ -17,7 +17,7 @@ Set some columns on a Parse object from a javascript object Mutates the Parse ob
 
  * **Parameters:**
    * `parseObj` — `Parse.Object` — 
-   * `keys` — `array|string` — 
+   * `dataObj` — `object` — 
    * `doMerge` — `bool` — - if true, each column value is shallow-merged with existing value
 
 ## `toJsn(parseObj)`
@@ -51,6 +51,13 @@ Return Parse.User instance from user id
    * `id` — `string` — 
    * `useMasterKey` — `bool` — - cloud code only
  * **Returns:** `Parse.User` — 
+
+## `isPFObject(thing)`
+
+Return true if thing is a Parse.Object
+
+ * **Parameters:** `thing` — `*` — 
+ * **Returns:** `boolean` — 
  
 ---
 Special thanks to [Csaba Tuncsik](https://github.com/cstuncsik) for his [es6-node-module-boilerplate](https://github.com/cstuncsik/es6-node-module-boilerplate)
