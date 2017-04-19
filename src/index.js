@@ -52,7 +52,7 @@ class Parsimonious {
    * @returns {object}
    */
   toJsn(parseObj) {
-    return parseObj && parseObj.toJSON() || null
+    return this.isParseThing(parseObj, 'Object') && parseObj.toJSON() || null
   }
   
   /**
@@ -82,6 +82,16 @@ class Parsimonious {
    */
   getUserById(id, useMasterKey) {
     return this.getObjById('User', id, useMasterKey)
+  }
+  
+  /**
+   * Return true of thing is instance of parseClass
+   * @param {*} thing
+   * @param {string} parseClass
+   * @returns {boolean}
+   */
+  isParseThing(thing, parseClass) {
+    return thing instanceof MyParse[parseClass]
   }
   
 }
