@@ -90,12 +90,12 @@ class Parsimonious {
   }
   
   /**
-   * Return true if thing is a Parse.Object
+   * Return true if thing is a Parse.Object or subclass of Parse.Object
    * @param {*} thing
    * @returns {boolean}
    */
   isPFObject(thing) {
-    return typeof thing === 'object' && typeof thing.toJSON === 'function'
+    return thing instanceof MyParse.Object
   }
   
 }

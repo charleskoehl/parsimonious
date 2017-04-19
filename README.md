@@ -54,7 +54,7 @@ Return Parse.User instance from user id
 
 ## `isPFObject(thing)`
 
-Return true if thing is a Parse.Object
+Return true if thing is a Parse.Object or subclass of Parse.Object
 
  * **Parameters:** `thing` — `*` — 
  * **Returns:** `boolean` — 
