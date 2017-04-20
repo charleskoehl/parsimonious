@@ -2,8 +2,9 @@
 
 const Parse = require('parse')
 const autoBind = require('auto-bind')
-const pick = require('lodash/pick')
 const merge = require('lodash/merge')
+const pick = require('lodash/pick')
+const omit = require('lodash/omit')
 
 // Active Parse instance is global.Parse in cloud code, or the cached require-ed Parse in clients:
 const MyParse = global.Parse || Parse
@@ -52,12 +53,25 @@ class Parsimonious {
   }
   
   /**
-   * Return Parse.Object converted to JSON, or null if no Parse object passed.
-   * @param {Parse.Object} parseObj
-   * @returns {object}
+   * Convert object to json map, whether it is an instance or subclass instance of Parse.Object,
+   * or a plain object that might contain instances or subclass instances of Parse.Object's.
+   * Has no effect on plain objects unless deep == true.
+   * @param {object|Parse.Object} obj
+   * @param {bool} deep
+   * @returns {*}
    */
-  toJsn(parseObj) {
-    return this.isPFObject(parseObj) && parseObj.toJSON() || null
+  toJsn(obj, deep=false) {
+    if(this.isPFObject(obj)) {
+      obj = obj.toJSON()
+    }
+    if(deep && typeof obj === 'object') {
+      obj.id = obj.objectId
+      obj = omit(obj,['objectId','__type','className'])
+      for(let k in obj) {
+        obj[k] = this.toJsn(obj[k], deep)
+      }
+    }
+    return obj
   }
   
   /**
@@ -90,7 +104,7 @@ class Parsimonious {
   }
   
   /**
-   * Return true if thing is a Parse.Object or subclass of Parse.Object
+   * Return true if thing is a Parse.Object
    * @param {*} thing
    * @returns {boolean}
    */
