@@ -109,7 +109,9 @@ class Parsimonious {
    * @returns {boolean}
    */
   isPFObject(thing) {
-    return thing instanceof MyParse.Object
+    return typeof thing === 'object'
+      && typeof thing.toJSON === 'function'
+      && typeof thing.toPointer === 'function'
   }
   
 }
