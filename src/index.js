@@ -112,6 +112,15 @@ class Parsimonious {
   }
   
   /**
+   * Return instance of Parse.Object class
+   * @param {string} className
+   * @returns {Parse.Object}
+   */
+  getClassInst(className) {
+    const Cls = MyParse.Object.extend(className)
+    return new Cls()
+  }
+  
    * Return true if thing is a Parse.Object
    * @param {*} thing
    * @returns {boolean}
