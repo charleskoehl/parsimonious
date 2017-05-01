@@ -5,6 +5,7 @@ const autoBind = require('auto-bind')
 const merge = require('lodash/merge')
 const pick = require('lodash/pick')
 const omit = require('lodash/omit')
+const lowerFirst = require('lodash/lowerFirst')
 
 /**
  * Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
@@ -121,6 +122,62 @@ class Parsimonious {
     return new Cls()
   }
   
+  /**
+   * Return the name of a table used to join two Parse.Object classes.
+   * @param {string} from First class name
+   * @param {string} to Second class name
+   * @returns {string}
+   */
+  getJoinTableName(from, to) {
+    return `${from}2${to}`
+  }
+  
+  /**
+   * Join two parse objects by adding a document to a third join table.
+   * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
+   * Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
+   * @param {object} classes - must contain two keys corresponding to existing classes; each value must be a valid parse object.
+   * @param {object=} metadata - optional key/value pairs to set on the new document to describe relationship.
+   * @param {bool} useMasterKey
+   * @returns {Promise}
+   */
+  joinWithTable(classes, metadata, useMasterKey=false) {
+    const classNames = Object.keys(classes)
+    const classInstances = Object.values(classes)
+    const joinObj = this.getClassInst(this.getJoinTableName(classNames[0], classNames[1]))
+    joinObj.set(lowerFirst(classNames[0]), classInstances[0])
+    joinObj.set(lowerFirst(classNames[1]), classInstances[1])
+    if(metadata) {
+      this.objSetMulti(joinObj, metadata)
+    }
+    return joinObj.save(null, useMasterKey && umk)
+  }
+  
+  /**
+   * Return a query on a join table.
+   * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
+   * Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
+   * @param {object} classes - must contain two keys corresponding to existing classes; at least one value must be a valid parse object; the other may be a valid parse object or null.
+   * @param {string=} selects - comma-separated list of keys to retrieve
+   * @returns {Parse.Query}
+   */
+  getJoinQuery(classes, selects) {
+    const classNames = Object.keys(classes)
+    const classInstances = Object.values(classes)
+    const query = this.newQuery(this.getJoinTableName(classNames[0], classNames[1]))
+    if(classInstances[0]) {
+      query.equalTo(lowerFirst(classNames[0]), classInstances[0])
+    }
+    if(classInstances[1]) {
+      query.equalTo(lowerFirst(classNames[1]), classInstances[1])
+    }
+    if(selects) {
+      query.select(selects)
+    }
+    return query
+  }
+  
+  /**
    * Return true if thing is a Parse.Object
    * @param {*} thing
    * @returns {boolean}
