@@ -14,10 +14,11 @@
   "scripts": {
     "commit": "git-cz",
     "compile": "babel src -d lib",
-    "prepublish": "npm run compile",
+    "prepublish": "npm run compile; npm run docs",
     "start": "mocha --watch --compilers js:babel-register",
     "test": "mocha --compilers js:babel-register",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "docs": "jsdoc2md --template README.hbs --files ./src/index.js --param-list-format list > README.md"
   },
   "main": "lib/index.js",
   "keywords": [
@@ -43,6 +44,7 @@
     "chai": "^3.5.0",
     "commitizen": "^2.9.4",
     "cz-conventional-changelog": "^2.0.0",
+    "jsdoc-to-markdown": "^3.0.0",
     "mocha": "^3.2.0",
     "semantic-release": "^6.3.2"
   },

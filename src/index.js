@@ -6,11 +6,19 @@ const merge = require('lodash/merge')
 const pick = require('lodash/pick')
 const omit = require('lodash/omit')
 
+/**
+ * Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
+ * @module Parsimonious
+ */
+
 // Active Parse instance is global.Parse in cloud code, or the cached require-ed Parse in clients:
 const MyParse = global.Parse || Parse
 
 const umk = {useMasterKey: true}
 
+/**
+ * @class
+ */
 class Parsimonious {
   
   constructor() {
@@ -24,7 +32,7 @@ class Parsimonious {
   /**
    * Get some columns from a Parse object and return a javascript object
    * @param {Parse.Object} parseObj
-   * @param {(string|string[])} keys
+   * @param {(string | string[])} keys
    * @returns {object}
    */
   objPick(parseObj, keys) {
@@ -37,7 +45,7 @@ class Parsimonious {
    * Mutates the Parse object.
    * @param {Parse.Object} parseObj
    * @param {object} dataObj
-   * @param {bool} doMerge - if true, each column value is shallow-merged with existing value
+   * @param {bool} doMerge If true, each column value is shallow-merged with existing value
    */
   objSetMulti(parseObj, dataObj, doMerge) {
     if(this.isPFObject(parseObj) && typeof dataObj === 'object') {
@@ -87,7 +95,7 @@ class Parsimonious {
    * Return a Parse.Object instance from className and id
    * @param {string} className
    * @param {string} id
-   * @param {bool} useMasterKey - cloud code only
+   * @param {bool} useMasterKey Cloud code only
    */
   getObjById(className, id, useMasterKey) {
     return this.newQuery(className).get(id, useMasterKey && umk)
@@ -96,7 +104,7 @@ class Parsimonious {
   /**
    * Return Parse.User instance from user id
    * @param {string} id
-   * @param {bool} useMasterKey - cloud code only
+   * @param {bool} useMasterKey Cloud code only
    * @returns {Parse.User}
    */
   getUserById(id, useMasterKey) {
