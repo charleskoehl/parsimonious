@@ -135,7 +135,8 @@ class Parsimonious {
   /**
    * Join two parse objects by adding a document to a third join table.
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
-   * Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
+   * Join table must exist and have pointer columns named like class names
+   * except first letter lower-case; e.g.: employee, company.
    * @param {object} classes - must contain two keys corresponding to existing classes; each value must be a valid parse object.
    * @param {object=} metadata - optional key/value pairs to set on the new document to describe relationship.
    * @param {bool} useMasterKey
@@ -144,13 +145,35 @@ class Parsimonious {
   joinWithTable(classes, metadata, useMasterKey=false) {
     const classNames = Object.keys(classes)
     const classInstances = Object.values(classes)
-    const joinObj = this.getClassInst(this.getJoinTableName(classNames[0], classNames[1]))
+    const joinTableName = this.getJoinTableName(classNames[0], classNames[1])
+    const joinObj = this.getClassInst(joinTableName)
     joinObj.set(lowerFirst(classNames[0]), classInstances[0])
     joinObj.set(lowerFirst(classNames[1]), classInstances[1])
     if(metadata) {
       this.objSetMulti(joinObj, metadata)
     }
     return joinObj.save(null, useMasterKey && umk)
+  }
+  
+  /**
+   * Unjoin two parse objects currently joined by a document in a third join table.
+   * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
+   * Join table must exist and have pointer columns named like class names
+   * except first letter lower-case; e.g.: employee, company.
+   * @param {object} classes - must contain two keys corresponding to existing classes; each value must be a valid parse object.
+   * @param {bool} useMasterKey
+   * @returns {Promise}
+   */
+  unJoinWithTable(classes, useMasterKey=false) {
+    return this.getJoinQuery(classes)
+      .first()
+      .then( joinObj => {
+        if(this.isPFObject(joinObj)) {
+          return joinObj.destroy(useMasterKey && umk)
+        } else {
+          return MyParse.Promise.as(null)
+        }
+      })
   }
   
   /**
