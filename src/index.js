@@ -211,9 +211,10 @@ class Parsimonious {
    * @returns {boolean}
    */
   isPFObject(thing) {
-    return typeof thing === 'object'
-      && typeof thing.toJSON === 'function'
-      && typeof thing.toPointer === 'function'
+    return thing !== null
+      && typeof thing === 'object'
+      && typeof thing._objCount === 'number'
+      && typeof thing.className === 'string'
   }
   
 }
