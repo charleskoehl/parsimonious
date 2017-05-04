@@ -41,7 +41,7 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
 <a name="module_Parsimonious..Parsimonious+objPick"></a>
 
 #### parsimonious.objPick(parseObj, keys) ⇒ <code>object</code>
-Get some columns from a Parse object and return a javascript object
+Get some columns from a Parse object and return them in a plain object.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 **Params**
@@ -52,8 +52,7 @@ Get some columns from a Parse object and return a javascript object
 <a name="module_Parsimonious..Parsimonious+objSetMulti"></a>
 
 #### parsimonious.objSetMulti(parseObj, dataObj, doMerge)
-Set some columns on a Parse object from a javascript object
-Mutates the Parse object.
+Set some columns on a Parse object. Mutates the Parse object.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 **Params**
@@ -65,20 +64,20 @@ Mutates the Parse object.
 <a name="module_Parsimonious..Parsimonious+toJsn"></a>
 
 #### parsimonious.toJsn(obj, deep) ⇒ <code>\*</code>
-Convert object to json map, whether it is an instance or subclass instance of Parse.Object,
-or a plain object that might contain instances or subclass instances of Parse.Object's.
-Has no effect on plain objects unless deep == true.
+Convert a Parse.Object, sub-class of Parse.Object,
+or plain object containing either of those,
+to json, recursively if desired.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 **Params**
 
 - obj <code>object</code> | <code>Parse.Object</code>
-- deep <code>bool</code> <code> = false</code>
+- deep <code>bool</code> <code> = false</code> - If true, converts all Parse.Objects, and sub-classes of Parse.Objects, contained in any plain objects found or created.
 
 <a name="module_Parsimonious..Parsimonious+newQuery"></a>
 
 #### parsimonious.newQuery(className) ⇒ <code>Parse.Query</code>
-Return a new Parse.Query instance from a Parse Object class name
+Return a new Parse.Query instance from a Parse Object class name.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 **Params**
@@ -88,7 +87,7 @@ Return a new Parse.Query instance from a Parse Object class name
 <a name="module_Parsimonious..Parsimonious+getObjById"></a>
 
 #### parsimonious.getObjById(className, id, useMasterKey)
-Return a Parse.Object instance from className and id
+Return a Parse.Object instance from className and id.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 **Params**
@@ -111,7 +110,7 @@ Return Parse.User instance from user id
 <a name="module_Parsimonious..Parsimonious+getClassInst"></a>
 
 #### parsimonious.getClassInst(className) ⇒ <code>Parse.Object</code>
-Return instance of Parse.Object class
+Return instance of Parse.Object class.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 **Params**
@@ -134,7 +133,7 @@ Return the name of a table used to join two Parse.Object classes.
 #### parsimonious.joinWithTable(classes, [metadata], useMasterKey) ⇒ <code>Promise</code>
 Join two parse objects by adding a document to a third join table.
 Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
-Join table must exist and have pointer columns named like class names
+Join table must exist and have pointer columns named like class names,
 except first letter lower-case; e.g.: employee, company.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
@@ -149,7 +148,7 @@ except first letter lower-case; e.g.: employee, company.
 #### parsimonious.unJoinWithTable(classes, useMasterKey) ⇒ <code>Promise</code>
 Unjoin two parse objects currently joined by a document in a third join table.
 Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
-Join table must exist and have pointer columns named like class names
+Join table must exist and have pointer columns named like class names,
 except first letter lower-case; e.g.: employee, company.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
@@ -174,7 +173,7 @@ Join table must have pointer columns named like class names except first letter 
 <a name="module_Parsimonious..Parsimonious+isPFObject"></a>
 
 #### parsimonious.isPFObject(thing) ⇒ <code>boolean</code>
-Return true if thing is a Parse.Object
+Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User)
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 **Params**
