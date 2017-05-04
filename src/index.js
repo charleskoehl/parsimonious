@@ -33,7 +33,7 @@ class Parsimonious {
   }
   
   /**
-   * Get some columns from a Parse object and return a javascript object
+   * Get some columns from a Parse object and return them in a plain object.
    * @param {Parse.Object} parseObj
    * @param {(string | string[])} keys
    * @returns {object}
@@ -44,8 +44,7 @@ class Parsimonious {
   }
   
   /**
-   * Set some columns on a Parse object from a javascript object
-   * Mutates the Parse object.
+   * Set some columns on a Parse object. Mutates the Parse object.
    * @param {Parse.Object} parseObj
    * @param {object} dataObj
    * @param {bool} doMerge If true, each column value is shallow-merged with existing value
@@ -64,11 +63,12 @@ class Parsimonious {
   }
   
   /**
-   * Convert object to json map, whether it is an instance or subclass instance of Parse.Object,
-   * or a plain object that might contain instances or subclass instances of Parse.Object's.
-   * Has no effect on plain objects unless deep == true.
+   * Convert a Parse.Object, sub-class of Parse.Object,
+   * or plain object containing either of those,
+   * to json, recursively if desired.
+   *
    * @param {object|Parse.Object} obj
-   * @param {bool} deep
+   * @param {bool} deep If true, converts all Parse.Objects, and sub-classes of Parse.Objects, contained in any plain objects found or created.
    * @returns {*}
    */
   toJsn(obj, deep=false) {
@@ -89,7 +89,7 @@ class Parsimonious {
   }
   
   /**
-   * Return a new Parse.Query instance from a Parse Object class name
+   * Return a new Parse.Query instance from a Parse Object class name.
    * @param {string} className
    * @returns {Parse.Query}
    */
@@ -98,7 +98,7 @@ class Parsimonious {
   }
   
   /**
-   * Return a Parse.Object instance from className and id
+   * Return a Parse.Object instance from className and id.
    * @param {string} className
    * @param {string} id
    * @param {bool} useMasterKey Cloud code only
@@ -118,7 +118,7 @@ class Parsimonious {
   }
   
   /**
-   * Return instance of Parse.Object class
+   * Return instance of Parse.Object class.
    * @param {string} className
    * @returns {Parse.Object}
    */
@@ -140,7 +140,7 @@ class Parsimonious {
   /**
    * Join two parse objects by adding a document to a third join table.
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
-   * Join table must exist and have pointer columns named like class names
+   * Join table must exist and have pointer columns named like class names,
    * except first letter lower-case; e.g.: employee, company.
    * @param {object} classes - must contain two keys corresponding to existing classes; each value must be a valid parse object.
    * @param {object=} metadata - optional key/value pairs to set on the new document to describe relationship.
@@ -163,7 +163,7 @@ class Parsimonious {
   /**
    * Unjoin two parse objects currently joined by a document in a third join table.
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
-   * Join table must exist and have pointer columns named like class names
+   * Join table must exist and have pointer columns named like class names,
    * except first letter lower-case; e.g.: employee, company.
    * @param {object} classes - must contain two keys corresponding to existing classes; each value must be a valid parse object.
    * @param {bool} useMasterKey
@@ -206,7 +206,7 @@ class Parsimonious {
   }
   
   /**
-   * Return true if thing is a Parse.Object
+   * Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User)
    * @param {*} thing
    * @returns {boolean}
    */
