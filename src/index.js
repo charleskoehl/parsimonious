@@ -6,6 +6,7 @@ const merge = require('lodash/merge')
 const pick = require('lodash/pick')
 const omit = require('lodash/omit')
 const isPlainObject = require('lodash/isPlainObject')
+const cloneWith = require('lodash/cloneWith')
 const lowerFirst = require('lodash/lowerFirst')
 
 /**
@@ -62,17 +63,21 @@ class Parsimonious {
   }
   
   /**
-   * Convert a Parse.Object, sub-class of Parse.Object,
-   * or plain object containing either of those,
-   * to json, recursively if desired.
+   * Return a json representation of a Parse.Object,
+   * sub-class of Parse.Object (such as Parse.User),
+   * or plain object containing any or none of those, to json, optionally recursively.
+   * Does not mutate parameters.
    *
-   * @param {object|Parse.Object} obj
-   * @param {bool} deep If true, converts all Parse.Objects, and sub-classes of Parse.Objects, contained in any plain objects found or created.
+   * @param {*} thing Value to create json from.
+   * @param {bool} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects, contained in any plain objects found or created during recursion.
    * @returns {*}
    */
-  toJsn(obj, deep=false) {
-    if(this.isPFObject(obj)) {
-      obj = obj.toJSON()
+  toJsn(thing, deep=false) {
+    let obj
+    if(this.isPFObject(thing)) {
+      obj = thing.toJSON()
+    } else {
+      obj = cloneWith(thing, val => this.isPFObject(val) ? val.clone() : undefined)
     }
     if(deep && isPlainObject(obj)) {
       // Make more plain-object-like, and prevent Parse.Cloud.run from converting back into Parse.Object in responses:
@@ -80,6 +85,7 @@ class Parsimonious {
         obj.id = obj.objectId
       }
       obj = omit(obj,['objectId','__type','className','ACL'])
+      // Convert all other properties of plain object to json.
       for(let k in obj) {
         obj[k] = this.toJsn(obj[k], deep)
       }
