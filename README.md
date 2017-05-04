@@ -15,6 +15,7 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
         * [.getClassInst(className)](#module_Parsimonious..Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
         * [.getJoinTableName(from, to)](#module_Parsimonious..Parsimonious+getJoinTableName) ⇒ <code>string</code>
         * [.joinWithTable(classes, [metadata], useMasterKey)](#module_Parsimonious..Parsimonious+joinWithTable) ⇒ <code>Promise</code>
+        * [.unJoinWithTable(classes, useMasterKey)](#module_Parsimonious..Parsimonious+unJoinWithTable) ⇒ <code>Promise</code>
         * [.getJoinQuery(classes, [selects])](#module_Parsimonious..Parsimonious+getJoinQuery) ⇒ <code>Parse.Query</code>
         * [.isPFObject(thing)](#module_Parsimonious..Parsimonious+isPFObject) ⇒ <code>boolean</code>
 
@@ -33,6 +34,7 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [.getClassInst(className)](#module_Parsimonious..Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
     * [.getJoinTableName(from, to)](#module_Parsimonious..Parsimonious+getJoinTableName) ⇒ <code>string</code>
     * [.joinWithTable(classes, [metadata], useMasterKey)](#module_Parsimonious..Parsimonious+joinWithTable) ⇒ <code>Promise</code>
+    * [.unJoinWithTable(classes, useMasterKey)](#module_Parsimonious..Parsimonious+unJoinWithTable) ⇒ <code>Promise</code>
     * [.getJoinQuery(classes, [selects])](#module_Parsimonious..Parsimonious+getJoinQuery) ⇒ <code>Parse.Query</code>
     * [.isPFObject(thing)](#module_Parsimonious..Parsimonious+isPFObject) ⇒ <code>boolean</code>
 
@@ -132,13 +134,28 @@ Return the name of a table used to join two Parse.Object classes.
 #### parsimonious.joinWithTable(classes, [metadata], useMasterKey) ⇒ <code>Promise</code>
 Join two parse objects by adding a document to a third join table.
 Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
-Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
+Join table must exist and have pointer columns named like class names
+except first letter lower-case; e.g.: employee, company.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 **Params**
 
 - classes <code>object</code> - must contain two keys corresponding to existing classes; each value must be a valid parse object.
 - [metadata] <code>object</code> - optional key/value pairs to set on the new document to describe relationship.
+- useMasterKey <code>bool</code> <code> = false</code>
+
+<a name="module_Parsimonious..Parsimonious+unJoinWithTable"></a>
+
+#### parsimonious.unJoinWithTable(classes, useMasterKey) ⇒ <code>Promise</code>
+Unjoin two parse objects currently joined by a document in a third join table.
+Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
+Join table must exist and have pointer columns named like class names
+except first letter lower-case; e.g.: employee, company.
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
+**Params**
+
+- classes <code>object</code> - must contain two keys corresponding to existing classes; each value must be a valid parse object.
 - useMasterKey <code>bool</code> <code> = false</code>
 
 <a name="module_Parsimonious..Parsimonious+getJoinQuery"></a>
