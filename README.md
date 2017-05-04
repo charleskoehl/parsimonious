@@ -8,7 +8,7 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [~Parsimonious](#module_Parsimonious..Parsimonious)
         * [.objPick(parseObj, keys)](#module_Parsimonious..Parsimonious+objPick) ⇒ <code>object</code>
         * [.objSetMulti(parseObj, dataObj, doMerge)](#module_Parsimonious..Parsimonious+objSetMulti)
-        * [.toJsn(obj, deep)](#module_Parsimonious..Parsimonious+toJsn) ⇒ <code>\*</code>
+        * [.toJsn(thing, deep)](#module_Parsimonious..Parsimonious+toJsn) ⇒ <code>\*</code>
         * [.newQuery(className)](#module_Parsimonious..Parsimonious+newQuery) ⇒ <code>Parse.Query</code>
         * [.getObjById(className, id, useMasterKey)](#module_Parsimonious..Parsimonious+getObjById)
         * [.getUserById(id, useMasterKey)](#module_Parsimonious..Parsimonious+getUserById) ⇒ <code>Parse.User</code>
@@ -27,7 +27,7 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
 * [~Parsimonious](#module_Parsimonious..Parsimonious)
     * [.objPick(parseObj, keys)](#module_Parsimonious..Parsimonious+objPick) ⇒ <code>object</code>
     * [.objSetMulti(parseObj, dataObj, doMerge)](#module_Parsimonious..Parsimonious+objSetMulti)
-    * [.toJsn(obj, deep)](#module_Parsimonious..Parsimonious+toJsn) ⇒ <code>\*</code>
+    * [.toJsn(thing, deep)](#module_Parsimonious..Parsimonious+toJsn) ⇒ <code>\*</code>
     * [.newQuery(className)](#module_Parsimonious..Parsimonious+newQuery) ⇒ <code>Parse.Query</code>
     * [.getObjById(className, id, useMasterKey)](#module_Parsimonious..Parsimonious+getObjById)
     * [.getUserById(id, useMasterKey)](#module_Parsimonious..Parsimonious+getUserById) ⇒ <code>Parse.User</code>
@@ -63,16 +63,17 @@ Set some columns on a Parse object. Mutates the Parse object.
 
 <a name="module_Parsimonious..Parsimonious+toJsn"></a>
 
-#### parsimonious.toJsn(obj, deep) ⇒ <code>\*</code>
-Convert a Parse.Object, sub-class of Parse.Object,
-or plain object containing either of those,
-to json, recursively if desired.
+#### parsimonious.toJsn(thing, deep) ⇒ <code>\*</code>
+Return a json representation of a Parse.Object,
+sub-class of Parse.Object (such as Parse.User),
+or plain object containing any or none of those, to json, optionally recursively.
+Does not mutate parameters.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 **Params**
 
-- obj <code>object</code> | <code>Parse.Object</code>
-- deep <code>bool</code> <code> = false</code> - If true, converts all Parse.Objects, and sub-classes of Parse.Objects, contained in any plain objects found or created.
+- thing <code>\*</code> - Value to create json from.
+- deep <code>bool</code> <code> = false</code> - If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects, contained in any plain objects found or created during recursion.
 
 <a name="module_Parsimonious..Parsimonious+newQuery"></a>
 
