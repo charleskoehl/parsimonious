@@ -5,6 +5,8 @@ const autoBind = require('auto-bind')
 const merge = require('lodash/merge')
 const pick = require('lodash/pick')
 const omit = require('lodash/omit')
+const isPlainObject = require('lodash/isPlainObject')
+const cloneDeep = require('lodash/cloneDeep')
 const lowerFirst = require('lodash/lowerFirst')
 
 /**
@@ -70,17 +72,20 @@ class Parsimonious {
    * @returns {*}
    */
   toJsn(obj, deep=false) {
+    let result
     if(this.isPFObject(obj)) {
-      obj = obj.toJSON()
+      result = obj.toJSON()
+    } else {
+      result = cloneDeep(obj)
     }
-    if(deep && typeof obj === 'object') {
-      obj.id = obj.objectId
-      obj = omit(obj,['objectId','__type','className'])
-      for(let k in obj) {
-        obj[k] = this.toJsn(obj[k], deep)
+    if(deep && isPlainObject(result)) {
+      result.id = result.objectId
+      result = omit(result,['objectId','__type','className','ACL'])
+      for(let k in result) {
+        result[k] = this.toJsn(result[k], deep)
       }
     }
-    return obj
+    return result
   }
   
   /**
