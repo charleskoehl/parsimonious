@@ -6,7 +6,6 @@ const merge = require('lodash/merge')
 const pick = require('lodash/pick')
 const omit = require('lodash/omit')
 const isPlainObject = require('lodash/isPlainObject')
-const cloneDeep = require('lodash/cloneDeep')
 const lowerFirst = require('lodash/lowerFirst')
 
 /**
@@ -72,20 +71,20 @@ class Parsimonious {
    * @returns {*}
    */
   toJsn(obj, deep=false) {
-    let result
     if(this.isPFObject(obj)) {
-      result = obj.toJSON()
-    } else {
-      result = cloneDeep(obj)
+      obj = obj.toJSON()
     }
-    if(deep && isPlainObject(result)) {
-      result.id = result.objectId
-      result = omit(result,['objectId','__type','className','ACL'])
-      for(let k in result) {
-        result[k] = this.toJsn(result[k], deep)
+    if(deep && isPlainObject(obj)) {
+      // Make more plain-object-like, and prevent Parse.Cloud.run from converting back into Parse.Object in responses:
+      if(obj.objectId) {
+        obj.id = obj.objectId
+      }
+      obj = omit(obj,['objectId','__type','className','ACL'])
+      for(let k in obj) {
+        obj[k] = this.toJsn(obj[k], deep)
       }
     }
-    return result
+    return obj
   }
   
   /**
