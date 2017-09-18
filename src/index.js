@@ -39,8 +39,10 @@ class Parsimonious {
    * @returns {object}
    */
   objPick(parseObj, keys) {
-    const keysArr = Array.isArray(keys) ? keys : keys.split(',')
-    return pick(this.toJsn(parseObj), keysArr)
+    if(typeof keys === 'string' || Array.isArray(keys)) {
+      const keysArr = Array.isArray(keys) ? keys : keys.split(',')
+      return pick(this.toJsn(parseObj), keysArr)
+    }
   }
   
   /**
