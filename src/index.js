@@ -5,6 +5,7 @@ const autoBind = require('auto-bind')
 const merge = require('lodash/merge')
 const pick = require('lodash/pick')
 const omit = require('lodash/omit')
+const isEmpty = require('lodash/isEmpty')
 const isPlainObject = require('lodash/isPlainObject')
 const cloneWith = require('lodash/cloneWith')
 const lowerFirst = require('lodash/lowerFirst')
@@ -139,8 +140,16 @@ class Parsimonious {
    * @param {bool} useMasterKey Cloud code only
    * @returns {Parse.User}
    */
-  getUserById(id, useMasterKey, sessionToken) {
+  getUserById(id, useMasterKey=false, sessionToken) {
     return this.getObjById('User', id, useMasterKey, sessionToken)
+  }
+  
+  userHasRole(user, roleName, useMasterKey=false, sessionToken) {
+    const roleQuery = new MyParse.Query(MyParse.Role)
+    roleQuery.equalTo('name', roleName)
+    roleQuery.equalTo('users', user)
+    return roleQuery.first(this.getMkStOpts(useMasterKey, sessionToken))
+      .then( result => !isEmpty(result) )
   }
   
   /**
