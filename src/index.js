@@ -72,7 +72,7 @@ class Parsimonious {
    * Does not mutate parameters.
    *
    * @param {*} thing Value to create json from.
-   * @param {bool} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects, contained in any plain objects found or created during recursion.
+   * @param {bool} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
    * @returns {*}
    */
   toJsn(thing, deep=false) {
