@@ -97,19 +97,28 @@ class Parsimonious {
   }
   
   /**
+   * Return a plain object containing one of the following:
+   *    null
+   *    {userMasterKey: true}
+   *    {sessionToken: <string>}
+   * @param {bool=} useMasterKey Cloud code only
+   * @param {string=} sessionToken
+   * @returns {object|null}
+   */
+  getMkStOpts(useMasterKey=false, sessionToken=null) {
+    return useMasterKey ? umk : (sessionToken ? {sessionToken} : null)
+  }
+  
+  /**
    * Return a new Parse.Query instance from a Parse Object class name.
    * @param {string} className
-   * @params {object} opt Options: skip, limit
+   * @params {object=} opts Options: skip, limit
    * @returns {Parse.Query}
    */
   newQuery(className, opts={}) {
     const q = new MyParse.Query(className)
-    if(typeof opts.skip === 'number' && opts.skip >= 1) {
-      q.skip(Math.floor(opts.skip))
-    }
-    if(typeof opts.limit === 'number' && opts.limit >= 1) {
-      q.limit(Math.floor(opts.limit))
-    }
+    typeof opts.skip === 'number' && opts.skip >= 1 && q.skip(Math.floor(opts.skip))
+    typeof opts.limit === 'number' && opts.limit >= 1 && q.limit(Math.floor(opts.limit))
     return q
   }
   
@@ -117,10 +126,11 @@ class Parsimonious {
    * Return a Parse.Object instance from className and id.
    * @param {string} className
    * @param {string} id
-   * @param {bool} useMasterKey Cloud code only
+   * @param {bool=} useMasterKey Cloud code only
+   * @param {string=} sessionToken
    */
-  getObjById(className, id, useMasterKey) {
-    return this.newQuery(className).get(id, useMasterKey && umk)
+  getObjById(className, id, useMasterKey=false, sessionToken) {
+    return this.newQuery(className).get(id, this.getMkStOpts(useMasterKey, sessionToken))
   }
   
   /**
@@ -129,8 +139,8 @@ class Parsimonious {
    * @param {bool} useMasterKey Cloud code only
    * @returns {Parse.User}
    */
-  getUserById(id, useMasterKey) {
-    return this.getObjById('User', id, useMasterKey)
+  getUserById(id, useMasterKey, sessionToken) {
+    return this.getObjById('User', id, useMasterKey, sessionToken)
   }
   
   /**
@@ -163,7 +173,7 @@ class Parsimonious {
    * @param {bool} useMasterKey
    * @returns {Promise}
    */
-  joinWithTable(classes, metadata, useMasterKey=false) {
+  joinWithTable(classes, metadata, useMasterKey=false, sessionToken) {
     const classNames = Object.keys(classes)
     const classInstances = Object.values(classes)
     const joinTableName = this.getJoinTableName(classNames[0], classNames[1])
@@ -173,7 +183,7 @@ class Parsimonious {
     if(metadata) {
       this.objSetMulti(joinObj, metadata)
     }
-    return joinObj.save(null, useMasterKey && umk)
+    return joinObj.save(null, this.getMkStOpts(useMasterKey, sessionToken))
   }
   
   /**
@@ -185,12 +195,12 @@ class Parsimonious {
    * @param {bool} useMasterKey
    * @returns {Promise}
    */
-  unJoinWithTable(classes, useMasterKey=false) {
+  unJoinWithTable(classes, useMasterKey=false, sessionToken) {
     return this.getJoinQuery(classes)
       .first()
       .then( joinObj => {
         if(this.isPFObject(joinObj)) {
-          return joinObj.destroy(useMasterKey && umk)
+          return joinObj.destroy(this.getMkStOpts(useMasterKey, sessionToken))
         } else {
           return MyParse.Promise.as(null)
         }
@@ -203,21 +213,16 @@ class Parsimonious {
    * Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
    * @param {object} classes - must contain two keys corresponding to existing classes; at least one value must be a valid parse object; the other may be a valid parse object or null.
    * @param {string=} selects - comma-separated list of keys to retrieve
+   * @params {object=} opts Options: skip, limit
    * @returns {Parse.Query}
    */
-  getJoinQuery(classes, selects) {
+  getJoinQuery(classes, selects, opts) {
     const classNames = Object.keys(classes)
     const classInstances = Object.values(classes)
-    const query = this.newQuery(this.getJoinTableName(classNames[0], classNames[1]))
-    if(classInstances[0]) {
-      query.equalTo(lowerFirst(classNames[0]), classInstances[0])
-    }
-    if(classInstances[1]) {
-      query.equalTo(lowerFirst(classNames[1]), classInstances[1])
-    }
-    if(selects) {
-      query.select(selects)
-    }
+    const query = this.newQuery(this.getJoinTableName(classNames[0], classNames[1]), opts)
+    classInstances[0] && query.equalTo(lowerFirst(classNames[0]), classInstances[0])
+    classInstances[1] && query.equalTo(lowerFirst(classNames[1]), classInstances[1])
+    selects && query.select(selects)
     return query
   }
   
