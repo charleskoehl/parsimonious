@@ -97,10 +97,18 @@ class Parsimonious {
   /**
    * Return a new Parse.Query instance from a Parse Object class name.
    * @param {string} className
+   * @params {object} opt Options: skip, limit
    * @returns {Parse.Query}
    */
-  newQuery(className) {
-    return new MyParse.Query(className)
+  newQuery(className, opts={}) {
+    const q = new MyParse.Query(className)
+    if(typeof opts.skip === 'number' && opts.skip >= 1) {
+      q.skip(Math.floor(opts.skip))
+    }
+    if(typeof opts.limit === 'number' && opts.limit >= 1) {
+      q.limit(Math.floor(opts.limit))
+    }
+    return q
   }
   
   /**
