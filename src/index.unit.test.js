@@ -8,20 +8,8 @@ aParseObj.set('violets', 'blue')
 aParseObj.set('grass', 'green')
 
 expect.extend({
-  toBeEquivalentToObject(received, argument) {
-    let pass = true
-    const rProps = Object.getOwnPropertyNames(received)
-    const aProps = Object.getOwnPropertyNames(argument)
-    if (rProps.length != aProps.length) {
-      pass = false
-    }
-    for (let i = 0; i < rProps.length; i++) {
-      var propName = rProps[i]
-      if (received[propName] !== argument[propName]) {
-        pass = false
-      }
-    }
-    if(pass) {
+  toBeEquivalentObject(received, argument) {
+    if(this.equals(received, argument)) {
       return {
         message: () => (`expected ${received} to not contain the same properties and values as ${argument}`),
         pass: true
