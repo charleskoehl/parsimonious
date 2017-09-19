@@ -1,8 +1,11 @@
 import Parse from 'Parse'
 import parsm from './index'
 
-const Colors = Parse.Object.extend('Colors')
-const colors = new Colors()
+const TheParseObj = Parse.Object.extend('TheParseObj')
+const aParseObj = new TheParseObj()
+aParseObj.set('roses', 'red')
+aParseObj.set('violets', 'blue')
+aParseObj.set('grass', 'green')
 
 expect.extend({
   toBeEquivalentToObject(received, argument) {
