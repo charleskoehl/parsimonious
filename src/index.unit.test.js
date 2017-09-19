@@ -123,6 +123,41 @@ describe('parsimonious methods', () => {
       })
       expect(aParseObj.get('river')).toBe('deep')
     })
+    it('sets some columns on a Parse object from a plain object, not merging sub-objects', () => {
+      aParseObj.set('ocean', {
+        size:'large',
+        color:'blue',
+        denizens:'fish'
+      })
+      parsm.objSetMulti(aParseObj, {
+        ocean: {
+          size:'medium',
+          color:'green'
+        }
+      })
+      expect(aParseObj.get('ocean')).toBeEquivalentObject({
+        size:'medium',
+        color:'green'
+      })
+    })
+    it('sets some columns on a Parse object from a plain object, merging sub-objects', () => {
+      aParseObj.set('ocean', {
+        size:'large',
+        color:'blue',
+        denizens:'fish'
+      })
+      parsm.objSetMulti(aParseObj, {
+        ocean: {
+          size:'medium',
+          color:'green'
+        }
+      }, true)
+      expect(aParseObj.get('ocean')).toBeEquivalentObject({
+        size:'medium',
+        color:'green',
+        denizens:'fish'
+      })
+    })
   })
   
   describe('getMkStOpts', () => {
