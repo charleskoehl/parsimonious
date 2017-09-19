@@ -7,22 +7,6 @@ aParseObj.set('roses', 'red')
 aParseObj.set('violets', 'blue')
 aParseObj.set('grass', 'green')
 
-expect.extend({
-  toBeEquivalentObject(received, argument) {
-    if(this.equals(received, argument)) {
-      return {
-        message: () => (`expected ${received} to not contain the same properties and values as ${argument}`),
-        pass: true
-      }
-    } else {
-      return {
-        message: () => (`expected ${received} to contain the same properties and values as ${argument}`),
-        pass: false
-      }
-    }
-  }
-})
-
 describe('parsimonious methods', () => {
   
   describe('toJsn', () => {

@@ -44,6 +44,7 @@
     "commitizen": "^2.9.4",
     "cz-conventional-changelog": "^2.0.0",
     "jest": "^21.1.0",
+    "jest-diff": "^21.1.0",
     "jsdoc-to-markdown": "^3.0.0",
     "semantic-release": "^6.3.2"
   },
@@ -51,5 +52,8 @@
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
     }
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "./set-up-jest.js"
   }
 }
