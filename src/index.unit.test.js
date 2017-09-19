@@ -26,9 +26,15 @@ expect.extend({
 describe('parsimonious methods', () => {
   
   describe('toJsn', () => {
-    colors.set('roses', 'red')
-    colors.set('violets', 'blue')
-    colors.set('grass', 'green')
+    it('returns the input when input is not a Parse object or a plain, non-null object', () => {
+      const mySymbol = Symbol('test')
+      expect(parsm.toJsn(mySymbol)).toEqual(mySymbol)
+      expect(parsm.toJsn(undefined)).toEqual(undefined)
+      expect(parsm.toJsn(null)).toEqual(null)
+      expect(parsm.toJsn(true)).toEqual(true)
+      expect(parsm.toJsn(2)).toEqual(2)
+      expect(parsm.toJsn('abc')).toEqual('abc')
+    })
     it('returns a shallow JSON representation of a Parse object', () => {
       expect(parsm.toJsn(colors)).toEqual({
         roses: 'red',
