@@ -85,7 +85,7 @@ class Parsimonious {
    * @param {object} dataObj
    * @param {bool} doMerge If true, each column value is shallow-merged with existing value
    */
-  objSetMulti(parseObj, dataObj, doMerge) {
+  objSetMulti(parseObj, dataObj, doMerge=false) {
     if(this.isPFObject(parseObj) && isPlainObject(dataObj)) {
       let key, oldVal, newVal
       for (key in dataObj) {
