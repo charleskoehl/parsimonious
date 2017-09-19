@@ -81,25 +81,24 @@ describe('parsimonious methods', () => {
       })
     })
     it('returns deep JSON representation of a plain object containing a Parse object that has an objectId key', () => {
-      const myColors = new Colors()
-      myColors.set('roses', 'red')
-      myColors.set('violets', 'blue')
-      myColors.set('grass', 'green')
-      myColors.set('objectId', 'iei38s')
+      aParseObj.set('objectId', 'iei38s')
       const someObj = {
         foo: 'bar',
         domo: 'arigato',
         things: ['cow', 'pencil'],
-        colors: myColors
+        aParseObj
       }
-      const json = parsm.toJsn(someObj, true)
-      expect(json.foo).toEqual('bar')
-      expect(json.domo).toEqual('arigato')
-      expect(json.things).toEqual(['cow', 'pencil'])
-      expect(json.colors.grass).toEqual('green')
-      expect(json.colors.roses).toEqual('red')
-      expect(json.colors.violets).toEqual('blue')
-      expect(json.colors.id).toEqual('iei38s')
+      expect(parsm.toJsn(someObj, true)).toBeEquivalentObject({
+        foo: 'bar',
+        domo: 'arigato',
+        things: ['cow', 'pencil'],
+        aParseObj: {
+          id: 'iei38s',
+          roses: 'red',
+          violets: 'blue',
+          grass: 'green'
+        }
+      })
     })
   })
   
