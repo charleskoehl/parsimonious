@@ -91,7 +91,7 @@ class Parsimonious {
       for (key in dataObj) {
         oldVal = parseObj.get(key)
         newVal = dataObj[key]
-        if (doMerge && isPlainObject(oldVal)) {
+        if (doMerge && isPlainObject(oldVal) && isPlainObject(newVal)) {
           newVal = merge(oldVal, newVal)
         }
         parseObj.set(key, newVal)
