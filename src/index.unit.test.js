@@ -36,7 +36,7 @@ describe('parsimonious methods', () => {
       expect(parsm.toJsn('abc')).toEqual('abc')
     })
     it('returns a shallow JSON representation of a Parse object', () => {
-      expect(parsm.toJsn(colors)).toEqual({
+      expect(parsm.toJsn(aParseObj)).toBeEquivalentObject({
         roses: 'red',
         violets: 'blue',
         grass: 'green'
@@ -52,7 +52,7 @@ describe('parsimonious methods', () => {
           levers: 2
         }
       }
-      expect(parsm.toJsn(plainObj, true)).toEqual({
+      expect(parsm.toJsn(plainObj, true)).toBeEquivalentObject({
         foo: 'bar',
         domo: 'arigato',
         things: ['cow', 'pencil'],
@@ -67,13 +67,13 @@ describe('parsimonious methods', () => {
         foo: 'bar',
         domo: 'arigato',
         things: ['cow', 'pencil'],
-        colors
+        aParseObj
       }
-      expect(parsm.toJsn(someObj, true)).toEqual({
+      expect(parsm.toJsn(someObj, true)).toBeEquivalentObject({
         foo: 'bar',
         domo: 'arigato',
         things: ['cow', 'pencil'],
-        colors: {
+        aParseObj: {
           roses: 'red',
           violets: 'blue',
           grass: 'green'
@@ -105,11 +105,11 @@ describe('parsimonious methods', () => {
   
   describe('objPick', () => {
     it('gets some columns from a Parse object and returns them in a plain object', () => {
-      expect(parsm.objPick(colors, 'roses,grass')).toEqual({
+      expect(parsm.objPick(aParseObj, 'roses,grass')).toEqual({
         roses: 'red',
         grass: 'green'
       })
-      expect(parsm.objPick(colors, ['roses', 'grass'])).toEqual({
+      expect(parsm.objPick(aParseObj, ['roses', 'grass'])).toEqual({
         roses: 'red',
         grass: 'green'
       })
@@ -117,12 +117,12 @@ describe('parsimonious methods', () => {
   })
   
   describe('objSetMulti', () => {
-    it('sets some columns on a Parse object from a js object', () => {
-      parsm.objSetMulti(colors, {
+    it('sets some columns on a Parse object from a plain object', () => {
+      parsm.objSetMulti(aParseObj, {
         valley: 'big',
         river: 'deep'
       })
-      expect(colors.get('river')).toBe('deep')
+      expect(aParseObj.get('river')).toBe('deep')
     })
   })
   
@@ -166,7 +166,7 @@ describe('parsimonious methods', () => {
   
   describe('isPFObject', () => {
     it('determines if a variable is a Parse.Object', () => {
-      expect(parsm.isPFObject(colors)).toBe(true)
+      expect(parsm.isPFObject(aParseObj)).toBe(true)
     })
   })
 })
