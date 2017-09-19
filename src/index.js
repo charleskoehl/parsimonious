@@ -7,7 +7,6 @@ const pick = require('lodash/pick')
 const omit = require('lodash/omit')
 const isEmpty = require('lodash/isEmpty')
 const isPlainObject = require('lodash/isPlainObject')
-const isObjectLike = require('lodash/isObjectLike')
 const clone = require('lodash/clone')
 const lowerFirst = require('lodash/lowerFirst')
 
@@ -48,12 +47,12 @@ class Parsimonious {
     let obj
     if(this.isPFObject(thing)) {
       obj = thing.toJSON()
-    } else if(isPlainObject(thing) && isObjectLike(thing)) {
+    } else if(isPlainObject(thing)) {
       obj = Object.assign({}, thing)
     } else {
       obj = clone(thing)
     }
-    if(deep && isPlainObject(obj) && isObjectLike(obj)) {
+    if(deep && isPlainObject(obj)) {
       // Make more plain-object-like, and prevent Parse.Cloud.run from converting back into Parse.Object in responses:
       if(obj.objectId) {
         obj.id = obj.objectId
