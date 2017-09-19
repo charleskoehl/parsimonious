@@ -7,7 +7,8 @@ const pick = require('lodash/pick')
 const omit = require('lodash/omit')
 const isEmpty = require('lodash/isEmpty')
 const isPlainObject = require('lodash/isPlainObject')
-const cloneWith = require('lodash/cloneWith')
+const isObjectLike = require('lodash/isObjectLike')
+const clone = require('lodash/clone')
 const lowerFirst = require('lodash/lowerFirst')
 
 /**
@@ -31,6 +32,39 @@ class Parsimonious {
       Parsimonious.instance = this
     }
     return Parsimonious.instance
+  }
+  
+  /**
+   * Return a json representation of a Parse.Object,
+   * sub-class of Parse.Object (such as Parse.User),
+   * or plain object containing any or none of those, to json, optionally recursively.
+   * Does not mutate parameters.
+   *
+   * @param {*} thing Value to create json from.
+   * @param {bool} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
+   * @returns {*}
+   */
+  toJsn(thing, deep=false) {
+    let obj
+    if(this.isPFObject(thing)) {
+      obj = thing.toJSON()
+    } else if(isPlainObject(thing) && isObjectLike(thing)) {
+      obj = Object.assign({}, thing)
+    } else {
+      obj = clone(thing)
+    }
+    if(deep && isPlainObject(obj) && isObjectLike(obj)) {
+      // Make more plain-object-like, and prevent Parse.Cloud.run from converting back into Parse.Object in responses:
+      if(obj.objectId) {
+        obj.id = obj.objectId
+      }
+      obj = omit(obj,['objectId','__type','className','ACL'])
+      // Convert all other properties of plain object to json.
+      for(let k in obj) {
+        obj[k] = this.toJsn(obj[k], deep)
+      }
+    }
+    return obj
   }
   
   /**
@@ -64,37 +98,6 @@ class Parsimonious {
         parseObj.set(key, newVal)
       }
     }
-  }
-  
-  /**
-   * Return a json representation of a Parse.Object,
-   * sub-class of Parse.Object (such as Parse.User),
-   * or plain object containing any or none of those, to json, optionally recursively.
-   * Does not mutate parameters.
-   *
-   * @param {*} thing Value to create json from.
-   * @param {bool} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
-   * @returns {*}
-   */
-  toJsn(thing, deep=false) {
-    let obj
-    if(this.isPFObject(thing)) {
-      obj = thing.toJSON()
-    } else {
-      obj = cloneWith(thing, val => this.isPFObject(val) ? val.clone() : undefined)
-    }
-    if(deep && isPlainObject(obj)) {
-      // Make more plain-object-like, and prevent Parse.Cloud.run from converting back into Parse.Object in responses:
-      if(obj.objectId) {
-        obj.id = obj.objectId
-      }
-      obj = omit(obj,['objectId','__type','className','ACL'])
-      // Convert all other properties of plain object to json.
-      for(let k in obj) {
-        obj[k] = this.toJsn(obj[k], deep)
-      }
-    }
-    return obj
   }
   
   /**
