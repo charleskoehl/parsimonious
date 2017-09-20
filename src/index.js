@@ -6,6 +6,7 @@ const merge = require('lodash/merge')
 const pick = require('lodash/pick')
 const omit = require('lodash/omit')
 const isEmpty = require('lodash/isEmpty')
+const isInteger = require('lodash/isInteger')
 const isPlainObject = require('lodash/isPlainObject')
 const clone = require('lodash/clone')
 const lowerFirst = require('lodash/lowerFirst')
@@ -109,19 +110,21 @@ class Parsimonious {
    * @returns {object|null}
    */
   getMkStOpts(useMasterKey=false, sessionToken=null) {
-    return useMasterKey ? umk : (sessionToken ? {sessionToken} : null)
+    return useMasterKey ? umk : (sessionToken ? {sessionToken} : {})
   }
   
   /**
    * Return a new Parse.Query instance from a Parse Object class name.
    * @param {string} className
-   * @params {object=} opts Options: skip, limit
+   * @param {object=} opts Options: skip, limit
    * @returns {Parse.Query}
    */
-  newQuery(className, opts={}) {
+  newQuery(className, opts=undefined) {
     const q = new MyParse.Query(className)
-    typeof opts.skip === 'number' && opts.skip >= 1 && q.skip(Math.floor(opts.skip))
-    typeof opts.limit === 'number' && opts.limit >= 1 && q.limit(Math.floor(opts.limit))
+    if(opts !== undefined && isPlainObject(opts)) {
+      isInteger(opts.skip) && opts.skip > 0 && q.skip(opts.skip)
+      isInteger(opts.limit) && opts.limit > 0 && q.skip(opts.limit)
+    }
     return q
   }
   
@@ -132,7 +135,7 @@ class Parsimonious {
    * @param {bool=} useMasterKey Cloud code only
    * @param {string=} sessionToken
    */
-  getObjById(className, id, useMasterKey=false, sessionToken) {
+  getObjById(className, id, useMasterKey=false, sessionToken=null) {
     return this.newQuery(className).get(id, this.getMkStOpts(useMasterKey, sessionToken))
   }
   
@@ -242,11 +245,12 @@ class Parsimonious {
    * @param {*} thing
    * @returns {boolean}
    */
-  isPFObject(thing) {
+  isPFObject(thing, ofClass=null) {
     return thing !== null
       && typeof thing === 'object'
       && typeof thing._objCount === 'number'
       && typeof thing.className === 'string'
+      && (typeof ofClass === 'string' ? thing.className === ofClass : true)
   }
   
 }

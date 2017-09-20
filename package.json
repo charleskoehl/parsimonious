@@ -46,6 +46,8 @@
     "jest": "^21.1.0",
     "jest-diff": "^21.1.0",
     "jsdoc-to-markdown": "^3.0.0",
+    "parse-mockdb": "^0.1.25",
+    "parse-shim": "^1.0.6",
     "semantic-release": "^6.3.2"
   },
   "config": {
