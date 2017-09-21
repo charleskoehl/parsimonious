@@ -1,6 +1,6 @@
 'use strict'
 
-import Parse from 'parse-shim'
+import Parse from 'parse'
 import ParseMockDB from 'parse-mockdb'
 import parsm from './index'
 
