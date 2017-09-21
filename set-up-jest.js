@@ -1,6 +1,12 @@
 import diff from 'jest-diff'
 
 expect.extend({
+  /**
+   * Compares two objects and deems them equivalent if they have the same keys and values, regardless of order.
+   * @param {object} received
+   * @param {object} expected
+   * @return {{actual: object, message: string, pass: boolean}}
+   */
   toBeEquivalentObject(received, expected) {
     const pass = this.equals(received, expected)
     const message = pass

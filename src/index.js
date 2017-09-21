@@ -5,7 +5,6 @@ const autoBind = require('auto-bind')
 const merge = require('lodash/merge')
 const pick = require('lodash/pick')
 const omit = require('lodash/omit')
-const isEmpty = require('lodash/isEmpty')
 const isInteger = require('lodash/isInteger')
 const isPlainObject = require('lodash/isPlainObject')
 const clone = require('lodash/clone')
@@ -41,7 +40,7 @@ class Parsimonious {
    * Does not mutate parameters.
    *
    * @param {*} thing Value to create json from.
-   * @param {bool} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
+   * @param {boolean=} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
    * @returns {*}
    */
   toJsn(thing, deep=false) {
@@ -60,9 +59,9 @@ class Parsimonious {
       }
       obj = omit(obj,['objectId','__type','className','ACL'])
       // Convert all other properties of plain object to json.
-      for(let k in obj) {
+      Object.keys(obj).forEach(k => {
         obj[k] = this.toJsn(obj[k], deep)
-      }
+      })
     }
     return obj
   }
@@ -84,7 +83,7 @@ class Parsimonious {
    * Set some columns on a Parse object. Mutates the Parse object.
    * @param {Parse.Object} parseObj
    * @param {object} dataObj
-   * @param {bool} doMerge If true, each column value is shallow-merged with existing value
+   * @param {boolean=} doMerge If true, each column value is shallow-merged with existing value
    */
   objSetMulti(parseObj, dataObj, doMerge=false) {
     if(this.isPFObject(parseObj) && isPlainObject(dataObj)) {
@@ -101,19 +100,6 @@ class Parsimonious {
   }
   
   /**
-   * Return a plain object containing one of the following:
-   *    null
-   *    {userMasterKey: true}
-   *    {sessionToken: <string>}
-   * @param {bool=} useMasterKey Cloud code only
-   * @param {string=} sessionToken
-   * @returns {object|null}
-   */
-  getMkStOpts(useMasterKey=false, sessionToken=null) {
-    return useMasterKey ? umk : (sessionToken ? {sessionToken} : {})
-  }
-  
-  /**
    * Return a new Parse.Query instance from a Parse Object class name.
    * @param {string} className
    * @param {object=} opts Options: skip, limit
@@ -123,7 +109,7 @@ class Parsimonious {
     const q = new MyParse.Query(className)
     if(opts !== undefined && isPlainObject(opts)) {
       isInteger(opts.skip) && opts.skip > 0 && q.skip(opts.skip)
-      isInteger(opts.limit) && opts.limit > 0 && q.skip(opts.limit)
+      isInteger(opts.limit) && opts.limit > 0 && q.limit(opts.limit)
     }
     return q
   }
@@ -132,29 +118,40 @@ class Parsimonious {
    * Return a Parse.Object instance from className and id.
    * @param {string} className
    * @param {string} id
-   * @param {bool=} useMasterKey Cloud code only
+   * @param {boolean=} useMasterKey Cloud code only
    * @param {string=} sessionToken
    */
   getObjById(className, id, useMasterKey=false, sessionToken=null) {
-    return this.newQuery(className).get(id, this.getMkStOpts(useMasterKey, sessionToken))
+    return this.newQuery(className).get(id, this._getMkStOpts(useMasterKey, sessionToken))
   }
   
   /**
    * Return Parse.User instance from user id
    * @param {string} id
-   * @param {bool} useMasterKey Cloud code only
+   * @param {boolean=} useMasterKey Cloud code only
+   * @param {string=} sessionToken
    * @returns {Parse.User}
    */
   getUserById(id, useMasterKey=false, sessionToken) {
     return this.getObjById('User', id, useMasterKey, sessionToken)
   }
   
+  /**
+   *
+   * @param {Parse.User}  user
+   * @param {string}      roleName
+   * @param {boolean=} useMasterKey Cloud code only
+   * @param {string=} sessionToken
+   * @return {Promise.<TResult>|Parse.Promise}
+   */
   userHasRole(user, roleName, useMasterKey=false, sessionToken) {
     const roleQuery = new MyParse.Query(MyParse.Role)
     roleQuery.equalTo('name', roleName)
     roleQuery.equalTo('users', user)
-    return roleQuery.first(this.getMkStOpts(useMasterKey, sessionToken))
-      .then( result => !isEmpty(result) )
+    return roleQuery.first(this._getMkStOpts(useMasterKey, sessionToken))
+      .then( result => {
+        return result !== undefined
+      })
   }
   
   /**
@@ -182,22 +179,25 @@ class Parsimonious {
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
    * Join table must exist and have pointer columns named like class names,
    * except first letter lower-case; e.g.: employee, company.
+   * Returns promise.
+   * If can't join objects, returned promise resolves to undefined.
    * @param {object} classes - must contain two keys corresponding to existing classes; each value must be a valid parse object.
    * @param {object=} metadata - optional key/value pairs to set on the new document to describe relationship.
-   * @param {bool} useMasterKey
+   * @param {boolean=} useMasterKey Cloud code only
+   * @param {string=} sessionToken
    * @returns {Promise}
    */
-  joinWithTable(classes, metadata, useMasterKey=false, sessionToken) {
+  joinWithTable(classes, metadata=null, useMasterKey=false, sessionToken=null) {
     const classNames = Object.keys(classes)
-    const classInstances = Object.values(classes)
+    const classInstances = [classes[classNames[0]],classes[classNames[1]]]
     const joinTableName = this.getJoinTableName(classNames[0], classNames[1])
     const joinObj = this.getClassInst(joinTableName)
     joinObj.set(lowerFirst(classNames[0]), classInstances[0])
     joinObj.set(lowerFirst(classNames[1]), classInstances[1])
-    if(metadata) {
+    if(isPlainObject(metadata)) {
       this.objSetMulti(joinObj, metadata)
     }
-    return joinObj.save(null, this.getMkStOpts(useMasterKey, sessionToken))
+    return joinObj.save(null, this._getMkStOpts(useMasterKey, sessionToken))
   }
   
   /**
@@ -205,18 +205,20 @@ class Parsimonious {
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
    * Join table must exist and have pointer columns named like class names,
    * except first letter lower-case; e.g.: employee, company.
-   * @param {object} classes - must contain two keys corresponding to existing classes; each value must be a valid parse object.
-   * @param {bool} useMasterKey
+   * @param {object} classes - must contain two keys corresponding to existing classes;
+   *                           each value must be a valid parse object already in db.
+   * @param {boolean=} useMasterKey Cloud code only
+   * @param {string=} sessionToken
    * @returns {Promise}
    */
-  unJoinWithTable(classes, useMasterKey=false, sessionToken) {
+  unJoinWithTable(classes, useMasterKey=false, sessionToken=null) {
     return this.getJoinQuery(classes)
       .first()
       .then( joinObj => {
         if(this.isPFObject(joinObj)) {
-          return joinObj.destroy(this.getMkStOpts(useMasterKey, sessionToken))
+          return joinObj.destroy(this._getMkStOpts(useMasterKey, sessionToken))
         } else {
-          return MyParse.Promise.as(null)
+          return MyParse.Promise.as(undefined)
         }
       })
   }
@@ -225,32 +227,55 @@ class Parsimonious {
    * Return a query on a join table.
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
    * Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
-   * @param {object} classes - must contain two keys corresponding to existing classes; at least one value must be a valid parse object; the other may be a valid parse object or null.
-   * @param {string=} selects - comma-separated list of keys to retrieve
+   * @param {object} classes - must contain two keys corresponding to existing classes;
+   *                           each value must be either a valid parse object or null
+   * @param {(string | string[])=} select - comma-separated list, or array, of keys to retrieve
    * @params {object=} opts Options: skip, limit
    * @returns {Parse.Query}
    */
-  getJoinQuery(classes, selects, opts) {
+  getJoinQuery(classes, select, opts) {
     const classNames = Object.keys(classes)
-    const classInstances = Object.values(classes)
+    const classInstances = [classes[classNames[0]],classes[classNames[1]]]
     const query = this.newQuery(this.getJoinTableName(classNames[0], classNames[1]), opts)
-    classInstances[0] && query.equalTo(lowerFirst(classNames[0]), classInstances[0])
-    classInstances[1] && query.equalTo(lowerFirst(classNames[1]), classInstances[1])
-    selects && query.select(selects)
+    this.isPFObject(classInstances[0], classNames[0]) && query.equalTo(lowerFirst(classNames[0]), classInstances[0])
+    this.isPFObject(classInstances[1], classNames[1]) && query.equalTo(lowerFirst(classNames[1]), classInstances[1])
+    let selectArray
+    if(Array.isArray(select) && select.length) {
+      selectArray = select
+    } else if(typeof select === 'string') {
+      selectArray = select.split(',')
+    }
+    Array.isArray(selectArray) && query.select(selectArray)
     return query
   }
   
   /**
    * Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User)
    * @param {*} thing
+   * @param {string=} ofClass
    * @returns {boolean}
    */
   isPFObject(thing, ofClass=null) {
+    const specialClasses = ['User','Role','Session']
     return thing !== null
       && typeof thing === 'object'
       && typeof thing._objCount === 'number'
       && typeof thing.className === 'string'
-      && (typeof ofClass === 'string' ? thing.className === ofClass : true)
+      // Check if correct class if specified.
+      && (typeof ofClass === 'string' ? (thing.className === ofClass || (specialClasses.indexOf(ofClass) > -1 && thing.className === `_${ofClass}`)) : true)
+  }
+  
+  /**
+   * Return a plain object containing one of the following:
+   *    null
+   *    {userMasterKey: true}
+   *    {sessionToken: <string>}
+   * @param {boolean=} useMasterKey Cloud code only
+   * @param {string=} sessionToken
+   * @returns {object|null}
+   */
+  _getMkStOpts(useMasterKey=false, sessionToken=null) {
+    return useMasterKey ? umk : (sessionToken ? {sessionToken} : {})
   }
   
 }
