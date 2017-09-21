@@ -14,7 +14,7 @@
   "scripts": {
     "commit": "git-cz",
     "compile": "babel src -d lib",
-    "prepare": "npm run compile; npm run docs; git add .; git commit -m 'prepublish'; git push origin master;",
+    "prepare": "npm run compile; npm run docs; git add .; git commit -m 'prepare'; git push origin master;",
     "start": "mocha --watch --compilers js:babel-register",
     "test": "jest",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
@@ -33,22 +33,23 @@
   "dependencies": {
     "auto-bind": "^1.1.0",
     "lodash": "^4.17.4",
-    "parse": "^1.9.2"
+    "parse": "^1.10.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.18.0",
-    "babel-core": "^6.21.0",
-    "babel-plugin-transform-es2015-modules-umd": "^6.18.0",
-    "babel-preset-es2015": "^6.18.0",
-    "babel-register": "^6.18.0",
-    "commitizen": "^2.9.4",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "commitizen": "^2.9.6",
+    "coveralls": "^2.13.1",
     "cz-conventional-changelog": "^2.0.0",
     "jest": "^21.1.0",
     "jest-diff": "^21.1.0",
     "jsdoc-to-markdown": "^3.0.0",
     "parse-mockdb": "^0.1.25",
     "parse-shim": "^1.0.6",
-    "semantic-release": "^6.3.2"
+    "semantic-release": "^8.0.3"
   },
   "config": {
     "commitizen": {
