@@ -14,7 +14,7 @@
   "scripts": {
     "commit": "git-cz",
     "compile": "babel src -d lib",
-    "prepublish": "npm run compile; npm run docs; git add .; git commit -m 'prepublish'; git push origin master;",
+    "prepare": "npm run compile; npm run docs; git add .; git commit -m 'prepublish'; git push origin master;",
     "start": "mocha --watch --compilers js:babel-register",
     "test": "jest",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
