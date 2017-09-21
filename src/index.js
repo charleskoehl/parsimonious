@@ -149,9 +149,7 @@ class Parsimonious {
     roleQuery.equalTo('name', roleName)
     roleQuery.equalTo('users', user)
     return roleQuery.first(this._getMkStOpts(useMasterKey, sessionToken))
-      .then( result => {
-        return result !== undefined
-      })
+      .then( result => result !== undefined )
   }
   
   /**
