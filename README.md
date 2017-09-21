@@ -1,11 +1,8 @@
 <a name="module_Parsimonious"></a>
 
-# Parsimonious
+## Parsimonious
 Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
 
-### [Change Log](docs/CHANGELOG.md)
-
-### API
 
 * [Parsimonious](#module_Parsimonious)
     * [~Parsimonious](#module_Parsimonious..Parsimonious)
@@ -167,7 +164,6 @@ Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
 Join table must exist and have pointer columns named like class names,
 except first letter lower-case; e.g.: employee, company.
 Returns promise.
-If can't join objects, returned promise resolves to undefined.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 
@@ -185,6 +181,7 @@ Unjoin two parse objects currently joined by a document in a third join table.
 Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
 Join table must exist and have pointer columns named like class names,
 except first letter lower-case; e.g.: employee, company.
+If can't unjoin objects, returned promise resolves to undefined.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 

@@ -1,6 +1,6 @@
 # Change Log
 
-## Version 2.0 - 20th September 2017
+## Version 2.0.0 - 20th September 2017
 
 ### New Features
 
