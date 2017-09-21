@@ -18,7 +18,7 @@
     "start": "mocha --watch --compilers js:babel-register",
     "test": "jest",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "docs": "jsdoc2md --template README.hbs --files ./src/index.js --param-list-format list > README.md"
+    "docs": "jsdoc2md --template README.hbs --files ./src/index.js --param-list-format table > README.md"
   },
   "main": "lib/index.js",
   "keywords": [
