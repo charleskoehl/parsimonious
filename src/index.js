@@ -180,7 +180,6 @@ class Parsimonious {
    * Join table must exist and have pointer columns named like class names,
    * except first letter lower-case; e.g.: employee, company.
    * Returns promise.
-   * If can't join objects, returned promise resolves to undefined.
    * @param {object} classes - must contain two keys corresponding to existing classes; each value must be a valid parse object.
    * @param {object=} metadata - optional key/value pairs to set on the new document to describe relationship.
    * @param {boolean=} useMasterKey Cloud code only
@@ -205,6 +204,7 @@ class Parsimonious {
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
    * Join table must exist and have pointer columns named like class names,
    * except first letter lower-case; e.g.: employee, company.
+   * If can't unjoin objects, returned promise resolves to undefined.
    * @param {object} classes - must contain two keys corresponding to existing classes;
    *                           each value must be a valid parse object already in db.
    * @param {boolean=} useMasterKey Cloud code only
