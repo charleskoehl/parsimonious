@@ -1,8 +1,11 @@
 <a name="module_Parsimonious"></a>
 
-## Parsimonious
+# Parsimonious
 Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
 
+### [Change Log](docs/CHANGELOG.md)
+
+### API
 
 * [Parsimonious](#module_Parsimonious)
     * [~Parsimonious](#module_Parsimonious..Parsimonious)
