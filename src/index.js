@@ -1,6 +1,6 @@
 'use strict'
 
-const Parse = require('parse')
+const Parse = require('parse-shim')
 const autoBind = require('auto-bind')
 const merge = require('lodash/merge')
 const pick = require('lodash/pick')
