@@ -1,5 +1,4 @@
 sudo: false
-install: true
 language: node_js
 cache:
   directories:
