@@ -12,7 +12,6 @@
     "email": "charles@etherscapes.com"
   },
   "scripts": {
-    "commit": "git-cz",
     "compile": "babel src -d lib",
     "prepare": "npm run compile; npm run docs; git add .; git commit -m 'prepare'; git push origin master;",
     "test": "jest -c jest-config.json",
@@ -42,16 +41,9 @@
     "babel-preset-env": "^1.6.0",
     "babel-register": "^6.26.0",
     "codecov": "^2.3.0",
-    "commitizen": "^2.9.6",
-    "cz-conventional-changelog": "^2.0.0",
     "jest": "^21.1.0",
     "jest-diff": "^21.1.0",
     "jsdoc-to-markdown": "^3.0.0",
     "parse-mockdb": "^0.1.25"
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-conventional-changelog"
-    }
   }
 }
