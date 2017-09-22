@@ -1,0 +1,4 @@
+{
+  "setupTestFrameworkScriptFile": "./set-up-jest.js",
+  "roots": ["src"]
+}

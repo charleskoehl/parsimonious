@@ -16,7 +16,7 @@
     "compile": "babel src -d lib",
     "prepare": "npm run compile; npm run docs; git add .; git commit -m 'prepare'; git push origin master;",
     "start": "mocha --watch --compilers js:babel-register",
-    "test": "npm run compile; jest",
+    "test": "jest -c jest-config.json",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "docs": "jsdoc2md --template README.hbs --files ./src/index.js --param-list-format table > README.md"
   },
@@ -56,8 +56,5 @@
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
     }
-  },
-  "jest": {
-    "setupTestFrameworkScriptFile": "./set-up-jest.js"
   }
 }
