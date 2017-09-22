@@ -5,7 +5,7 @@ Utilities for Parse Server cloud code and JS SDK
 
 ## Change Log
 
-### Version 2.0.4 - 21st September 2017
+### Version 2.0.5 - 21st September 2017
 #### Updates
 * added codecov reporting and badge
 * reduced minimum required node version to 4
