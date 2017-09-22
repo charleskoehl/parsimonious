@@ -1,3 +1,26 @@
+# Parsimonious
+Utilities for Parse Server cloud code and JS SDK
+
+# Change Log
+
+## Version 2.0.3 - 21st September 2017
+### Updates
+* 100% test coverage with jest
+* uses different branch of parse-shim to account for parse already being loaded in cloud code
+
+### Bug Fixes
+* uses different branch of parse-shim to correctly detect when running in browser or node to import correct parse version
+
+## Version 2.0.2 - 20th September 2017
+### New Features
+* userHasRole method
+### Updates
+* all methods that access the database now accept optional sessionToken
+* isPFObject now accepts an optional class name param
+* can pass array of field names, in addition to comma-separated list, to getJoinQuery
+### Breaking Changes
+* If unJoinWithTable can't unjoin objects, it returns a promise that resolves to *undefined* instead of null.
+
 <a name="module_Parsimonious"></a>
 
 ## Parsimonious
@@ -233,14 +256,3 @@ Return a plain object containing one of the following:
 | [useMasterKey] | <code>boolean</code> | <code>false</code> | Cloud code only |
 | [sessionToken] | <code>string</code> | <code>null</code> |  |
 
-
-# Change Log
-## Version 2.0.2 - 20th September 2017
-### New Features
-* userHasRole method
-### Updates
-* all methods that access the database now accept optional sessionToken
-* isPFObject now accepts an optional class name param
-* can pass array of field names, in addition to comma-separated list, to getJoinQuery
-### Breaking Changes
-* If unJoinWithTable can't unjoin objects, it returns a promise that resolves to *undefined* instead of null.
