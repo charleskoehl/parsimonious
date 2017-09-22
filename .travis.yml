@@ -11,7 +11,7 @@ node_js:
 before_install:
   - npm i -g npm@^4.5.0
 install:
-  - npm i
+  - npm install
 before_script:
   - npm prune
 script:
