@@ -1,4 +1,7 @@
 {
   "setupTestFrameworkScriptFile": "./set-up-jest.js",
-  "roots": ["src"]
+  "roots": ["src"],
+  "collectCoverage": true,
+  "collectCoverageFrom" : ["src/**/*.{js,jsx}", "!**/node_modules/**", "!**/vendor/**"]
+
 }
