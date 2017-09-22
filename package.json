@@ -28,7 +28,7 @@
     "utility"
   ],
   "engines": {
-    "node": ">=5"
+    "node": ">=4"
   },
   "dependencies": {
     "auto-bind": "^1.1.0",
