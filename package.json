@@ -33,7 +33,8 @@
   "dependencies": {
     "auto-bind": "^1.1.0",
     "lodash": "^4.17.4",
-    "parse": "^1.10.0"
+    "parse": "^1.10.0",
+    "parse-shim": "github:charleskoehl/parse-shim"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -48,7 +49,6 @@
     "jest-diff": "^21.1.0",
     "jsdoc-to-markdown": "^3.0.0",
     "parse-mockdb": "^0.1.25",
-    "parse-shim": "^1.0.6",
     "semantic-release": "^8.0.3"
   },
   "config": {
