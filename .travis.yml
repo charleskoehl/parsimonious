@@ -15,7 +15,6 @@ script:
   - npm run test-ci
 after_success:
   - codecov
-  - npm run semantic-release
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
