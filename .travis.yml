@@ -1,5 +1,4 @@
 sudo: false
-install: true
 language: node_js
 cache:
   directories:
@@ -14,6 +13,8 @@ node_js:
 before_install:
   - npm i -g npm@^4.5.0
   - npm prune
+install:
+  - npm i
 script:
   - npm run test-ci
 after_success:
