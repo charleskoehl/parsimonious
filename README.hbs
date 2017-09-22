@@ -1,6 +1,8 @@
 # Parsimonious
 Utilities for Parse Server cloud code and JS SDK
 
+[![codecov](https://codecov.io/gh/charleskoehl/parsimonious/branch/master/graph/badge.svg)](https://codecov.io/gh/charleskoehl/parsimonious)
+
 # Change Log
 
 ## Version 2.0.3 - 21st September 2017
