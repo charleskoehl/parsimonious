@@ -1,6 +1,6 @@
 {
   "name": "parsimonious",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Utilities for Parse Server cloud code and JS SDK",
   "license": "WTFPL",
   "repository": {
