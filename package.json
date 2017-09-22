@@ -15,7 +15,8 @@
     "commit": "git-cz",
     "compile": "babel src -d lib",
     "prepare": "npm run compile; npm run docs; git add .; git commit -m 'prepare'; git push origin master;",
-    "test": "jest -c jest-config.json && codecov -t 67eee3d5-678f-4942-842a-c1c44c5d7684",
+    "test": "jest -c jest-config.json",
+    "test-ci": "jest -c jest-config-ci.json",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "docs": "jsdoc2md --template README.hbs --files ./src/index.js --param-list-format table > README.md"
   },
