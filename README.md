@@ -242,6 +242,11 @@ Return a plain object containing one of the following:
 <a name="changelog"></a>
 ## Change Log
 
+### Version 2.0.8 - 22nd September 2017
+#### Updates
+* improve ci config
+* move Change Log to bottom of README
+
 ### Version 2.0.7 - 21st September 2017
 #### Updates
 * removed commitizen
