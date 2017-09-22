@@ -13,7 +13,7 @@
   },
   "scripts": {
     "compile": "babel src -d lib",
-    "prepare": "npm run compile; npm run docs; git add .; git commit -m 'prepare'; git push origin master;",
+    "prepareooo": "npm run compile; npm run docs; git add .; git commit -m 'prepare'; git push origin master;",
     "test": "jest -c jest-config.json",
     "test-ci": "jest -c jest-config-ci.json",
     "docs": "jsdoc2md --template README.hbs --files ./src/index.js --param-list-format table > README.md"
