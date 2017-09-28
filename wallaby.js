@@ -9,6 +9,11 @@ module.exports = function (wallaby) {
       'src/**/*.unit.test.js'
     ],
     testFramework: 'jest',
+    setup: (w) => {
+      w.testFramework.configure({
+        setupTestFrameworkScriptFile: '<rootDir>/set-up-jest.js'
+      });
+    },
     compilers: {
       '**/*.js': wallaby.compilers.babel()
     },
