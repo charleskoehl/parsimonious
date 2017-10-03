@@ -18,8 +18,6 @@ import lowerFirst from 'lodash/lowerFirst'
 // Active Parse instance is global.Parse in cloud code, or the cached require-ed Parse in clients:
 const MyParse = global.Parse || Parse
 
-const umk = {useMasterKey: true}
-
 /**
  * @class
  */
@@ -118,37 +116,46 @@ class Parsimonious {
    * Return a Parse.Object instance from className and id.
    * @param {string} className
    * @param {string} id
-   * @param {boolean=} useMasterKey Cloud code only
-   * @param {string=} sessionToken
+   * @param {object=} opts A Backbone-style options object. Valid options are:
+     success: Function to call when the count completes successfully.
+     error: Function to call when the find fails.
+     useMasterKey: In Cloud Code and Node only, causes the Master Key to be used for this request.
+     sessionToken: A valid session token, used for making a request on behalf of a specific user.
    */
-  getObjById(className, id, useMasterKey=false, sessionToken=null) {
-    return this.newQuery(className).get(id, this._getMkStOpts(useMasterKey, sessionToken))
+  getObjById(className, id, opts) {
+    return this.newQuery(className).get(id, opts)
   }
   
   /**
    * Return Parse.User instance from user id
    * @param {string} id
-   * @param {boolean=} useMasterKey Cloud code only
-   * @param {string=} sessionToken
+   * @param {object=} opts A Backbone-style options object. Valid options are:
+     success: Function to call when the count completes successfully.
+     error: Function to call when the find fails.
+     useMasterKey: In Cloud Code and Node only, causes the Master Key to be used for this request.
+     sessionToken: A valid session token, used for making a request on behalf of a specific user.
    * @returns {Parse.User}
    */
-  getUserById(id, useMasterKey=false, sessionToken) {
-    return this.getObjById('User', id, useMasterKey, sessionToken)
+  getUserById(id, opts) {
+    return this.getObjById('User', id, opts)
   }
   
   /**
    *
    * @param {Parse.User}  user
    * @param {string}      roleName
-   * @param {boolean=} useMasterKey Cloud code only
-   * @param {string=} sessionToken
+   * @param {object=} opts A Backbone-style options object. Valid options are:
+     success: Function to call when the count completes successfully.
+     error: Function to call when the find fails.
+     useMasterKey: In Cloud Code and Node only, causes the Master Key to be used for this request.
+     sessionToken: A valid session token, used for making a request on behalf of a specific user.
    * @return {Promise.<TResult>|Parse.Promise}
    */
-  userHasRole(user, roleName, useMasterKey=false, sessionToken) {
+  userHasRole(user, roleName, opts) {
     const roleQuery = new MyParse.Query(MyParse.Role)
     roleQuery.equalTo('name', roleName)
     roleQuery.equalTo('users', user)
-    return roleQuery.first(this._getMkStOpts(useMasterKey, sessionToken))
+    return roleQuery.first(opts)
       .then( result => result !== undefined )
   }
   
@@ -180,11 +187,14 @@ class Parsimonious {
    * Returns promise.
    * @param {object} classes - must contain two keys corresponding to existing classes; each value must be a valid parse object.
    * @param {object=} metadata - optional key/value pairs to set on the new document to describe relationship.
-   * @param {boolean=} useMasterKey Cloud code only
-   * @param {string=} sessionToken
+   * @param {object=} opts A Backbone-style options object. Valid options are:
+     success: Function to call when the count completes successfully.
+     error: Function to call when the find fails.
+     useMasterKey: In Cloud Code and Node only, causes the Master Key to be used for this request.
+     sessionToken: A valid session token, used for making a request on behalf of a specific user.
    * @returns {Promise}
    */
-  joinWithTable(classes, metadata=null, useMasterKey=false, sessionToken=null) {
+  joinWithTable(classes, metadata=null, opts=null) {
     const classNames = Object.keys(classes)
     const classInstances = [classes[classNames[0]],classes[classNames[1]]]
     const joinTableName = this.getJoinTableName(classNames[0], classNames[1])
@@ -194,7 +204,7 @@ class Parsimonious {
     if(isPlainObject(metadata)) {
       this.objSetMulti(joinObj, metadata)
     }
-    return joinObj.save(null, this._getMkStOpts(useMasterKey, sessionToken))
+    return joinObj.save(null, opts)
   }
   
   /**
@@ -205,16 +215,19 @@ class Parsimonious {
    * If can't unjoin objects, returned promise resolves to undefined.
    * @param {object} classes - must contain two keys corresponding to existing classes;
    *                           each value must be a valid parse object already in db.
-   * @param {boolean=} useMasterKey Cloud code only
-   * @param {string=} sessionToken
+   * @param {object=} opts A Backbone-style options object. Valid options are:
+     success: Function to call when the count completes successfully.
+     error: Function to call when the find fails.
+     useMasterKey: In Cloud Code and Node only, causes the Master Key to be used for this request.
+     sessionToken: A valid session token, used for making a request on behalf of a specific user.
    * @returns {Promise}
    */
-  unJoinWithTable(classes, useMasterKey=false, sessionToken=null) {
+  unJoinWithTable(classes, opts=null) {
     return this.getJoinQuery(classes)
       .first()
       .then( joinObj => {
         if(this.isPFObject(joinObj)) {
-          return joinObj.destroy(this._getMkStOpts(useMasterKey, sessionToken))
+          return joinObj.destroy(opts)
         } else {
           return MyParse.Promise.as(undefined)
         }
@@ -261,19 +274,6 @@ class Parsimonious {
       && typeof thing.className === 'string'
       // Check if correct class if specified.
       && (typeof ofClass === 'string' ? (thing.className === ofClass || (specialClasses.indexOf(ofClass) > -1 && thing.className === `_${ofClass}`)) : true)
-  }
-  
-  /**
-   * Return a plain object containing one of the following:
-   *    null
-   *    {userMasterKey: true}
-   *    {sessionToken: <string>}
-   * @param {boolean=} useMasterKey Cloud code only
-   * @param {string=} sessionToken
-   * @returns {object|null}
-   */
-  _getMkStOpts(useMasterKey=false, sessionToken=null) {
-    return useMasterKey ? umk : (sessionToken ? {sessionToken} : {})
   }
   
 }

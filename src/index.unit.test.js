@@ -169,29 +169,6 @@ describe('parsimonious methods', () => {
     })
   })
   
-  describe('_getMkStOpts', () => {
-    test('returns null when no params', () => {
-      expect(parsm._getMkStOpts()).toEqual({})
-    })
-    test('returns empty object when first or both params are falsy', () => {
-      expect(parsm._getMkStOpts(false)).toEqual({})
-      expect(parsm._getMkStOpts(null)).toEqual({})
-      expect(parsm._getMkStOpts(false,null)).toEqual({})
-      expect(parsm._getMkStOpts(null,null)).toEqual({})
-    })
-    test('returns {userMasterKey: true}', () => {
-      const umk = {useMasterKey: true}
-      expect(parsm._getMkStOpts(true)).toEqual(umk)
-      expect(parsm._getMkStOpts(true, 'abc')).toEqual(umk)
-    })
-    test(`returns {sessionToken: <string>}`, () => {
-      const st = {sessionToken: 'abc'}
-      expect(parsm._getMkStOpts(null, 'abc')).toEqual(st)
-      expect(parsm._getMkStOpts(false, 'abc')).toEqual(st)
-      expect(parsm._getMkStOpts(false, 'def')).not.toEqual(st)
-    })
-  })
-  
   describe('newQuery', () => {
     test('returns a query that finds all instances of a Parse class', () => {
       expect.assertions(4)
