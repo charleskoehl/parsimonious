@@ -235,19 +235,12 @@ class Parsimonious {
    * @params {object=} opts Query restrictions (see Parsimonious.newQuery)
    * @returns {Parse.Query}
    */
-  getJoinQuery(classes, select, opts) {
+  getJoinQuery(classes, opts) {
     const classNames = Object.keys(classes)
     const classInstances = [classes[classNames[0]],classes[classNames[1]]]
     const query = this.newQuery(this.getJoinTableName(classNames[0], classNames[1]), opts)
     this.isPFObject(classInstances[0], classNames[0]) && query.equalTo(lowerFirst(classNames[0]), classInstances[0])
     this.isPFObject(classInstances[1], classNames[1]) && query.equalTo(lowerFirst(classNames[1]), classInstances[1])
-    let selectArray
-    if(Array.isArray(select) && select.length) {
-      selectArray = select
-    } else if(typeof select === 'string') {
-      selectArray = select.split(',')
-    }
-    Array.isArray(selectArray) && query.select(selectArray)
     return query
   }
   
