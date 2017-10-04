@@ -168,58 +168,6 @@ class Parsimonious {
     return new Cls()
   }
   
-  getOneToManyPointerColumn(oneObj) {
-    return this.isPFObject(oneObj) ? lowerFirst(oneObj.className.replace(/_/g,'')) : null
-  }
-  
-  /**
-   * Return a Parse.Query on manyClass restricted to objects that have an appropriate pointer to oneObj.
-   * @param {object} oneObj The Parse object on the "one" side
-   * @param {string} manyClass The Parse class of the objects on the "many" side
-   * @param {object=} opts
-   * @param {string=} opts.pointerCol The manyClass column name of the pointer to the "one" class. Defaults to oneObj's class, first letter lower-case.
-   * @params {object=} opts.queryOpts Query restrictions (see Parsimonious.newQuery)
-   * @returns {Parse.Query}
-   */
-  getOneToManyQuery(oneObj, manyClass, opts={}) {
-    let {pointerCol, queryOpts} = opts
-    pointerCol = pointerCol || this.getOneToManyPointerColumn(oneObj)
-    if(typeof pointerCol === 'string' && typeof manyClass === 'string') {
-      return this.newQuery(manyClass, queryOpts)
-        .equalTo(pointerCol, oneObj)
-    }
-  }
-  
-  /**
-   * Return an instance of manyClass that has an appropriate pointer to oneObj
-   * @param {object} oneObj The object on the "one" side
-   * @param {string} relatedClass The class of the object on the other "one" side
-   * @param {object=} opts
-   * @param {string=} opts.pointerCol The manyClass column name of the pointer to the "one" class. Defaults to oneObj's class, first letter lower-case.
-   * @params {object=} opts.queryOpts Query restrictions (see Parsimonious.newQuery)
-   * @params {object=} opts.findOpts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-   * @returns {Promise}
-   */
-  getOneToOne(oneObj, relatedClass, opts={}) {
-    const q = this.getOneToManyQuery(oneObj, relatedClass, opts)
-    return q ? q.first(opts.findOpts) : Parse.Promise.as(null)
-  }
-  
-  /**
-   * Return an array of instances of manyClass that have an appropriate pointer to oneObj
-   * @param {object} oneObj The object on the "one" side
-   * @param {string} manyClass The class of the objects on the "many" side
-   * @param {object=} opts
-   * @param {string=} opts.pointerCol The manyClass column name of the pointer to the "one" class. Defaults to oneObj's class, first letter lower-case.
-   * @params {object=} opts.queryOpts Query restrictions (see Parsimonious.newQuery)
-   * @params {object=} opts.findOpts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-   * @returns {Promise}
-   */
-  getOneToMany(oneObj, manyClass, opts={}) {
-    const q = this.getOneToManyQuery(oneObj, manyClass, opts)
-    return q ? q.find(opts.findOpts) : Parse.Promise.as(null)
-  }
-  
   /**
    * Return the name of a table used to join two Parse.Object classes in a many-to-many relationship.
    * @param {string} from First class name

@@ -273,6 +273,7 @@ describe('parsimonious methods', () => {
     })
   })
   
+  
   describe('getJoinTableName', () => {
     test(`returns a name for a table used to join two other tables; format: <first table name>2<second table name>`, () => {
       expect(parsm.getJoinTableName('Employee','Company')).toBe('Employee2Company')
