@@ -100,16 +100,16 @@ class Parsimonious {
   /**
    * Return a new Parse.Query instance from a Parse Object class name.
    * @param {string} className
-   * @params {object=} opts Query restrictions
-   * @params {number=} opts.limit Parameter for Parse.Query.limit. Must be integer greater than zero.
-   * @params {number=} opts.skip Parameter for Parse.Query.skip. Must be integer greater than zero.
-   * @params {string[]=} opts.select Parameter for Parse.Query.select. Restricts the fields of the returned Parse.Objects to include only the provided keys.
+   * @param {object=} opts Query restrictions
+   * @param {number=} opts.limit Parameter for Parse.Query.limit. Must be integer greater than zero.
+   * @param {number=} opts.skip Parameter for Parse.Query.skip. Must be integer greater than zero.
+   * @param {string[]=} opts.select Parameter for Parse.Query.select. Restricts the fields of the returned Parse.Objects to include only the provided keys.
    * @returns {Parse.Query}
    */
   newQuery(className, opts={}) {
     const q = new MyParse.Query(className)
     const {skip, limit, select} = opts
-    if(opts !== undefined && isPlainObject(opts)) {
+    if(isPlainObject(opts)) {
       isInteger(skip) && skip > 0 && q.skip(skip)
       isInteger(limit) && limit > 0 && q.limit(limit)
       let selectArray
@@ -215,8 +215,8 @@ class Parsimonious {
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Promise}
    */
-  unJoinWithTable(classes, opts=null) {
-    return this.getJoinQuery(classes)
+  unJoinWithTable(classes, opts) {
+    return this.getJoinQuery(classes, opts)
       .first()
       .then( joinObj => {
         if(this.isPFObject(joinObj)) {
@@ -232,7 +232,7 @@ class Parsimonious {
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
    * Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
    * @param {object} classes - must contain two keys corresponding to existing classes, with each key's value being either a valid parse object or null
-   * @params {object=} opts Query restrictions (see Parsimonious.newQuery)
+   * @param {object=} opts Query restrictions (see Parsimonious.newQuery)
    * @returns {Parse.Query}
    */
   getJoinQuery(classes, opts) {
@@ -266,5 +266,3 @@ const instance = new Parsimonious()
 Object.freeze(instance)
 
 export default instance
-
-// TODO: In other repos, modify signatures of newQuery, getJoinQuery
