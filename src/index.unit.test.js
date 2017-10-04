@@ -400,14 +400,14 @@ describe('parsimonious methods', () => {
           expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
           expect(joinedFleet.id).toEqual(origObjs.Fleet.id)
           // Test 'select' parameter
-          return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')}, 'active')
+          return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')}, {select: 'active'})
             .first()
         })
         .then(joinObj => {
           expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
           expect(joinObj.get('active')).toBe(true)
           // TODO I can't get query.select to work. It might be parse-mockdb. expect(joinObj.get('position')).toBeUndefined()
-          return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')}, ['position'])
+          return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')}, {select: ['position']})
             .first()
         })
         .then(joinObj => {
