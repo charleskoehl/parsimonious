@@ -8,42 +8,50 @@
 <a name="changelog"></a>
 ## Change Log
 
+### Version 3.0.0 - 3rd October 2017
+##### Breaking Changes
+* getJoinQuery signature has changed: The 'select' parameter has been removed. Instead, set a 'select' key in the 2nd options param object for use by newQuery method.
+##### New Features
+* newQuery accepts a 'select' key in its 2nd parameter to select fields to restrict results to.
+##### Updates
+* Improved documentation.
+
 ### Version 2.0.8 - 22nd September 2017
-#### Updates
-* improve ci config
-* move Change Log to bottom of README
+##### Updates
+* Improved ci config.
+* Moved Change Log to bottom of README.
 
 ### Version 2.0.7 - 21st September 2017
-#### Updates
-* removed commitizen
+##### Updates
+* Removed commitizen.
 
 ### Version 2.0.6 - 21st September 2017
-#### Updates
-* removed semantic-release
+##### Updates
+* Removed semantic-release for now.
 
 ### Version 2.0.5 - 21st September 2017
-#### Updates
-* reconfigured ci
+##### Updates
+* Reconfigured ci.
 
 ### Version 2.0.4 - 21st September 2017
-#### Updates
-* added codecov reporting and badge
-* reduced minimum required node version to 4
+##### Updates
+* Added codecov reporting and badge.
+* Reduced minimum required node version to 4.
 
 ### Version 2.0.3 - 21st September 2017
-#### Updates
-* 100% test coverage with jest
-* uses different branch of parse-shim to account for parse already being loaded in cloud code
+##### Updates
+* 100% test coverage with jest.
+* Use different branch of parse-shim to account for parse already being loaded in cloud code.
 
-#### Bug Fixes
-* uses different branch of parse-shim to correctly detect when running in browser or node to import correct parse version
+##### Bug Fixes
+* Use different branch of parse-shim to correctly detect when running in browser or node to import correct parse version.
 
 ### Version 2.0.2 - 20th September 2017
-#### New Features
+##### New Features
 * userHasRole method
-#### Updates
+##### Updates
 * all methods that access the database now accept optional sessionToken
 * isPFObject now accepts an optional class name param
 * can pass array of field names, in addition to comma-separated list, to getJoinQuery
-#### Breaking Changes
+##### Breaking Changes
 * If unJoinWithTable can't unjoin objects, it returns a promise that resolves to *undefined* instead of null.
