@@ -127,11 +127,7 @@ class Parsimonious {
    * Return a Parse.Object instance from className and id.
    * @param {string} className
    * @param {string} id
-   * @param {object=} opts A Backbone-style options object. Valid options are:
-     success: Function to call when the count completes successfully.
-     error: Function to call when the find fails.
-     useMasterKey: In Cloud Code and Node only, causes the Master Key to be used for this request.
-     sessionToken: A valid session token, used for making a request on behalf of a specific user.
+   * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    */
   getObjById(className, id, opts) {
     return this.newQuery(className).get(id, opts)
@@ -140,11 +136,7 @@ class Parsimonious {
   /**
    * Return Parse.User instance from user id
    * @param {string} id
-   * @param {object=} opts A Backbone-style options object. Valid options are:
-     success: Function to call when the count completes successfully.
-     error: Function to call when the find fails.
-     useMasterKey: In Cloud Code and Node only, causes the Master Key to be used for this request.
-     sessionToken: A valid session token, used for making a request on behalf of a specific user.
+   * @param {object=} opts A A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Parse.User}
    */
   getUserById(id, opts) {
@@ -155,11 +147,7 @@ class Parsimonious {
    *
    * @param {Parse.User}  user
    * @param {string}      roleName
-   * @param {object=} opts A Backbone-style options object. Valid options are:
-     success: Function to call when the count completes successfully.
-     error: Function to call when the find fails.
-     useMasterKey: In Cloud Code and Node only, causes the Master Key to be used for this request.
-     sessionToken: A valid session token, used for making a request on behalf of a specific user.
+   * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @return {Promise.<TResult>|Parse.Promise}
    */
   userHasRole(user, roleName, opts) {
@@ -181,7 +169,7 @@ class Parsimonious {
   }
   
   /**
-   * Return the name of a table used to join two Parse.Object classes.
+   * Return the name of a table used to join two Parse.Object classes in a many-to-many relationship.
    * @param {string} from First class name
    * @param {string} to Second class name
    * @returns {string}
@@ -191,18 +179,15 @@ class Parsimonious {
   }
   
   /**
-   * Join two parse objects by adding a document to a third join table.
+   * Join two parse objects in a many-to-many relationship by adding a document to a third join table.
+   * Like Parse.Relation.add except that it allows you to add metadata to describe the relationship.
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
    * Join table must exist and have pointer columns named like class names,
    * except first letter lower-case; e.g.: employee, company.
    * Returns promise.
    * @param {object} classes - must contain two keys corresponding to existing classes; each value must be a valid parse object.
    * @param {object=} metadata - optional key/value pairs to set on the new document to describe relationship.
-   * @param {object=} opts A Backbone-style options object. Valid options are:
-     success: Function to call when the count completes successfully.
-     error: Function to call when the find fails.
-     useMasterKey: In Cloud Code and Node only, causes the Master Key to be used for this request.
-     sessionToken: A valid session token, used for making a request on behalf of a specific user.
+   * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Promise}
    */
   joinWithTable(classes, metadata=null, opts=null) {
@@ -219,18 +204,15 @@ class Parsimonious {
   }
   
   /**
-   * Unjoin two parse objects currently joined by a document in a third join table.
+   * Unjoin two parse objects currently joined in a many-to-many relationship by a document in a third join table.
+   * Like Parse.Relation.remove (see Parsimonious.joinWithTable above).
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
    * Join table must exist and have pointer columns named like class names,
    * except first letter lower-case; e.g.: employee, company.
    * If can't unjoin objects, returned promise resolves to undefined.
    * @param {object} classes - must contain two keys corresponding to existing classes;
    *                           each value must be a valid parse object already in db.
-   * @param {object=} opts A Backbone-style options object. Valid options are:
-     success: Function to call when the count completes successfully.
-     error: Function to call when the find fails.
-     useMasterKey: In Cloud Code and Node only, causes the Master Key to be used for this request.
-     sessionToken: A valid session token, used for making a request on behalf of a specific user.
+   * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Promise}
    */
   unJoinWithTable(classes, opts=null) {
@@ -246,13 +228,11 @@ class Parsimonious {
   }
   
   /**
-   * Return a query on a join table.
+   * Return a query on a many-to-many join table.
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
    * Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
-   * @param {object} classes - must contain two keys corresponding to existing classes;
-   *                           each value must be either a valid parse object or null
-   * @param {(string | string[])=} select - comma-separated list, or array, of keys to retrieve
-   * @params {object=} opts Options: skip, limit
+   * @param {object} classes - must contain two keys corresponding to existing classes, with each key's value being either a valid parse object or null
+   * @params {object=} opts Query restrictions (see Parsimonious.newQuery)
    * @returns {Parse.Query}
    */
   getJoinQuery(classes, select, opts) {
