@@ -202,10 +202,6 @@ describe('parsimonious methods', () => {
         })
       })
   })
-  /*
-  parsm.newQuery('Bouquet', {limit:5}).find(),
-    parsm.newQuery('Bouquet', {skip: 5}).find()
-    */
   
   describe('getObjById', () => {
     test('gets a Parse object from db by id', () => {
