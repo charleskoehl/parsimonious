@@ -125,12 +125,12 @@ class Parsimonious {
   
   /**
    * Return a Parse.Object instance from className and id.
-   * @param {string} className
+   * @param {string|object} aClass class name or constructor
    * @param {string} id
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    */
-  getObjById(className, id, opts) {
-    return this.newQuery(className).get(id, opts)
+  getObjById(aClass, id, opts) {
+    return this.newQuery(aClass).get(id, opts)
   }
   
   /**
