@@ -224,7 +224,7 @@ Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse
 <a name="changelog"></a>
 ## Change Log
 
-### Version 3.0.1 - 8rd October 2017
+### Version 3.1.0 - 8rd October 2017
 ##### New Features
 * userHasRole method can check if a user has any or all of an array of roles.
 ##### Updates
