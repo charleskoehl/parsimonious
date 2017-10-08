@@ -17,7 +17,7 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
         * [.newQuery(className, [opts])](#module_Parsimonious..Parsimonious+newQuery) ⇒ <code>Parse.Query</code>
         * [.getObjById(className, id, [opts])](#module_Parsimonious..Parsimonious+getObjById)
         * [.getUserById(id, [opts])](#module_Parsimonious..Parsimonious+getUserById) ⇒ <code>Parse.User</code>
-        * [.userHasRole(user, roleName, [opts])](#module_Parsimonious..Parsimonious+userHasRole) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
+        * [.userHasRole(user, roles, [opts])](#module_Parsimonious..Parsimonious+userHasRole) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
         * [.getClassInst(className)](#module_Parsimonious..Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
         * [.getJoinTableName(from, to)](#module_Parsimonious..Parsimonious+getJoinTableName) ⇒ <code>string</code>
         * [.joinWithTable(classes, [metadata], [opts])](#module_Parsimonious..Parsimonious+joinWithTable) ⇒ <code>Promise</code>
@@ -37,7 +37,7 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [.newQuery(className, [opts])](#module_Parsimonious..Parsimonious+newQuery) ⇒ <code>Parse.Query</code>
     * [.getObjById(className, id, [opts])](#module_Parsimonious..Parsimonious+getObjById)
     * [.getUserById(id, [opts])](#module_Parsimonious..Parsimonious+getUserById) ⇒ <code>Parse.User</code>
-    * [.userHasRole(user, roleName, [opts])](#module_Parsimonious..Parsimonious+userHasRole) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
+    * [.userHasRole(user, roles, [opts])](#module_Parsimonious..Parsimonious+userHasRole) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
     * [.getClassInst(className)](#module_Parsimonious..Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
     * [.getJoinTableName(from, to)](#module_Parsimonious..Parsimonious+getJoinTableName) ⇒ <code>string</code>
     * [.joinWithTable(classes, [metadata], [opts])](#module_Parsimonious..Parsimonious+joinWithTable) ⇒ <code>Promise</code>
@@ -127,13 +127,13 @@ Return Parse.User instance from user id
 
 <a name="module_Parsimonious..Parsimonious+userHasRole"></a>
 
-#### parsimonious.userHasRole(user, roleName, [opts]) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
+#### parsimonious.userHasRole(user, roles, [opts]) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | user | <code>Parse.User</code> |  |
-| roleName | <code>string</code> |  |
+| roles | <code>string</code> \| <code>object</code> | Can be single role name string, or object containing array of role names and 'op' key of value 'and' or 'or' |
 | [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
 
 <a name="module_Parsimonious..Parsimonious+getClassInst"></a>
@@ -224,11 +224,17 @@ Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse
 <a name="changelog"></a>
 ## Change Log
 
+### Version 3.0.1 - 8rd October 2017
+##### New Features
+* userHasRole method can check if a user has any or all of an array of roles.
+##### Updates
+* Improved documentation of newQuery method
+
 ### Version 3.0.0 - 3rd October 2017
 ##### Breaking Changes
 * getJoinQuery signature has changed: The 'select' parameter has been removed. Instead, set a 'select' key in the 2nd options param object for use by newQuery method.
 ##### New Features
-* newQuery accepts a 'select' key in its 2nd parameter to select fields to restrict results to.
+* newQuery method accepts a 'select' key in its 2nd parameter to select fields to restrict results to.
 ##### Updates
 * Improved documentation.
 

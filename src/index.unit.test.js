@@ -240,27 +240,44 @@ describe('parsimonious methods', () => {
   describe('userHasRole', () => {
     const roleACL = new Parse.ACL()
     roleACL.setPublicReadAccess(true)
-    const role = new Parse.Role("Administrator", roleACL)
+    const adminRole = new Parse.Role("Administrator", roleACL)
+    const modRole = new Parse.Role("Moderator", roleACL)
     const user = new Parse.User({
       username:'foo manchu',
       password:'je9w83d',
       email:'foo@bar.com'
     })
-    test('determines if a user has a role, by role name', () => {
-      expect.assertions(2)
+    test('determines if a user has a single role', () => {
+      expect.assertions(4)
       return user.signUp()
         .then(aUser => {
-          const users = role.getUsers()
-          return users
-            .add(aUser)
-            .save()
-            .then(() => parsm.userHasRole(aUser, 'Administrator'))
-            .then(hasRole => {
-              expect(hasRole).toBe(true)
-              return parsm.userHasRole(aUser, 'blah')
-            })
+          return parsm.userHasRole(aUser, 'Administrator')
             .then(hasRole => {
               expect(hasRole).toBe(false)
+              return adminRole.getUsers()
+                .add(aUser)
+                .save()
+                .then(() => parsm.userHasRole(aUser, 'Administrator'))
+            })
+            .then(hasRole => {
+              expect(hasRole).toBe(true)
+              return modRole.getUsers()
+                .add(aUser)
+                .save()
+                .then(() => parsm.userHasRole(aUser, {
+                  names: ['Administrator', 'Moderator'],
+                  op: 'and'
+                }))
+            })
+            .then(hasRoles => {
+              expect(hasRoles).toBe(true)
+              return parsm.userHasRole(aUser, {
+                names: ['Administrator', 'Moderator'],
+                op: 'or'
+              })
+            })
+            .then(hasRoles => {
+              expect(hasRoles).toBe(true)
             })
         })
     })

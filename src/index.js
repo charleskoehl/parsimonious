@@ -41,7 +41,7 @@ class Parsimonious {
    * @param {boolean=} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
    * @returns {*}
    */
-  toJsn(thing, deep=false) {
+  toJsn(thing, deep = false) {
     let obj
     if(this.isPFObject(thing)) {
       obj = thing.toJSON()
@@ -55,7 +55,7 @@ class Parsimonious {
       if(obj.objectId) {
         obj.id = obj.objectId
       }
-      obj = omit(obj,['objectId','__type','className','ACL'])
+      obj = omit(obj, ['objectId', '__type', 'className', 'ACL'])
       // Convert all other properties of plain object to json.
       Object.keys(obj).forEach(k => {
         obj[k] = this.toJsn(obj[k], deep)
@@ -71,8 +71,8 @@ class Parsimonious {
    * @returns {object}
    */
   objPick(parseObj, keys) {
-    if(typeof keys === 'string' || Array.isArray(keys)) {
-      const keysArr = Array.isArray(keys) ? keys : keys.split(',')
+    const keysArr = this._toArray(keys)
+    if(Array.isArray(keysArr)) {
       return pick(this.toJsn(parseObj), keysArr)
     }
   }
@@ -83,13 +83,13 @@ class Parsimonious {
    * @param {object} dataObj
    * @param {boolean=} doMerge If true, each column value is shallow-merged with existing value
    */
-  objSetMulti(parseObj, dataObj, doMerge=false) {
+  objSetMulti(parseObj, dataObj, doMerge = false) {
     if(this.isPFObject(parseObj) && isPlainObject(dataObj)) {
       let key, oldVal, newVal
-      for (key in dataObj) {
+      for(key in dataObj) {
         oldVal = parseObj.get(key)
         newVal = dataObj[key]
-        if (doMerge && isPlainObject(oldVal) && isPlainObject(newVal)) {
+        if(doMerge && isPlainObject(oldVal) && isPlainObject(newVal)) {
           newVal = merge(oldVal, newVal)
         }
         parseObj.set(key, newVal)
@@ -106,7 +106,7 @@ class Parsimonious {
    * @param {string[]} [opts.select] Parameter for Parse.Query.select. Restricts the fields of the returned Parse.Objects to include only the provided keys.
    * @returns {Parse.Query}
    */
-  newQuery(className, opts={}) {
+  newQuery(className, opts = {}) {
     const q = new MyParse.Query(className)
     const {skip, limit, select} = opts
     if(isPlainObject(opts)) {
@@ -145,18 +145,25 @@ class Parsimonious {
   
   /**
    *
-   * @param {Parse.User}  user
-   * @param {string}      roleName
+   * @param {Parse.User} user
+   * @param {string|object} roles Can be single role name string, or object containing array of role names and 'op' key of value 'and' or 'or'
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @return {Promise.<TResult>|Parse.Promise}
    */
-  userHasRole(user, roleName, opts) {
+  userHasRole(user, roles, opts) {
     const roleQuery = new MyParse.Query(MyParse.Role)
-    roleQuery.equalTo('name', roleName)
     roleQuery.equalTo('users', user)
-    return roleQuery.first(opts)
-      .then( result => result !== undefined )
-  }
+    if(typeof roles === 'string') {
+      roleQuery.equalTo('name', roles)
+      return roleQuery.first(opts)
+        .then(result => result !== undefined)
+    } else if(isPlainObject(roles) && Array.isArray(roles.names) && roles.op) {
+      roleQuery.containedIn('name', roles.names)
+      return roleQuery.count(opts)
+        .then(result => roles.op === 'and' ? result == roles.names.length : result > 0 )
+      }
+    }
+  
   
   /**
    * Return instance of Parse.Object class.
@@ -190,9 +197,9 @@ class Parsimonious {
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Promise}
    */
-  joinWithTable(classes, metadata=null, opts=null) {
+  joinWithTable(classes, metadata = null, opts = null) {
     const classNames = Object.keys(classes)
-    const classInstances = [classes[classNames[0]],classes[classNames[1]]]
+    const classInstances = [classes[classNames[0]], classes[classNames[1]]]
     const joinTableName = this.getJoinTableName(classNames[0], classNames[1])
     const joinObj = this.getClassInst(joinTableName)
     joinObj.set(lowerFirst(classNames[0]), classInstances[0])
@@ -218,7 +225,7 @@ class Parsimonious {
   unJoinWithTable(classes, opts) {
     return this.getJoinQuery(classes, opts)
       .first()
-      .then( joinObj => {
+      .then(joinObj => {
         if(this.isPFObject(joinObj)) {
           return joinObj.destroy(opts)
         } else {
@@ -237,7 +244,7 @@ class Parsimonious {
    */
   getJoinQuery(classes, opts) {
     const classNames = Object.keys(classes)
-    const classInstances = [classes[classNames[0]],classes[classNames[1]]]
+    const classInstances = [classes[classNames[0]], classes[classNames[1]]]
     const query = this.newQuery(this.getJoinTableName(classNames[0], classNames[1]), opts)
     this.isPFObject(classInstances[0], classNames[0]) && query.equalTo(lowerFirst(classNames[0]), classInstances[0])
     this.isPFObject(classInstances[1], classNames[1]) && query.equalTo(lowerFirst(classNames[1]), classInstances[1])
@@ -250,8 +257,8 @@ class Parsimonious {
    * @param {string=} ofClass
    * @returns {boolean}
    */
-  isPFObject(thing, ofClass=null) {
-    const specialClasses = ['User','Role','Session']
+  isPFObject(thing, ofClass = null) {
+    const specialClasses = ['User', 'Role', 'Session']
     return thing !== null
       && typeof thing === 'object'
       && typeof thing._objCount === 'number'
@@ -259,6 +266,15 @@ class Parsimonious {
       // Check if correct class if specified.
       && (typeof ofClass === 'string' ? (thing.className === ofClass || (specialClasses.indexOf(ofClass) > -1 && thing.className === `_${ofClass}`)) : true)
   }
+  
+  _toArray(thing) {
+    if(typeof thing === 'string') {
+      return thing.split(',')
+    } else if(Array.isArray(thing)) {
+      return thing
+    }
+  }
+  
   
 }
 
