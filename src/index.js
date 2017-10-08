@@ -143,6 +143,12 @@ class Parsimonious {
     return this.getObjById('User', id, opts)
   }
   
+  getRole(name, opts) {
+    const roleQuery = this.newQuery(Parse.Role)
+    roleQuery.equalTo('name', name)
+    return roleQuery.first(opts)
+  }
+  
   /**
    *
    * @param {Parse.User} user
