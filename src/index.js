@@ -99,15 +99,15 @@ class Parsimonious {
   
   /**
    * Return a new Parse.Query instance from a Parse Object class name.
-   * @param {string} className
+   * @param {string|object} aClass class name or constructor
    * @param {object=} opts Query restrictions
    * @param {number=} opts.limit Parameter for Parse.Query.limit. Must be integer greater than zero.
    * @param {number=} opts.skip Parameter for Parse.Query.skip. Must be integer greater than zero.
    * @param {string[]} [opts.select] Parameter for Parse.Query.select. Restricts the fields of the returned Parse.Objects to include only the provided keys.
    * @returns {Parse.Query}
    */
-  newQuery(className, opts = {}) {
-    const q = new MyParse.Query(className)
+  newQuery(aClass, opts = {}) {
+    const q = new MyParse.Query(aClass)
     const {skip, limit, select} = opts
     if(isPlainObject(opts)) {
       isInteger(skip) && skip > 0 && q.skip(skip)
