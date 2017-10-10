@@ -151,7 +151,7 @@ class Parsimonious {
   }
   
   /**
-   *
+   * Check if a user has a role, or any or all of multiple roles, return a promise resolving to true or false.
    * @param {Parse.User} user
    * @param {string|object} roles Can be single role name string, or object containing array of role names and 'op' key of value 'and' or 'or'
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
@@ -170,7 +170,6 @@ class Parsimonious {
         .then(result => roles.op === 'and' ? result == roles.names.length : result > 0 )
       }
     }
-  
   
   /**
    * Return instance of Parse.Object class.
