@@ -17,6 +17,7 @@ import lowerFirst from 'lodash/lowerFirst'
 
 // Active Parse instance is global.Parse in cloud code, or the cached require-ed Parse in clients:
 const MyParse = global.Parse || Parse
+const specialClasses = ['User', 'Role', 'Session']
 
 /**
  * @class
@@ -264,13 +265,12 @@ class Parsimonious {
    * @returns {boolean}
    */
   isPFObject(thing, ofClass = null) {
-    const specialClasses = ['User', 'Role', 'Session']
     return thing !== null
       && typeof thing === 'object'
       && typeof thing._objCount === 'number'
       && typeof thing.className === 'string'
       // Check if correct class if specified.
-      && (typeof ofClass === 'string' ? (thing.className === ofClass || (specialClasses.indexOf(ofClass) > -1 && thing.className === `_${ofClass}`)) : true)
+      && (typeof ofClass === 'string' ? this._toClassName(thing.className) === ofClass : true)
   }
   
   _toArray(thing) {
@@ -278,6 +278,18 @@ class Parsimonious {
       return thing.split(',')
     } else if(Array.isArray(thing)) {
       return thing
+    }
+  }
+  
+  /**
+   * Returns the passed string, removing the underscore if it is one of the special classes with a leading underscore
+   * @param {string} str
+   * @return {string}
+   * @private
+   */
+  _toClassName(str) {
+    if(typeof str === 'string') {
+      return specialClasses.indexOf(str.replace('_','')) > -1 ? str.replace('_','') : str
     }
   }
   
