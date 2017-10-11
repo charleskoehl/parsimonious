@@ -255,6 +255,10 @@ Returns the passed string, removing the underscore if it is one of the special c
 <a name="changelog"></a>
 ## Change Log
 
+### Version 3.2.0 - 11th October 2017
+##### New Features
+* new getUserRoles method returns array of names of user's direct roles.
+
 ### Version 3.1.0 - 8rd October 2017
 ##### New Features
 * userHasRole method can check if a user has any or all of an array of roles.
@@ -301,7 +305,7 @@ Returns the passed string, removing the underscore if it is one of the special c
 
 ### Version 2.0.2 - 20th September 2017
 ##### New Features
-* userHasRole method
+* new userHasRole method
 ##### Updates
 * all methods that access the database now accept optional sessionToken
 * isPFObject now accepts an optional class name param
