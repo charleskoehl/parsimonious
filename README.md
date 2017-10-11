@@ -14,16 +14,18 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
         * [.toJsn(thing, [deep])](#module_Parsimonious..Parsimonious+toJsn) ⇒ <code>\*</code>
         * [.objPick(parseObj, keys)](#module_Parsimonious..Parsimonious+objPick) ⇒ <code>object</code>
         * [.objSetMulti(parseObj, dataObj, [doMerge])](#module_Parsimonious..Parsimonious+objSetMulti)
-        * [.newQuery(className, [opts])](#module_Parsimonious..Parsimonious+newQuery) ⇒ <code>Parse.Query</code>
-        * [.getObjById(className, id, [opts])](#module_Parsimonious..Parsimonious+getObjById)
+        * [.newQuery(aClass, [opts])](#module_Parsimonious..Parsimonious+newQuery) ⇒ <code>Parse.Query</code>
+        * [.getObjById(aClass, id, [opts])](#module_Parsimonious..Parsimonious+getObjById)
         * [.getUserById(id, [opts])](#module_Parsimonious..Parsimonious+getUserById) ⇒ <code>Parse.User</code>
+        * [.getUserRoles(user, [opts])](#module_Parsimonious..Parsimonious+getUserRoles) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
         * [.userHasRole(user, roles, [opts])](#module_Parsimonious..Parsimonious+userHasRole) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
-        * [.getClassInst(className)](#module_Parsimonious..Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
+        * [.getClassInst(className, [attributes], [options])](#module_Parsimonious..Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
         * [.getJoinTableName(from, to)](#module_Parsimonious..Parsimonious+getJoinTableName) ⇒ <code>string</code>
         * [.joinWithTable(classes, [metadata], [opts])](#module_Parsimonious..Parsimonious+joinWithTable) ⇒ <code>Promise</code>
         * [.unJoinWithTable(classes, [opts])](#module_Parsimonious..Parsimonious+unJoinWithTable) ⇒ <code>Promise</code>
         * [.getJoinQuery(classes, [opts])](#module_Parsimonious..Parsimonious+getJoinQuery) ⇒ <code>Parse.Query</code>
         * [.isPFObject(thing, [ofClass])](#module_Parsimonious..Parsimonious+isPFObject) ⇒ <code>boolean</code>
+        * [.getPFObjectClassName(str)](#module_Parsimonious..Parsimonious+getPFObjectClassName) ⇒ <code>string</code>
 
 <a name="module_Parsimonious..Parsimonious"></a>
 
@@ -34,16 +36,18 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [.toJsn(thing, [deep])](#module_Parsimonious..Parsimonious+toJsn) ⇒ <code>\*</code>
     * [.objPick(parseObj, keys)](#module_Parsimonious..Parsimonious+objPick) ⇒ <code>object</code>
     * [.objSetMulti(parseObj, dataObj, [doMerge])](#module_Parsimonious..Parsimonious+objSetMulti)
-    * [.newQuery(className, [opts])](#module_Parsimonious..Parsimonious+newQuery) ⇒ <code>Parse.Query</code>
-    * [.getObjById(className, id, [opts])](#module_Parsimonious..Parsimonious+getObjById)
+    * [.newQuery(aClass, [opts])](#module_Parsimonious..Parsimonious+newQuery) ⇒ <code>Parse.Query</code>
+    * [.getObjById(aClass, id, [opts])](#module_Parsimonious..Parsimonious+getObjById)
     * [.getUserById(id, [opts])](#module_Parsimonious..Parsimonious+getUserById) ⇒ <code>Parse.User</code>
+    * [.getUserRoles(user, [opts])](#module_Parsimonious..Parsimonious+getUserRoles) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
     * [.userHasRole(user, roles, [opts])](#module_Parsimonious..Parsimonious+userHasRole) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
-    * [.getClassInst(className)](#module_Parsimonious..Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
+    * [.getClassInst(className, [attributes], [options])](#module_Parsimonious..Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
     * [.getJoinTableName(from, to)](#module_Parsimonious..Parsimonious+getJoinTableName) ⇒ <code>string</code>
     * [.joinWithTable(classes, [metadata], [opts])](#module_Parsimonious..Parsimonious+joinWithTable) ⇒ <code>Promise</code>
     * [.unJoinWithTable(classes, [opts])](#module_Parsimonious..Parsimonious+unJoinWithTable) ⇒ <code>Promise</code>
     * [.getJoinQuery(classes, [opts])](#module_Parsimonious..Parsimonious+getJoinQuery) ⇒ <code>Parse.Query</code>
     * [.isPFObject(thing, [ofClass])](#module_Parsimonious..Parsimonious+isPFObject) ⇒ <code>boolean</code>
+    * [.getPFObjectClassName(str)](#module_Parsimonious..Parsimonious+getPFObjectClassName) ⇒ <code>string</code>
 
 <a name="module_Parsimonious..Parsimonious+toJsn"></a>
 
@@ -87,14 +91,14 @@ Set some columns on a Parse object. Mutates the Parse object.
 
 <a name="module_Parsimonious..Parsimonious+newQuery"></a>
 
-#### parsimonious.newQuery(className, [opts]) ⇒ <code>Parse.Query</code>
+#### parsimonious.newQuery(aClass, [opts]) ⇒ <code>Parse.Query</code>
 Return a new Parse.Query instance from a Parse Object class name.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| className | <code>string</code> |  |
+| aClass | <code>string</code> \| <code>object</code> | class name or constructor |
 | [opts] | <code>object</code> | Query restrictions |
 | [opts.limit] | <code>number</code> | Parameter for Parse.Query.limit. Must be integer greater than zero. |
 | [opts.skip] | <code>number</code> | Parameter for Parse.Query.skip. Must be integer greater than zero. |
@@ -102,14 +106,14 @@ Return a new Parse.Query instance from a Parse Object class name.
 
 <a name="module_Parsimonious..Parsimonious+getObjById"></a>
 
-#### parsimonious.getObjById(className, id, [opts])
+#### parsimonious.getObjById(aClass, id, [opts])
 Return a Parse.Object instance from className and id.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| className | <code>string</code> |  |
+| aClass | <code>string</code> \| <code>object</code> | class name or constructor |
 | id | <code>string</code> |  |
 | [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
 
@@ -125,9 +129,23 @@ Return Parse.User instance from user id
 | id | <code>string</code> |  |
 | [opts] | <code>object</code> | A A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
 
+<a name="module_Parsimonious..Parsimonious+getUserRoles"></a>
+
+#### parsimonious.getUserRoles(user, [opts]) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
+Return array of names of user's direct roles, or empty array.
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| user | <code>Parse.User</code> |  |
+| [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
+
 <a name="module_Parsimonious..Parsimonious+userHasRole"></a>
 
 #### parsimonious.userHasRole(user, roles, [opts]) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
+Check if a user has a role, or any or all of multiple roles, return a promise resolving to true or false.
+
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 
 | Param | Type | Description |
@@ -138,14 +156,16 @@ Return Parse.User instance from user id
 
 <a name="module_Parsimonious..Parsimonious+getClassInst"></a>
 
-#### parsimonious.getClassInst(className) ⇒ <code>Parse.Object</code>
+#### parsimonious.getClassInst(className, [attributes], [options]) ⇒ <code>Parse.Object</code>
 Return instance of Parse.Object class.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
 
-| Param | Type |
-| --- | --- |
-| className | <code>string</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| className | <code>string</code> |  |
+| [attributes] | <code>object</code> | Properties to set on new object. |
+| [options] | <code>object</code> | Options to use when creating object. |
 
 <a name="module_Parsimonious..Parsimonious+getJoinTableName"></a>
 
@@ -175,7 +195,7 @@ Returns promise.
 | --- | --- | --- | --- |
 | classes | <code>object</code> |  | must contain two keys corresponding to existing classes; each value must be a valid parse object. |
 | [metadata] | <code>object</code> | <code></code> | optional key/value pairs to set on the new document to describe relationship. |
-| [opts] | <code>object</code> | <code></code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
+| [opts] | <code>object</code> |  | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
 
 <a name="module_Parsimonious..Parsimonious+unJoinWithTable"></a>
 
@@ -219,6 +239,17 @@ Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse
 | --- | --- | --- |
 | thing | <code>\*</code> |  | 
 | [ofClass] | <code>string</code> | <code>null</code> | 
+
+<a name="module_Parsimonious..Parsimonious+getPFObjectClassName"></a>
+
+#### parsimonious.getPFObjectClassName(str) ⇒ <code>string</code>
+Returns the passed string, removing the underscore if it is one of the special classes with a leading underscore
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious..Parsimonious)  
+
+| Param | Type |
+| --- | --- |
+| str | <code>string</code> | 
 
 
 <a name="changelog"></a>
