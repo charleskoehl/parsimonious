@@ -167,64 +167,20 @@ class Parsimonious {
     } else if(isPlainObject(roles) && Array.isArray(roles.names) && roles.op) {
       roleQuery.containedIn('name', roles.names)
       return roleQuery.count(opts)
-        .then(result => roles.op === 'and' ? result == roles.names.length : result > 0 )
-      }
+        .then(result => roles.op === 'and' ? result == roles.names.length : result > 0)
     }
+  }
   
   /**
    * Return instance of Parse.Object class.
    * @param {string} className
+   * @param {object=} attributes Properties to set on new object.
+   * @param {object=} options Options to use when creating object.
    * @returns {Parse.Object}
    */
-  getClassInst(className) {
+  getClassInst(className, attributes, options) {
     const Cls = MyParse.Object.extend(className)
-    return new Cls()
-  }
-  
-  /**
-   * Create or update a main object along with one or more other objects with one-to-one relationships with the main object.
-   * Ensures there is only one of each other object.
-   * All classes must exist on Parse Server already.
-   * On success, returns Parse.Promise resolving to plain object containing the saved main and other objects in the following format:
-   * {
-   *   main: <saved main Parse Object>,
-   *   others: {
-   *     <class name>: <saved other Parse Object>,
-   *     ..
-   *   }
-   * }
-   * @param {object} config Plain object containing main and other objects.
-   * @param {Parse.Object} config.main Main object to which others are related via pointer.
-   * @param {string} config.pointerName Name of the column pointing to main object in other objects. Defaults to lower-case-first version of main object's classname without underscores.
-   * @param {Parse.Object[]} config.others The other objects.
-   * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-   * @return {Promise.<TResult>|Parse.Promise}
-   */
-  saveSplitObject(config, opts) {
-    if(isPlainObject(config)) {
-      const {main, others, pointerName} = config
-      if(this.isPFObject(main) && Array.isArray(others) && typeof pointerName === 'string') {
-        return main.save(opts)
-          .then(main => {
-            const
-              result = {main, others:{}},
-              pointer = main.toPointer(),
-              otherSaves = others.map(other => {
-                other.set(pointerName, pointer)
-                return other.save(opts)
-              })
-            return MyParse.Promise.when(otherSaves)
-              .then(othersSaved => {
-                othersSaved.forEach(other => {
-                  result.others[this._toClassName(other.className)] = other
-                })
-                return MyParse.Promise.as(result)
-              })
-          })
-          .catch(err => Parse.Promise.error('saveSplitObject could not save all objects', err))
-      }
-    }
-    return MyParse.Promise.reject('saveSplitObject called with invalid configuration')
+    return new Cls(attributes, options)
   }
   
   /**
@@ -315,7 +271,19 @@ class Parsimonious {
       && typeof thing._objCount === 'number'
       && typeof thing.className === 'string'
       // Check if correct class if specified.
-      && (typeof ofClass === 'string' ? this._toClassName(thing.className) === ofClass : true)
+      && (typeof ofClass === 'string' ? this.getPFObjectClassName(thing) === ofClass : true)
+  }
+  
+  /**
+   * Returns the passed string, removing the underscore if it is one of the special classes with a leading underscore
+   * @param {string} str
+   * @return {string}
+   */
+  getPFObjectClassName(obj) {
+    if(this.isPFObject(obj)) {
+      const str = obj.className
+      return str.substring(0,1) === '_' && specialClasses.indexOf(str.substring(1)) !== -1 ? str.substring(1) : str
+    }
   }
   
   _toArray(thing) {
@@ -323,18 +291,6 @@ class Parsimonious {
       return thing.split(',')
     } else if(Array.isArray(thing)) {
       return thing
-    }
-  }
-  
-  /**
-   * Returns the passed string, removing the underscore if it is one of the special classes with a leading underscore
-   * @param {string} str
-   * @return {string}
-   * @private
-   */
-  _toClassName(str) {
-    if(typeof str === 'string') {
-      return specialClasses.indexOf(str.replace('_','')) > -1 ? str.replace('_','') : str
     }
   }
   
