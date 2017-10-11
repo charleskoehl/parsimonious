@@ -295,6 +295,33 @@ describe('parsimonious methods', () => {
           })
       })
     })
+  
+    describe('getUserRoles', () => {
+      test('returns array of names of user\'s direct roles, or empty array if none', () => {
+        expect.assertions(3)
+        const user = new Parse.User({
+          username:'blastois',
+          password:'je9w83d',
+          email:'foo@bar.com'
+        })
+        return user.save()
+          .then(aUser => {
+            return parsm.getUserRoles(aUser)
+              .then(roles => {
+                expect(roles).toEqual([])
+                return adminRole
+                  .getUsers()
+                  .add(aUser)
+                  .save()
+                  .then(() => parsm.getUserRoles(aUser))
+                  .then(roles => {
+                    expect(roles.length).toBe(1)
+                    expect(roles[0]).toBe("Administrator")
+                  })
+              })
+          })
+      })
+    })
     
   })
   

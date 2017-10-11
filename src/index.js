@@ -151,6 +151,19 @@ class Parsimonious {
   }
   
   /**
+   * Return array of names of user's direct roles, or empty array.
+   * @param {Parse.User} user
+   * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
+   * @return {Promise.<TResult>|Parse.Promise}
+   */
+  getUserRoles(user, opts) {
+    return this.newQuery(MyParse.Role)
+      .equalTo('users', user)
+      .find(opts)
+      .then(roles => Array.isArray(roles) && roles.length > 0 ? roles.map(role => role.get('name')) : [])
+  }
+  
+  /**
    * Check if a user has a role, or any or all of multiple roles, return a promise resolving to true or false.
    * @param {Parse.User} user
    * @param {string|object} roles Can be single role name string, or object containing array of role names and 'op' key of value 'and' or 'or'
