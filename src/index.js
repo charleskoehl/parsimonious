@@ -145,9 +145,9 @@ class Parsimonious {
   }
   
   getRole(name, opts) {
-    const roleQuery = this.newQuery(Parse.Role)
-    roleQuery.equalTo('name', name)
-    return roleQuery.first(opts)
+    return this.newQuery(MyParse.Role)
+      .equalTo('name', name)
+      .first(opts)
   }
   
   /**
@@ -158,8 +158,8 @@ class Parsimonious {
    * @return {Promise.<TResult>|Parse.Promise}
    */
   userHasRole(user, roles, opts) {
-    const roleQuery = new MyParse.Query(MyParse.Role)
-    roleQuery.equalTo('users', user)
+    const roleQuery = this.newQuery(MyParse.Role)
+      .equalTo('users', user)
     if(typeof roles === 'string') {
       roleQuery.equalTo('name', roles)
       return roleQuery.first(opts)
