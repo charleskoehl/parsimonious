@@ -245,13 +245,13 @@ describe('parsimonious methods', () => {
     const modRole = new Parse.Role("Moderator", roleACL)
   
     describe('userHasRole', () => {
-      const user = new Parse.User({
-        username:'foo manchu',
-        password:'je9w83d',
-        email:'foo@bar.com'
-      })
       test('determines if a user has a single role', () => {
         expect.assertions(4)
+        const user = new Parse.User({
+          username:'foo manchu',
+          password:'je9w83d',
+          email:'foo@bar.com'
+        })
         return user.signUp()
           .then(aUser => {
             return parsm.userHasRole(aUser, 'Administrator')
