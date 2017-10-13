@@ -104,7 +104,7 @@ class Parsimonious {
    * @param {object=} opts Query restrictions
    * @param {number=} opts.limit Parameter for Parse.Query.limit. Must be integer greater than zero.
    * @param {number=} opts.skip Parameter for Parse.Query.skip. Must be integer greater than zero.
-   * @param {string[]} [opts.select] Parameter for Parse.Query.select. Restricts the fields of the returned Parse.Objects to include only the provided keys.
+   * @param {string[]=} [opts.select] Parameter for Parse.Query.select. Restricts the fields of the returned Parse.Objects to include only the provided keys.
    * @returns {Parse.Query}
    */
   newQuery(aClass, opts = {}) {
@@ -137,7 +137,7 @@ class Parsimonious {
   /**
    * Return Parse.User instance from user id
    * @param {string} id
-   * @param {object=} opts A A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
+   * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Parse.User}
    */
   getUserById(id, opts) {
@@ -152,6 +152,7 @@ class Parsimonious {
   
   /**
    * Return array of names of user's direct roles, or empty array.
+   * Requires that the Roles class has appropriate read permissions.
    * @param {Parse.User} user
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @return {Promise.<TResult>|Parse.Promise}
