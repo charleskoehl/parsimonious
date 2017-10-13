@@ -523,4 +523,22 @@ describe('parsimonious methods', () => {
     })
   })
   
+  describe('isUser', () => {
+    test('determines if a variable is a Parse.User', () => {
+      expect.assertions(1)
+      const user = new Parse.User({
+        username:'chuck biff',
+        password:'823980jdlksjd9',
+        email:'chuck@wow.com'
+      })
+      return user.signUp()
+        .then(aUser => {
+          expect(parsm.isUser(aUser)).toBe(true)
+        })
+    })
+    test('determines if a variable is a not a Parse.User', () => {
+      expect(parsm.isUser(aParseObj)).toBe(false)
+    })
+  })
+  
 })

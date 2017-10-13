@@ -274,6 +274,15 @@ class Parsimonious {
   }
   
   /**
+   * Return true if thing is an instance of Parse.User.
+   * @param {*} thing
+   * @returns {boolean}
+   */
+  isUser(thing) {
+    return this.isPFObject(thing, 'User')
+  }
+  
+  /**
    * Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User)
    * @param {*} thing
    * @param {string=} ofClass
