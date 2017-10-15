@@ -19,6 +19,7 @@
     "docs": "jsdoc2md --template README.hbs --files ./src/index.js --param-list-format table > README.md"
   },
   "main": "lib/index.js",
+  "browser": "lib/browser.js",
   "keywords": [
     "parse",
     "utilities",
@@ -31,8 +32,7 @@
   "dependencies": {
     "auto-bind": "^1.1.0",
     "lodash": "^4.17.4",
-    "parse": "^1.10.0",
-    "parse-shim": "github:charleskoehl/parse-shim"
+    "parse": "^1.10.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

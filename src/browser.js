@@ -1,6 +1,6 @@
 'use strict'
 
-import Parse from 'parse/node'
+import Parse from 'parse'
 import autoBind from 'auto-bind'
 import merge from 'lodash/merge'
 import pick from 'lodash/pick'
