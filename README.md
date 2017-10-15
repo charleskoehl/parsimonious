@@ -245,9 +245,10 @@ Returns the passed string, removing the underscore if it is one of the special c
 <a name="changelog"></a>
 ## Change Log
 
-### Version 3.3.1 - 14th October 2017
+### Version 3.4.0 - 14th October 2017
 ##### Updates
-* Instead of trying to detect the environment at runtime in order to decide whether to import "parse" or "parse/node," I added "browser" option in package.json as a hint to babel, browserify, etc.
+* Refactored into two files -- one for node environments and one for browsers. Reason: Runtime environment detection is too unreliable, even using "detect-node" module, because of problems running in webpack-dev-server.
+* Added a "browser" option in package.json as a hint to babel, browserify, etc. to use the browser version.
 
 ### Version 3.3.0 - 13th October 2017
 ##### New Features
