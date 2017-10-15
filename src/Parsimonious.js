@@ -1,6 +1,5 @@
 'use strict'
 
-import Parse from 'parse/node'
 import autoBind from 'auto-bind'
 import merge from 'lodash/merge'
 import pick from 'lodash/pick'
@@ -15,19 +14,15 @@ import lowerFirst from 'lodash/lowerFirst'
  * @module Parsimonious
  */
 
-// Active Parse instance is global.Parse in cloud code, or the cached require-ed Parse in clients:
-const MyParse = global.Parse || Parse
 const specialClasses = ['User', 'Role', 'Session']
 
-/**
- * @class
- */
-class Parsimonious {
+export default class Parsimonious {
   
-  constructor() {
+  constructor(parse) {
     if(!Parsimonious.instance) {
       autoBind(this)
       Parsimonious.instance = this
+      this.Parse = parse
     }
     return Parsimonious.instance
   }
@@ -108,7 +103,7 @@ class Parsimonious {
    * @returns {Parse.Query}
    */
   newQuery(aClass, opts = {}) {
-    const q = new MyParse.Query(aClass)
+    const q = new this.Parse.Query(aClass)
     const {skip, limit, select} = opts
     if(isPlainObject(opts)) {
       isInteger(skip) && skip > 0 && q.skip(skip)
@@ -145,7 +140,7 @@ class Parsimonious {
   }
   
   getRole(name, opts) {
-    return this.newQuery(MyParse.Role)
+    return this.newQuery(this.Parse.Role)
       .equalTo('name', name)
       .first(opts)
   }
@@ -158,7 +153,7 @@ class Parsimonious {
    * @return {Promise.<TResult>|Parse.Promise}
    */
   getUserRoles(user, opts) {
-    return this.newQuery(MyParse.Role)
+    return this.newQuery(this.Parse.Role)
       .equalTo('users', user)
       .find(opts)
       .then(roles => Array.isArray(roles) && roles.length > 0 ? roles.map(role => role.get('name')) : [])
@@ -172,7 +167,7 @@ class Parsimonious {
    * @return {Promise.<TResult>|Parse.Promise}
    */
   userHasRole(user, roles, opts) {
-    const roleQuery = this.newQuery(MyParse.Role)
+    const roleQuery = this.newQuery(this.Parse.Role)
       .equalTo('users', user)
     if(typeof roles === 'string') {
       roleQuery.equalTo('name', roles)
@@ -193,7 +188,7 @@ class Parsimonious {
    * @returns {Parse.Object}
    */
   getClassInst(className, attributes, options) {
-    const Cls = MyParse.Object.extend(className)
+    const Cls = this.Parse.Object.extend(className)
     return new Cls(attributes, options)
   }
   
@@ -251,7 +246,7 @@ class Parsimonious {
         if(this.isPFObject(joinObj)) {
           return joinObj.destroy(opts)
         } else {
-          return MyParse.Promise.as(undefined)
+          return this.Parse.Promise.as(undefined)
         }
       })
   }
@@ -317,10 +312,4 @@ class Parsimonious {
     }
   }
   
-  
 }
-
-const instance = new Parsimonious()
-Object.freeze(instance)
-
-export default instance

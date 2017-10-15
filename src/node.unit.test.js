@@ -1,8 +1,8 @@
 'use strict'
 
-import Parse from 'parse-shim'
+import Parse from 'parse/node'
 import ParseMockDB from 'parse-mockdb'
-import parsm from './index'
+import parsm from './node'
 
 
 Parse.initialize('test')
