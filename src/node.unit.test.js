@@ -544,13 +544,16 @@ describe('parsimonious methods', () => {
   })
   
   describe('isPFObject', () => {
-    test('determines if a variable is a Parse.Object', () => {
+    test('checks a valid Parse.Object', () => {
       expect(parsm.isPFObject(aParseObj)).toBe(true)
     })
-    test('determines if a variable is a Parse.Object of a certain class', () => {
+    test('checks Parse.Object of a certain class', () => {
       expect(parsm.isPFObject(aParseObj, 'TheParseObj')).toBe(true)
     })
-    test('determines if a variable is an instance of a special sub-class of Parse.Object', () => {
+    test('ignores invalid "ofClass" parameter', () => {
+      expect(parsm.isPFObject(aParseObj, 3)).toBe(true)
+    })
+    test('checks a special sub-class of Parse.Object, like "User"', () => {
       expect.assertions(1)
       const user = new Parse.User({
         username:'chuck biff',
@@ -562,8 +565,14 @@ describe('parsimonious methods', () => {
           expect(parsm.isPFObject(aUser, 'User')).toBe(true)
         })
     })
-    test('ignores invalid "ofClass" parameter', () => {
-      expect(parsm.isPFObject(aParseObj, 3)).toBe(true)
+    test('returns false for pointer created locally as plain object', () => {
+      expect(parsm.isPFObject({__type:'Pointer', className:'HairBall', objectId:'kjasoiuwne'})).toBe(false)
+    })
+    test('returns false for pointer created with Parse.Object.toPointer', () => {
+      expect(parsm.isPFObject(savedBouquets[0].toPointer())).toBe(false)
+    })
+    test('returns true for Parse.Object subclass reference created with Parse.Object.createWithoutData', () => {
+      expect(parsm.isPFObject(TheParseObj.createWithoutData('ihsd978h293'))).toBe(true)
     })
   })
   
