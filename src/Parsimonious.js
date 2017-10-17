@@ -246,7 +246,7 @@ export default class Parsimonious {
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Promise}
    */
-  joinWithTable(classes, metadata = null, opts) {
+  joinWithTable(classes, metadata=null, opts) {
     const classNames = Object.keys(classes)
     const classInstances = [classes[classNames[0]], classes[classNames[1]]]
     const joinTableName = this.getJoinTableName(classNames[0], classNames[1])
