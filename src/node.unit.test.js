@@ -263,6 +263,16 @@ describe('parsimonious methods', () => {
       return expect(parsm.fetchIfNeeded('blah')).resolves.toEqual('blah')
     })
   })
+  
+  describe('isPointer', () => {
+    test('returns true if passed value is Parse.Object pointer', () => {
+      expect(parsm.isPointer('Schnauser')).toBe(false)
+      expect(parsm.isPointer({className:'HairBall', objectId:'kjasoiuwne'})).toBe(false)
+      expect(parsm.isPointer({__type:'Pointer',className:'HairBall'})).toBe(false)
+      expect(parsm.isPointer({__type:'Pointer', className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
+    })
+  })
+  
   describe('Roles', () => {
     
     const roleACL = new Parse.ACL()
