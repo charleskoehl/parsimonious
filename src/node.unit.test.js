@@ -35,7 +35,7 @@ aParseObj.set('grass', 'green')
 describe('parsimonious methods', () => {
   
   describe('toJsn', () => {
-    test('returns the input when input is not a Parse object or a plain, non-null object', () => {
+    test('returns the passed value when it is not a Parse object or a plain, non-null object', () => {
       const mySymbol = Symbol('test')
       expect(parsm.toJsn(mySymbol)).toEqual(mySymbol)
       expect(parsm.toJsn(undefined)).toEqual(undefined)
