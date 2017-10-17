@@ -278,6 +278,10 @@ Returns undefined if anything else.
 <a name="changelog"></a>
 ## Change Log
 
+### Version 3.5.4 - 17th October 2017
+##### Fixes
+* Fixed isPointer method's recognition of one of the 3 different types of pointer objects it checks for.
+
 ### Version 3.5.3 - 17th October 2017
 ##### Fixes
 * isPointer method' recognizes 3 different types of pointer objects.
