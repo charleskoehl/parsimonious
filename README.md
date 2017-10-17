@@ -278,6 +278,10 @@ Returns undefined if anything else.
 ## Change Log
 
 ### Version 3.5.0 - 16th October 2017
+##### Bug fixes
+* isPointer method was restricting to plain objects.
+
+### Version 3.5.0 - 16th October 2017
 ##### New Features
 * New [fetchIfNeeded](#module_Parsimonious+fetchIfNeeded) method.
 * New [isPointer](#module_Parsimonious+isPointer) method.
