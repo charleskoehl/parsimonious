@@ -5,6 +5,7 @@ import merge from 'lodash/merge'
 import pick from 'lodash/pick'
 import omit from 'lodash/omit'
 import isInteger from 'lodash/isInteger'
+import isEqual from 'lodash/isEqual'
 import isPlainObject from 'lodash/isPlainObject'
 import clone from 'lodash/clone'
 import lowerFirst from 'lodash/lowerFirst'
@@ -86,23 +87,11 @@ export default class Parsimonious {
   fetchIfNeeded(thing, opts) {
     if(this.isPFObject(thing)) {
       return thing.dirty() ? thing.fetch(opts) : this.Parse.Promise.as(thing)
-    } else if(this.isPointer(thing)) {
+    } else if(this.isPointer(thing) && typeof thing.className === 'string') {
       return this.getObjById(thing.className, thing.objectId, opts)
     } else {
       return this.Parse.Promise.as(thing)
     }
-  }
-  
-  /**
-   * Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
-   * @param thing
-   * @returns {boolean}
-   */
-  isPointer(thing) {
-    return typeof thing === 'object' &&
-    thing.__type === 'Pointer' &&
-    typeof thing.className === 'string' &&
-    typeof thing.objectId === 'string'
   }
   
   getRole(name, opts) {
@@ -239,8 +228,31 @@ export default class Parsimonious {
   
   
   /**
+   * Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
+   * @param thing
    * @returns {boolean}
    */
+  isPointer(thing) {
+    if(typeof thing === 'object' && thing !== null) {
+      const keys = Object.keys(thing)
+      return (
+        (
+          isEqual(keys, ['__type', 'className', 'objectId'])
+          && thing.__type === 'Pointer'
+          && typeof thing.objectId === 'string'
+          && typeof thing.className === 'string'
+        )
+        || (
+          isEqual(keys, ['className', '_objCount', 'id'])
+          && typeof thing.className === 'string'
+          && typeof thing.id === 'string'
+        ) || (
+          isEqual(keys, ['objectId'])
+          && typeof thing.objectId === 'number'
+        )
+      )
+    }
+    return false
   }
   
   /**
