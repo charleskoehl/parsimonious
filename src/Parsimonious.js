@@ -325,8 +325,11 @@ export default class Parsimonious {
   }
   
   /**
-   * Returns the passed string, removing the underscore if it is one of the special classes with a leading underscore
-   * @param {string} str
+   * Returns valid class-name when passed either a subclass of Parse.Object or any string.
+   * Removes the underscore if it is one of the special classes with a leading underscore.
+   * Returns undefined if anything else.
+   *
+   * @param {object|string} thing
    * @return {string}
    */
   getPFObjectClassName(obj) {
