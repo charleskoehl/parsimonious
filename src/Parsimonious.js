@@ -139,6 +139,38 @@ export default class Parsimonious {
     return this.getObjById('User', id, opts)
   }
   
+  /**
+   * Given a value thing, return a promise that resolves to
+   *   thing if thing is a clean Parse.Object,
+   *   fetched Parse.Object if thing is a dirty Parse.Object,
+   *   fetched Parse.Object if thing is a pointer;
+   *   thing if otherwise
+   * @param {*} thing
+   * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
+   * @return {Parse.Promise|*|PromiseLike<T>|Promise<T>} Promise that fulfills with saved UserPrefs object.
+   */
+  fetchIfNeeded(thing, opts) {
+    if(this.isPFObject(thing)) {
+      return thing.dirty() ? thing.fetch(opts) : this.Parse.Promise.as(thing)
+    } else if(this.isPointer(thing)) {
+      return this.getObjById(thing.className, thing.objectId, opts)
+    } else {
+      return this.Parse.Promise.as(thing)
+    }
+  }
+  
+  /**
+   * Return true of thing is a pointer to a Parse.Object
+   * @param thing
+   * @returns {boolean}
+   */
+  isPointer(thing) {
+    return isPlainObject(thing) &&
+    thing.__type === 'Pointer' &&
+    typeof thing.className === 'string' &&
+    typeof thing.objectId === 'string'
+  }
+  
   getRole(name, opts) {
     return this.newQuery(this.Parse.Role)
       .equalTo('name', name)

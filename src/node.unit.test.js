@@ -13,7 +13,7 @@ beforeAll(() => {
   ParseMockDB.mockDB() // Mock the Parse RESTController
   const bouquets = []
   for(let i = 0; i < 10; i++) {
-    bouquets.push(parsm.getClassInst('Bouquet'))
+    bouquets.push(parsm.getClassInst('Bouquet', {active:false}))
   }
   return Parse.Object.saveAll(bouquets)
     .then(objs => {
@@ -237,6 +237,32 @@ describe('parsimonious methods', () => {
     })
   })
   
+  describe('fetchIfNeeded, given a value <thing>, return a promise that resolves to', () => {
+    test('thing if thing is a clean Parse.Object', () => {
+      return parsm.fetchIfNeeded(savedBouquets[0])
+      .then(result => {
+        expect(result).toBe(savedBouquets[0])
+      })
+    })
+    test('fetched Parse.Object if thing is a dirty Parse.Object', () => {
+      savedBouquets[0].set('active',true)
+      return parsm.fetchIfNeeded(savedBouquets[0])
+        .then(result => {
+          expect(result.get('active')).toBe(false)
+        })
+    })
+    test('fetched Parse.Object if thing is a pointer', () => {
+      return parsm.fetchIfNeeded(savedBouquets[0].toPointer())
+        .then(result => {
+          expect(result).toBeDefined()
+          expect(parsm.isPFObject(result)).toBe(true)
+          expect(parsm.isPFObject(result,'Bouquet')).toBe(true)
+        })
+    })
+    test('thing if otherwise', () => {
+      return expect(parsm.fetchIfNeeded('blah')).resolves.toEqual('blah')
+    })
+  })
   describe('Roles', () => {
     
     const roleACL = new Parse.ACL()
