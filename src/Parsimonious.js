@@ -147,7 +147,7 @@ export default class Parsimonious {
    *   thing if otherwise
    * @param {*} thing
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-   * @return {Parse.Promise|*|PromiseLike<T>|Promise<T>} Promise that fulfills with saved UserPrefs object.
+   * @return {Parse.Promise} Promise that fulfills with saved UserPrefs object.
    */
   fetchIfNeeded(thing, opts) {
     if(this.isPFObject(thing)) {
@@ -244,7 +244,7 @@ export default class Parsimonious {
    * @param {object} classes - must contain two keys corresponding to existing classes; each value must be a valid parse object.
    * @param {object=} metadata - optional key/value pairs to set on the new document to describe relationship.
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-   * @returns {Promise}
+   * @returns {Parse.Promise}
    */
   joinWithTable(classes, metadata=null, opts) {
     const classNames = Object.keys(classes)
@@ -269,7 +269,7 @@ export default class Parsimonious {
    * @param {object} classes - must contain two keys corresponding to existing classes;
    *                           each value must be a valid parse object already in db.
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-   * @returns {Promise}
+   * @returns {Parse.Promise}
    */
   unJoinWithTable(classes, opts) {
     return this.getJoinQuery(classes, opts)
