@@ -248,7 +248,7 @@ export default class Parsimonious {
           && typeof thing.id === 'string'
         ) || (
           isEqual(keys, ['objectId'])
-          && typeof thing.objectId === 'number'
+          && typeof thing.objectId === 'string'
         )
       )
     }

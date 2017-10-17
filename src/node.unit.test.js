@@ -538,6 +538,7 @@ describe('parsimonious methods', () => {
     })
     test('should return true for qualifying objects', () => {
       expect(parsm.isPointer({__type:'Pointer', className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
+      expect(parsm.isPointer({objectId:'kjasoiuwne'})).toBe(true)
       expect(parsm.isPointer(savedBouquets[0].toPointer())).toBe(true)
       expect(parsm.isPointer(TheParseObj.createWithoutData('ihsd978h293'))).toBe(true)
     })
