@@ -160,7 +160,7 @@ export default class Parsimonious {
   }
   
   /**
-   * Return true of thing is a pointer to a Parse.Object
+   * Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
    * @param thing
    * @returns {boolean}
    */
@@ -182,7 +182,7 @@ export default class Parsimonious {
    * Requires that the Roles class has appropriate read permissions.
    * @param {Parse.User} user
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-   * @return {Promise.<TResult>|Parse.Promise}
+   * @return {Parse.Promise}
    */
   getUserRoles(user, opts) {
     return this.newQuery(this.Parse.Role)
@@ -196,7 +196,7 @@ export default class Parsimonious {
    * @param {Parse.User} user
    * @param {string|object} roles Can be single role name string, or object containing array of role names and 'op' key of value 'and' or 'or'
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-   * @return {Promise.<TResult>|Parse.Promise}
+   * @return {Parse.Promise}
    */
   userHasRole(user, roles, opts) {
     const roleQuery = this.newQuery(this.Parse.Role)
