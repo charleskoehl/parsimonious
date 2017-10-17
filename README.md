@@ -10,14 +10,10 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
 
 
 * [Parsimonious](#module_Parsimonious)
-    * [.toJsn(thing, [deep])](#module_Parsimonious+toJsn) ⇒ <code>\*</code>
-    * [.objPick(parseObj, keys)](#module_Parsimonious+objPick) ⇒ <code>object</code>
-    * [.objSetMulti(parseObj, dataObj, [doMerge])](#module_Parsimonious+objSetMulti)
     * [.newQuery(aClass, [opts])](#module_Parsimonious+newQuery) ⇒ <code>Parse.Query</code>
     * [.getObjById(aClass, id, [opts])](#module_Parsimonious+getObjById)
     * [.getUserById(id, [opts])](#module_Parsimonious+getUserById) ⇒ <code>Parse.User</code>
     * [.fetchIfNeeded(thing, [opts])](#module_Parsimonious+fetchIfNeeded) ⇒ <code>Parse.Promise</code>
-    * [.isPointer(thing)](#module_Parsimonious+isPointer) ⇒ <code>boolean</code>
     * [.getUserRoles(user, [opts])](#module_Parsimonious+getUserRoles) ⇒ <code>Parse.Promise</code>
     * [.userHasRole(user, roles, [opts])](#module_Parsimonious+userHasRole) ⇒ <code>Parse.Promise</code>
     * [.getClassInst(className, [attributes], [options])](#module_Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
@@ -25,49 +21,13 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [.joinWithTable(classes, [metadata], [opts])](#module_Parsimonious+joinWithTable) ⇒ <code>Parse.Promise</code>
     * [.unJoinWithTable(classes, [opts])](#module_Parsimonious+unJoinWithTable) ⇒ <code>Parse.Promise</code>
     * [.getJoinQuery(classes, [opts])](#module_Parsimonious+getJoinQuery) ⇒ <code>Parse.Query</code>
-    * [.isUser(thing)](#module_Parsimonious+isUser) ⇒ <code>boolean</code>
+    * [.isPointer(thing)](#module_Parsimonious+isPointer) ⇒ <code>boolean</code>
     * [.isPFObject(thing, [ofClass])](#module_Parsimonious+isPFObject) ⇒ <code>boolean</code>
+    * [.isUser(thing)](#module_Parsimonious+isUser) ⇒ <code>boolean</code>
+    * [.toJsn(thing, [deep])](#module_Parsimonious+toJsn) ⇒ <code>\*</code>
+    * [.objPick(parseObj, keys)](#module_Parsimonious+objPick) ⇒ <code>object</code>
+    * [.objSetMulti(parseObj, dataObj, [doMerge])](#module_Parsimonious+objSetMulti)
     * [.getPFObjectClassName(thing)](#module_Parsimonious+getPFObjectClassName) ⇒ <code>string</code>
-
-<a name="module_Parsimonious+toJsn"></a>
-
-### parsimonious.toJsn(thing, [deep]) ⇒ <code>\*</code>
-Return a json representation of a Parse.Object,
-sub-class of Parse.Object (such as Parse.User),
-or plain object containing any or none of those, to json, optionally recursively.
-Does not mutate parameters.
-
-**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| thing | <code>\*</code> |  | Value to create json from. |
-| [deep] | <code>boolean</code> | <code>false</code> | If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion. |
-
-<a name="module_Parsimonious+objPick"></a>
-
-### parsimonious.objPick(parseObj, keys) ⇒ <code>object</code>
-Get some columns from a Parse object and return them in a plain object.
-
-**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
-
-| Param | Type |
-| --- | --- |
-| parseObj | <code>Parse.Object</code> | 
-| keys | <code>string</code> \| <code>Array.&lt;string&gt;</code> | 
-
-<a name="module_Parsimonious+objSetMulti"></a>
-
-### parsimonious.objSetMulti(parseObj, dataObj, [doMerge])
-Set some columns on a Parse object. Mutates the Parse object.
-
-**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| parseObj | <code>Parse.Object</code> |  |  |
-| dataObj | <code>object</code> |  |  |
-| [doMerge] | <code>boolean</code> | <code>false</code> | If true, each column value is shallow-merged with existing value |
 
 <a name="module_Parsimonious+newQuery"></a>
 
@@ -125,17 +85,6 @@ Given a value thing, return a promise that resolves to
 | --- | --- | --- |
 | thing | <code>\*</code> |  |
 | [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
-
-<a name="module_Parsimonious+isPointer"></a>
-
-### parsimonious.isPointer(thing) ⇒ <code>boolean</code>
-Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
-
-**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
-
-| Param |
-| --- |
-| thing | 
 
 <a name="module_Parsimonious+getUserRoles"></a>
 
@@ -237,16 +186,16 @@ Join table must have pointer columns named like class names except first letter 
 | classes | <code>object</code> | must contain two keys corresponding to existing classes, with each key's value being either a valid parse object or null |
 | [opts] | <code>object</code> | Query restrictions (see Parsimonious.newQuery) |
 
-<a name="module_Parsimonious+isUser"></a>
+<a name="module_Parsimonious+isPointer"></a>
 
-### parsimonious.isUser(thing) ⇒ <code>boolean</code>
-Return true if thing is an instance of Parse.User.
+### parsimonious.isPointer(thing) ⇒ <code>boolean</code>
+Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
 
-| Param | Type |
-| --- | --- |
-| thing | <code>\*</code> | 
+| Param |
+| --- |
+| thing | 
 
 <a name="module_Parsimonious+isPFObject"></a>
 
@@ -259,6 +208,58 @@ Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse
 | --- | --- |
 | thing | <code>\*</code> | 
 | [ofClass] | <code>string</code> | 
+
+<a name="module_Parsimonious+isUser"></a>
+
+### parsimonious.isUser(thing) ⇒ <code>boolean</code>
+Return true if thing is an instance of Parse.User.
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
+
+| Param | Type |
+| --- | --- |
+| thing | <code>\*</code> | 
+
+<a name="module_Parsimonious+toJsn"></a>
+
+### parsimonious.toJsn(thing, [deep]) ⇒ <code>\*</code>
+Return a json representation of a Parse.Object,
+sub-class of Parse.Object (such as Parse.User),
+or plain object containing any or none of those, to json, optionally recursively.
+Does not mutate parameters.
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| thing | <code>\*</code> |  | Value to create json from. |
+| [deep] | <code>boolean</code> | <code>false</code> | If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion. |
+
+<a name="module_Parsimonious+objPick"></a>
+
+### parsimonious.objPick(parseObj, keys) ⇒ <code>object</code>
+Get some columns from a Parse object and return them in a plain object.
+If keys is not an array or comma-separated string, return undefined.
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
+
+| Param | Type |
+| --- | --- |
+| parseObj | <code>Parse.Object</code> | 
+| keys | <code>string</code> \| <code>Array.&lt;string&gt;</code> | 
+
+<a name="module_Parsimonious+objSetMulti"></a>
+
+### parsimonious.objSetMulti(parseObj, dataObj, [doMerge])
+Set some columns on a Parse object. Mutates the Parse object.
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| parseObj | <code>Parse.Object</code> |  |  |
+| dataObj | <code>object</code> |  |  |
+| [doMerge] | <code>boolean</code> | <code>false</code> | If true, each column value is shallow-merged with existing value |
 
 <a name="module_Parsimonious+getPFObjectClassName"></a>
 
@@ -276,6 +277,12 @@ Returns undefined if anything else.
 
 <a name="changelog"></a>
 ## Change Log
+
+### Version 3.5.3 - 17th October 2017
+##### Fixes
+* isPointer method' recognizes 3 different types of pointer objects.
+* More thorough tests for isPFObject method, including invalidating pointers.
+* More thorough tests for isUser method.
 
 ### Version 3.5.2 - 16th October 2017
 ##### Bug fixes
