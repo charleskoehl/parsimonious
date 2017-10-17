@@ -366,12 +366,4 @@ export default class Parsimonious {
     }
   }
   
-  _toArray(thing) {
-    if(typeof thing === 'string') {
-      return thing.split(',')
-    } else if(Array.isArray(thing)) {
-      return thing
-    }
-  }
-  
 }
