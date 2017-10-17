@@ -16,14 +16,14 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [.newQuery(aClass, [opts])](#module_Parsimonious+newQuery) ⇒ <code>Parse.Query</code>
     * [.getObjById(aClass, id, [opts])](#module_Parsimonious+getObjById)
     * [.getUserById(id, [opts])](#module_Parsimonious+getUserById) ⇒ <code>Parse.User</code>
-    * [.fetchIfNeeded(thing, [opts])](#module_Parsimonious+fetchIfNeeded) ⇒ <code>Parse.Promise</code> \| <code>\*</code> \| <code>PromiseLike.&lt;T&gt;</code> \| <code>Promise.&lt;T&gt;</code>
+    * [.fetchIfNeeded(thing, [opts])](#module_Parsimonious+fetchIfNeeded) ⇒ <code>Parse.Promise</code>
     * [.isPointer(thing)](#module_Parsimonious+isPointer) ⇒ <code>boolean</code>
     * [.getUserRoles(user, [opts])](#module_Parsimonious+getUserRoles) ⇒ <code>Parse.Promise</code>
     * [.userHasRole(user, roles, [opts])](#module_Parsimonious+userHasRole) ⇒ <code>Parse.Promise</code>
     * [.getClassInst(className, [attributes], [options])](#module_Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
     * [.getJoinTableName(from, to)](#module_Parsimonious+getJoinTableName) ⇒ <code>string</code>
-    * [.joinWithTable(classes, [metadata], [opts])](#module_Parsimonious+joinWithTable) ⇒ <code>Promise</code>
-    * [.unJoinWithTable(classes, [opts])](#module_Parsimonious+unJoinWithTable) ⇒ <code>Promise</code>
+    * [.joinWithTable(classes, [metadata], [opts])](#module_Parsimonious+joinWithTable) ⇒ <code>Parse.Promise</code>
+    * [.unJoinWithTable(classes, [opts])](#module_Parsimonious+unJoinWithTable) ⇒ <code>Parse.Promise</code>
     * [.getJoinQuery(classes, [opts])](#module_Parsimonious+getJoinQuery) ⇒ <code>Parse.Query</code>
     * [.isUser(thing)](#module_Parsimonious+isUser) ⇒ <code>boolean</code>
     * [.isPFObject(thing, [ofClass])](#module_Parsimonious+isPFObject) ⇒ <code>boolean</code>
@@ -111,7 +111,7 @@ Return Parse.User instance from user id
 
 <a name="module_Parsimonious+fetchIfNeeded"></a>
 
-### parsimonious.fetchIfNeeded(thing, [opts]) ⇒ <code>Parse.Promise</code> \| <code>\*</code> \| <code>PromiseLike.&lt;T&gt;</code> \| <code>Promise.&lt;T&gt;</code>
+### parsimonious.fetchIfNeeded(thing, [opts]) ⇒ <code>Parse.Promise</code>
 Given a value thing, return a promise that resolves to
   thing if thing is a clean Parse.Object,
   fetched Parse.Object if thing is a dirty Parse.Object,
@@ -119,7 +119,7 @@ Given a value thing, return a promise that resolves to
   thing if otherwise
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
-**Returns**: <code>Parse.Promise</code> \| <code>\*</code> \| <code>PromiseLike.&lt;T&gt;</code> \| <code>Promise.&lt;T&gt;</code> - Promise that fulfills with saved UserPrefs object.  
+**Returns**: <code>Parse.Promise</code> - Promise that fulfills with saved UserPrefs object.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -190,7 +190,7 @@ Return the name of a table used to join two Parse.Object classes in a many-to-ma
 
 <a name="module_Parsimonious+joinWithTable"></a>
 
-### parsimonious.joinWithTable(classes, [metadata], [opts]) ⇒ <code>Promise</code>
+### parsimonious.joinWithTable(classes, [metadata], [opts]) ⇒ <code>Parse.Promise</code>
 Join two parse objects in a many-to-many relationship by adding a document to a third join table.
 Like Parse.Relation.add except that it allows you to add metadata to describe the relationship.
 Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
@@ -208,7 +208,7 @@ Returns promise.
 
 <a name="module_Parsimonious+unJoinWithTable"></a>
 
-### parsimonious.unJoinWithTable(classes, [opts]) ⇒ <code>Promise</code>
+### parsimonious.unJoinWithTable(classes, [opts]) ⇒ <code>Parse.Promise</code>
 Unjoin two parse objects currently joined in a many-to-many relationship by a document in a third join table.
 Like Parse.Relation.remove (see Parsimonious.joinWithTable above).
 Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
