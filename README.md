@@ -16,8 +16,10 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [.newQuery(aClass, [opts])](#module_Parsimonious+newQuery) ⇒ <code>Parse.Query</code>
     * [.getObjById(aClass, id, [opts])](#module_Parsimonious+getObjById)
     * [.getUserById(id, [opts])](#module_Parsimonious+getUserById) ⇒ <code>Parse.User</code>
-    * [.getUserRoles(user, [opts])](#module_Parsimonious+getUserRoles) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
-    * [.userHasRole(user, roles, [opts])](#module_Parsimonious+userHasRole) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
+    * [.fetchIfNeeded(thing, [opts])](#module_Parsimonious+fetchIfNeeded) ⇒ <code>Parse.Promise</code> \| <code>\*</code> \| <code>PromiseLike.&lt;T&gt;</code> \| <code>Promise.&lt;T&gt;</code>
+    * [.isPointer(thing)](#module_Parsimonious+isPointer) ⇒ <code>boolean</code>
+    * [.getUserRoles(user, [opts])](#module_Parsimonious+getUserRoles) ⇒ <code>Parse.Promise</code>
+    * [.userHasRole(user, roles, [opts])](#module_Parsimonious+userHasRole) ⇒ <code>Parse.Promise</code>
     * [.getClassInst(className, [attributes], [options])](#module_Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
     * [.getJoinTableName(from, to)](#module_Parsimonious+getJoinTableName) ⇒ <code>string</code>
     * [.joinWithTable(classes, [metadata], [opts])](#module_Parsimonious+joinWithTable) ⇒ <code>Promise</code>
@@ -25,7 +27,7 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [.getJoinQuery(classes, [opts])](#module_Parsimonious+getJoinQuery) ⇒ <code>Parse.Query</code>
     * [.isUser(thing)](#module_Parsimonious+isUser) ⇒ <code>boolean</code>
     * [.isPFObject(thing, [ofClass])](#module_Parsimonious+isPFObject) ⇒ <code>boolean</code>
-    * [.getPFObjectClassName(str)](#module_Parsimonious+getPFObjectClassName) ⇒ <code>string</code>
+    * [.getPFObjectClassName(thing)](#module_Parsimonious+getPFObjectClassName) ⇒ <code>string</code>
 
 <a name="module_Parsimonious+toJsn"></a>
 
@@ -107,9 +109,37 @@ Return Parse.User instance from user id
 | id | <code>string</code> |  |
 | [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
 
+<a name="module_Parsimonious+fetchIfNeeded"></a>
+
+### parsimonious.fetchIfNeeded(thing, [opts]) ⇒ <code>Parse.Promise</code> \| <code>\*</code> \| <code>PromiseLike.&lt;T&gt;</code> \| <code>Promise.&lt;T&gt;</code>
+Given a value thing, return a promise that resolves to
+  thing if thing is a clean Parse.Object,
+  fetched Parse.Object if thing is a dirty Parse.Object,
+  fetched Parse.Object if thing is a pointer;
+  thing if otherwise
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
+**Returns**: <code>Parse.Promise</code> \| <code>\*</code> \| <code>PromiseLike.&lt;T&gt;</code> \| <code>Promise.&lt;T&gt;</code> - Promise that fulfills with saved UserPrefs object.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| thing | <code>\*</code> |  |
+| [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
+
+<a name="module_Parsimonious+isPointer"></a>
+
+### parsimonious.isPointer(thing) ⇒ <code>boolean</code>
+Return true of thing is a pointer to a Parse.Object
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
+
+| Param |
+| --- |
+| thing | 
+
 <a name="module_Parsimonious+getUserRoles"></a>
 
-### parsimonious.getUserRoles(user, [opts]) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
+### parsimonious.getUserRoles(user, [opts]) ⇒ <code>Parse.Promise</code>
 Return array of names of user's direct roles, or empty array.
 Requires that the Roles class has appropriate read permissions.
 
@@ -122,7 +152,7 @@ Requires that the Roles class has appropriate read permissions.
 
 <a name="module_Parsimonious+userHasRole"></a>
 
-### parsimonious.userHasRole(user, roles, [opts]) ⇒ <code>Promise.&lt;TResult&gt;</code> \| <code>Parse.Promise</code>
+### parsimonious.userHasRole(user, roles, [opts]) ⇒ <code>Parse.Promise</code>
 Check if a user has a role, or any or all of multiple roles, return a promise resolving to true or false.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
@@ -225,25 +255,32 @@ Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
 
-| Param | Type | Default |
-| --- | --- | --- |
-| thing | <code>\*</code> |  | 
-| [ofClass] | <code>string</code> | <code>null</code> | 
+| Param | Type |
+| --- | --- |
+| thing | <code>\*</code> | 
+| [ofClass] | <code>string</code> | 
 
 <a name="module_Parsimonious+getPFObjectClassName"></a>
 
-### parsimonious.getPFObjectClassName(str) ⇒ <code>string</code>
-Returns the passed string, removing the underscore if it is one of the special classes with a leading underscore
+### parsimonious.getPFObjectClassName(thing) ⇒ <code>string</code>
+Returns valid class-name when passed either a subclass of Parse.Object or any string.
+Removes the underscore if it is one of the special classes with a leading underscore.
+Returns undefined if anything else.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
 
 | Param | Type |
 | --- | --- |
-| str | <code>string</code> | 
+| thing | <code>object</code> \| <code>string</code> | 
 
 
 <a name="changelog"></a>
 ## Change Log
+
+### Version 3.5.0 - 16th October 2017
+##### New Features
+* New [fetchIfNeeded](#module_Parsimonious+fetchIfNeeded) method.
+* New [isPointer](#module_Parsimonious+isPointer) method.
 
 ### Version 3.4.0 - 14th October 2017
 ##### Updates
