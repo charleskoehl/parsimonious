@@ -165,7 +165,7 @@ export default class Parsimonious {
    * @returns {boolean}
    */
   isPointer(thing) {
-    return isPlainObject(thing) &&
+    return typeof thing === 'object' &&
     thing.__type === 'Pointer' &&
     typeof thing.className === 'string' &&
     typeof thing.objectId === 'string'
