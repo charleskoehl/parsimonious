@@ -332,9 +332,9 @@ export default class Parsimonious {
    * @param {object|string} thing
    * @return {string}
    */
-  getPFObjectClassName(obj) {
-    if(this.isPFObject(obj)) {
-      const str = obj.className
+  getPFObjectClassName(thing) {
+    const str = typeof thing === 'string' ? thing : (this.isPFObject(thing) ? thing.className : null)
+    if(typeof str === 'string') {
       return str.substring(0,1) === '_' && specialClasses.indexOf(str.substring(1)) !== -1 ? str.substring(1) : str
     }
   }
