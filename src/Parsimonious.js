@@ -315,7 +315,7 @@ export default class Parsimonious {
    * @param {string=} ofClass
    * @returns {boolean}
    */
-  isPFObject(thing, ofClass = null) {
+  isPFObject(thing, ofClass) {
     return thing !== null
       && typeof thing === 'object'
       && typeof thing._objCount === 'number'
