@@ -208,7 +208,7 @@ export default class Parsimonious {
     } else if(isPlainObject(roles) && Array.isArray(roles.names) && roles.op) {
       roleQuery.containedIn('name', roles.names)
       return roleQuery.count(opts)
-        .then(result => roles.op === 'and' ? result == roles.names.length : result > 0)
+        .then(result => roles.op === 'and' ? result === roles.names.length : result > 0)
     }
   }
   
