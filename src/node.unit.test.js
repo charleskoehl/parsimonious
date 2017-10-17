@@ -264,15 +264,6 @@ describe('parsimonious methods', () => {
     })
   })
   
-  describe('isPointer', () => {
-    test('returns true if passed value is Parse.Object pointer', () => {
-      expect(parsm.isPointer('Schnauser')).toBe(false)
-      expect(parsm.isPointer({className:'HairBall', objectId:'kjasoiuwne'})).toBe(false)
-      expect(parsm.isPointer({__type:'Pointer',className:'HairBall'})).toBe(false)
-      expect(parsm.isPointer({__type:'Pointer', className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
-    })
-  })
-  
   describe('Roles', () => {
     
     const roleACL = new Parse.ACL()
@@ -533,6 +524,23 @@ describe('parsimonious methods', () => {
       
     })
     
+  })
+  
+  describe('isPointer', () => {
+    test('should return false for scalars', () => {
+      expect(parsm.isPointer('Schnauser')).toBe(false)
+      expect(parsm.isPointer(1)).toBe(false)
+    })
+    test('should return false for non-qualifying objects', () => {
+      expect(parsm.isPointer(null)).toBe(false)
+      expect(parsm.isPointer({className:'HairBall', objectId:'kjasoiuwne'})).toBe(false)
+      expect(parsm.isPointer({__type:'Pointer',className:'HairBall'})).toBe(false)
+    })
+    test('should return true for qualifying objects', () => {
+      expect(parsm.isPointer({__type:'Pointer', className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
+      expect(parsm.isPointer(savedBouquets[0].toPointer())).toBe(true)
+      expect(parsm.isPointer(TheParseObj.createWithoutData('ihsd978h293'))).toBe(true)
+    })
   })
   
   describe('isPFObject', () => {
