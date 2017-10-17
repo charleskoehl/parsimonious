@@ -549,6 +549,23 @@ describe('parsimonious methods', () => {
     })
   })
   
+  describe('getPFObjectClassName', () => {
+    const user = new Parse.User({
+      username:'foo manchu',
+      password:'je9w83d',
+      email:'foo@bar.com'
+    })
+    test('returns valid class-name of a subclass of Parse.Object without leading underscore', () => {
+      expect(parsm.getPFObjectClassName(aParseObj)).toBe('TheParseObj')
+      expect(parsm.getPFObjectClassName('User')).toBe('User')
+      expect(parsm.getPFObjectClassName('_User')).toBe('User')
+      expect(parsm.getPFObjectClassName(user)).toBe('User')
+      expect(parsm.getPFObjectClassName('_Session')).toBe('Session')
+      expect(parsm.getPFObjectClassName({naughty:'object'})).not.toBeDefined()
+      expect(parsm.getPFObjectClassName([1,2,3])).not.toBeDefined()
+    })
+  })
+  
   describe('isUser', () => {
     test('determines if a variable is a Parse.User', () => {
       expect.assertions(1)
