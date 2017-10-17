@@ -277,9 +277,13 @@ Returns undefined if anything else.
 <a name="changelog"></a>
 ## Change Log
 
-### Version 3.5.0 - 16th October 2017
+### Version 3.5.2 - 16th October 2017
 ##### Bug fixes
 * isPointer method was restricting to plain objects.
+
+### Version 3.5.2 - 16th October 2017
+##### Updates
+* Minor jsdoc fixes.
 
 ### Version 3.5.0 - 16th October 2017
 ##### New Features
