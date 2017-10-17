@@ -129,7 +129,7 @@ Given a value thing, return a promise that resolves to
 <a name="module_Parsimonious+isPointer"></a>
 
 ### parsimonious.isPointer(thing) ⇒ <code>boolean</code>
-Return true of thing is a pointer to a Parse.Object
+Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
 
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
 
