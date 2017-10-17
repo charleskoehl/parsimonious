@@ -28,72 +28,6 @@ export default class Parsimonious {
   }
   
   /**
-   * Return a json representation of a Parse.Object,
-   * sub-class of Parse.Object (such as Parse.User),
-   * or plain object containing any or none of those, to json, optionally recursively.
-   * Does not mutate parameters.
-   *
-   * @param {*} thing Value to create json from.
-   * @param {boolean=} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
-   * @returns {*}
-   */
-  toJsn(thing, deep = false) {
-    let obj
-    if(this.isPFObject(thing)) {
-      obj = thing.toJSON()
-    } else if(isPlainObject(thing)) {
-      obj = Object.assign({}, thing)
-    } else {
-      obj = clone(thing)
-    }
-    if(deep && isPlainObject(obj)) {
-      // Make more plain-object-like, and prevent Parse.Cloud.run from converting back into Parse.Object in responses:
-      if(obj.objectId) {
-        obj.id = obj.objectId
-      }
-      obj = omit(obj, ['objectId', '__type', 'className', 'ACL'])
-      // Convert all other properties of plain object to json.
-      Object.keys(obj).forEach(k => {
-        obj[k] = this.toJsn(obj[k], deep)
-      })
-    }
-    return obj
-  }
-  
-  /**
-   * Get some columns from a Parse object and return them in a plain object.
-   * @param {Parse.Object} parseObj
-   * @param {(string | string[])} keys
-   * @returns {object}
-   */
-  objPick(parseObj, keys) {
-    const keysArr = this._toArray(keys)
-    if(Array.isArray(keysArr)) {
-      return pick(this.toJsn(parseObj), keysArr)
-    }
-  }
-  
-  /**
-   * Set some columns on a Parse object. Mutates the Parse object.
-   * @param {Parse.Object} parseObj
-   * @param {object} dataObj
-   * @param {boolean=} doMerge If true, each column value is shallow-merged with existing value
-   */
-  objSetMulti(parseObj, dataObj, doMerge = false) {
-    if(this.isPFObject(parseObj) && isPlainObject(dataObj)) {
-      let key, oldVal, newVal
-      for(key in dataObj) {
-        oldVal = parseObj.get(key)
-        newVal = dataObj[key]
-        if(doMerge && isPlainObject(oldVal) && isPlainObject(newVal)) {
-          newVal = merge(oldVal, newVal)
-        }
-        parseObj.set(key, newVal)
-      }
-    }
-  }
-  
-  /**
    * Return a new Parse.Query instance from a Parse Object class name.
    * @param {string|object} aClass class name or constructor
    * @param {object=} opts Query restrictions
@@ -300,13 +234,13 @@ export default class Parsimonious {
     return query
   }
   
+  
+  /* TYPE CHECKS  */
+  
+  
   /**
-   * Return true if thing is an instance of Parse.User.
-   * @param {*} thing
    * @returns {boolean}
    */
-  isUser(thing) {
-    return this.isPFObject(thing, 'User')
   }
   
   /**
@@ -322,6 +256,87 @@ export default class Parsimonious {
       && typeof thing.className === 'string'
       // Check if correct class if specified.
       && (typeof ofClass === 'string' ? this.getPFObjectClassName(thing) === ofClass : true)
+  }
+  
+  /**
+   * Return true if thing is an instance of Parse.User.
+   * @param {*} thing
+   * @returns {boolean}
+   */
+  isUser(thing) {
+    return this.isPFObject(thing, 'User')
+  }
+  
+  
+  /* CONVERSIONS / DATA MANIPULATION */
+  
+  /**
+   * Return a json representation of a Parse.Object,
+   * sub-class of Parse.Object (such as Parse.User),
+   * or plain object containing any or none of those, to json, optionally recursively.
+   * Does not mutate parameters.
+   *
+   * @param {*} thing Value to create json from.
+   * @param {boolean=} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
+   * @returns {*}
+   */
+  toJsn(thing, deep = false) {
+    let obj
+    if(this.isPFObject(thing)) {
+      obj = thing.toJSON()
+    } else if(isPlainObject(thing)) {
+      obj = Object.assign({}, thing)
+    } else {
+      obj = clone(thing)
+    }
+    if(deep && isPlainObject(obj)) {
+      // Make more plain-object-like, and prevent Parse.Cloud.run from converting back into Parse.Object in responses:
+      if(obj.objectId) {
+        obj.id = obj.objectId
+      }
+      obj = omit(obj, ['objectId', '__type', 'className', 'ACL'])
+      // Convert all other properties of plain object to json.
+      Object.keys(obj).forEach(k => {
+        obj[k] = this.toJsn(obj[k], deep)
+      })
+    }
+    return obj
+  }
+  
+  /**
+   * Get some columns from a Parse object and return them in a plain object.
+   * If keys is not an array or comma-separated string, return undefined.
+   * @param {Parse.Object} parseObj
+   * @param {(string | string[])} keys
+   * @returns {object}
+   */
+  objPick(parseObj, keys) {
+    if(typeof keys === 'string') {
+      keys = keys.split(',')
+    }
+    if(Array.isArray(keys)) {
+      return pick(this.toJsn(parseObj), keys)
+    }
+  }
+  
+  /**
+   * Set some columns on a Parse object. Mutates the Parse object.
+   * @param {Parse.Object} parseObj
+   * @param {object} dataObj
+   * @param {boolean=} doMerge If true, each column value is shallow-merged with existing value
+   */
+  objSetMulti(parseObj, dataObj, doMerge = false) {
+    if(this.isPFObject(parseObj) && isPlainObject(dataObj)) {
+      let key, oldVal, newVal
+      for(key in dataObj) {
+        oldVal = parseObj.get(key)
+        newVal = dataObj[key]
+        if(doMerge && isPlainObject(oldVal) && isPlainObject(newVal)) {
+          newVal = merge(oldVal, newVal)
+        }
+        parseObj.set(key, newVal)
+      }
+    }
   }
   
   /**
