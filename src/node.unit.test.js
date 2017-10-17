@@ -592,21 +592,28 @@ describe('parsimonious methods', () => {
       expect(parsm.getPFObjectClassName([1,2,3])).not.toBeDefined()
     })
   })
-  
   describe('isUser', () => {
-    test('determines if a variable is a Parse.User', () => {
-      expect.assertions(1)
-      const user = new Parse.User({
-        username:'chuck biff',
-        password:'823980jdlksjd9',
-        email:'chuck@wow.com'
-      })
-      return user.signUp()
-        .then(aUser => {
-          expect(parsm.isUser(aUser)).toBe(true)
-        })
+    const user = new Parse.User()
+    test('determines if an object created with new Parse.User(...) -- but not yet saved -- is an instance of Parse.User', () => {
+      expect(parsm.isUser(user)).toBe(true)
     })
-    test('determines if a variable is a not a Parse.User', () => {
+    test('determines if the same object with some attributes set is an instance of Parse.User', () => {
+      parsm.objSetMulti(user,
+        {
+          username:'chuck biff',
+          password:'823980jdlksjd9',
+          email:'chuck@wow.com'
+        }
+      )
+      expect(parsm.isUser(user)).toBe(true)
+    })
+    test('determines if an object created with new Parse.User(...) -- and then saved -- is an instance of Parse.User', () => {
+      return expect(user.signUp().then(parsm.isUser)).resolves.toBe(true)
+    })
+    test('determines if a pointer to a User is a not an instance of Parse.User', () => {
+      expect(parsm.isUser(user.toPointer())).toBe(false)
+    })
+    test('determines if a object is a not an instance of Parse.User', () => {
       expect(parsm.isUser(aParseObj)).toBe(false)
     })
   })
