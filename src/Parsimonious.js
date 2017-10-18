@@ -122,6 +122,9 @@ export default class Parsimonious {
    * @return {Parse.Promise}
    */
   userHasRole(user, roles, opts) {
+    if(!this.isUser(user)) {
+      throw 'no user'
+    }
     const roleQuery = this.newQuery(this.Parse.Role)
       .equalTo('users', user)
     if(typeof roles === 'string') {
@@ -132,6 +135,8 @@ export default class Parsimonious {
       roleQuery.containedIn('name', roles.names)
       return roleQuery.count(opts)
         .then(result => roles.op === 'and' ? result === roles.names.length : result > 0)
+    } else {
+      throw 'invalid roles'
     }
   }
   
