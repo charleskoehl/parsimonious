@@ -352,9 +352,18 @@ describe('parsimonious methods', () => {
     
   })
   
-  describe('getClassInst', () => {
+  describe('getClass', () => {
     test('returns a subclass of Parse.Object', () => {
+      const cls = parsm.getClass('Colors')
+      expect(typeof cls).toBe('function')
+      expect(cls.className === 'Colors').toBe(true)
+    })
+  })
+  
+  describe('getClassInst', () => {
+    test('returns an instance of a subclass of Parse.Object', () => {
       const inst = parsm.getClassInst('Colors')
+      expect(typeof inst).toBe('object')
       expect(inst.className === 'Colors').toBe(true)
     })
     test('returns a subclass of Parse.Object with some attributes set', () => {
@@ -366,6 +375,7 @@ describe('parsimonious methods', () => {
           color:'white'
         }
       })
+      expect(typeof inst).toBe('object')
       expect(inst.className === 'Birds').toBe(true)
       expect(inst.get('raven').color).toBe('black')
       expect(inst.get('dove').color).toBe('white')
