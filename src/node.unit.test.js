@@ -124,6 +124,41 @@ describe('parsimonious methods', () => {
     })
   })
   
+  describe('objGetDeep', () => {
+    test('Get an an object-type column from a Parse object and return the value of a nested key within it', () => {
+      const someObj = parsm.getClassInst('Company', {
+        depts: {
+          accounting: {
+            employees: [
+              {
+                name: 'fred',
+                height: 6.1
+              }, {
+                name: 'dan',
+                height: 5.6
+              }
+            ]
+          },
+          marketing: {
+            employees: [
+              {
+                name: 'joe',
+                height: 6.1
+              }, {
+                name: 'jane',
+                height: 5.6
+              }
+            ]
+          }
+        }
+      })
+      expect(someObj.get('depts')).toBeDefined()
+      expect(someObj.get('depts').accounting.employees[0].name).toBe('fred')
+      expect(parsm.objGetDeep(someObj, 'depts.accounting.employees[0].name')).toBe('fred')
+      expect(parsm.objGetDeep(someObj, 'depts.accounting.employees')).toHaveLength(2)
+    })
+  })
+  
   describe('objSetMulti', () => {
     test('sets some columns on a Parse object from a plain object', () => {
       parsm.objSetMulti(aParseObj, {
