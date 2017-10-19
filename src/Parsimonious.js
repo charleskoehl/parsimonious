@@ -3,6 +3,7 @@
 import autoBind from 'auto-bind'
 import merge from 'lodash/merge'
 import pick from 'lodash/pick'
+import get from 'lodash/get'
 import omit from 'lodash/omit'
 import isInteger from 'lodash/isInteger'
 import isEqual from 'lodash/isEqual'
@@ -342,6 +343,23 @@ export default class Parsimonious {
     }
     if(Array.isArray(keys)) {
       return pick(this.toJsn(parseObj), keys)
+    }
+  }
+  
+  /**
+   * Get an an object-type column from a Parse object and return the value of a nested key within it.
+   * @param {Parse.Object} parseObj
+   * @param {string} columnAndPath Dot-notation path whose first segment is the column name.
+   * @returns {*}
+   */
+  objGetDeep(parseObj, columnAndPath) {
+    if(typeof columnAndPath === 'string') {
+      const
+        [column, path] = columnAndPath.split(/\.(.+)/),
+        columnVal = parseObj.get(column)
+      if(isPlainObject(columnVal)) {
+        return get(columnVal, path)
+      }
     }
   }
   
