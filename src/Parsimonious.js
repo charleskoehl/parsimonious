@@ -141,6 +141,15 @@ export default class Parsimonious {
   }
   
   /**
+   * Short-hand for this.Parse.Object.extend(className)
+   * @param className
+   * @returns subclass of Parse.Object
+   */
+  getClass(className) {
+    return this.Parse.Object.extend(className)
+  }
+  
+  /**
    * Return instance of Parse.Object class.
    * @param {string} className
    * @param {object=} attributes Properties to set on new object.
@@ -148,7 +157,7 @@ export default class Parsimonious {
    * @returns {Parse.Object}
    */
   getClassInst(className, attributes, options) {
-    const Cls = this.Parse.Object.extend(className)
+    const Cls = this.getClass(className)
     return new Cls(attributes, options)
   }
   
