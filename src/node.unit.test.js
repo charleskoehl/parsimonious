@@ -4,42 +4,35 @@ import Parse from 'parse/node'
 import ParseMockDB from 'parse-mockdb'
 import parsm from './node'
 
-
 Parse.initialize('test')
 
-const bouquets = []
-let savedBouquets,
-  TheParseObj = Parse.Object.extend('TheParseObj'),
-  aParseObj = new TheParseObj(),
-  savedParseObj
-aParseObj.set('roses', 'red')
-aParseObj.set('violets', 'blue')
-aParseObj.set('grass', 'green')
-
-beforeAll(() => {
-  ParseMockDB.mockDB() // Mock the Parse RESTController
-  for(let i = 0; i < 10; i++) {
-    bouquets.push(parsm.getClassInst('Bouquet', {active:false}))
-  }
-  savedParseObj = new TheParseObj({
-    garden:'planted'
-  })
-  return Parse.Object.saveAll(bouquets)
-    .then(objs => {
-      savedBouquets = objs
-    })
-    .then( () => {
-      savedParseObj.save()
-    })
-})
-
-afterAll(() => {
-  ParseMockDB.cleanUp(); // Clear the Database
-  ParseMockDB.unMockDB(); // Un-mock the Parse RESTController
-})
-
-
 describe('parsimonious methods', () => {
+  
+  let savedBouquets,
+    TheParseObj = Parse.Object.extend('TheParseObj'),
+    unsavedParseObj = new TheParseObj(),
+    savedParseObj
+  
+  beforeAll(() => {
+    unsavedParseObj.set('roses', 'red')
+    unsavedParseObj.set('violets', 'blue')
+    unsavedParseObj.set('grass', 'green')
+    ParseMockDB.mockDB() // Mock the Parse RESTController
+    return Parse.Object.saveAll(Array(10).fill(parsm.getClassInst('Bouquet', {active:false})))
+      .then(objs => {
+        savedBouquets = objs
+        return new TheParseObj()
+          .save({car:'fast'})
+          .then(obj => {
+            savedParseObj = obj
+          })
+      })
+  })
+  
+  afterAll(() => {
+    ParseMockDB.cleanUp(); // Clear the Database
+    ParseMockDB.unMockDB(); // Un-mock the Parse RESTController
+  })
   
   describe('toJsn', () => {
     test('returns the passed value when it is not a Parse object or a plain, non-null object', () => {
@@ -52,7 +45,7 @@ describe('parsimonious methods', () => {
       expect(parsm.toJsn('abc')).toEqual('abc')
     })
     test('returns a shallow JSON representation of a Parse object', () => {
-      expect(parsm.toJsn(aParseObj)).toBeEquivalentObject({
+      expect(parsm.toJsn(unsavedParseObj)).toBeEquivalentObject({
         roses: 'red',
         violets: 'blue',
         grass: 'green'
@@ -83,7 +76,7 @@ describe('parsimonious methods', () => {
         foo: 'bar',
         domo: 'arigato',
         things: ['cow', 'pencil'],
-        aParseObj
+        aParseObj: unsavedParseObj
       }
       expect(parsm.toJsn(someObj, true)).toEqual({
         foo: 'bar',
@@ -97,12 +90,12 @@ describe('parsimonious methods', () => {
       })
     })
     test('returns deep JSON representation of a plain object containing a Parse object that has an objectId key', () => {
-      aParseObj.set('objectId', 'iei38s')
+      unsavedParseObj.set('objectId', 'iei38s')
       const someObj = {
         foo: 'bar',
         domo: 'arigato',
         things: ['cow', 'pencil'],
-        aParseObj
+        aParseObj: unsavedParseObj
       }
       expect(parsm.toJsn(someObj, true)).toBeEquivalentObject({
         foo: 'bar',
@@ -120,11 +113,11 @@ describe('parsimonious methods', () => {
   
   describe('objPick', () => {
     test('gets some columns from a Parse object and returns them in a plain object', () => {
-      expect(parsm.objPick(aParseObj, 'roses,grass')).toEqual({
+      expect(parsm.objPick(unsavedParseObj, 'roses,grass')).toEqual({
         roses: 'red',
         grass: 'green'
       })
-      expect(parsm.objPick(aParseObj, ['roses', 'grass'])).toEqual({
+      expect(parsm.objPick(unsavedParseObj, ['roses', 'grass'])).toEqual({
         roses: 'red',
         grass: 'green'
       })
@@ -168,42 +161,42 @@ describe('parsimonious methods', () => {
   
   describe('objSetMulti', () => {
     test('sets some columns on a Parse object from a plain object', () => {
-      parsm.objSetMulti(aParseObj, {
+      parsm.objSetMulti(unsavedParseObj, {
         valley: 'big',
         river: 'deep'
       })
-      expect(aParseObj.get('river')).toBe('deep')
+      expect(unsavedParseObj.get('river')).toBe('deep')
     })
     test('sets some columns on a Parse object from a plain object, not merging sub-objects', () => {
-      aParseObj.set('ocean', {
+      unsavedParseObj.set('ocean', {
         size:'large',
         color:'blue',
         denizens:'fish'
       })
-      parsm.objSetMulti(aParseObj, {
+      parsm.objSetMulti(unsavedParseObj, {
         ocean: {
           size:'medium',
           color:'green'
         }
       })
-      expect(aParseObj.get('ocean')).toBeEquivalentObject({
+      expect(unsavedParseObj.get('ocean')).toBeEquivalentObject({
         size:'medium',
         color:'green'
       })
     })
     test('sets some columns on a Parse object from a plain object, merging sub-objects', () => {
-      aParseObj.set('ocean', {
+      unsavedParseObj.set('ocean', {
         size:'large',
         color:'blue',
         denizens:'fish'
       })
-      parsm.objSetMulti(aParseObj, {
+      parsm.objSetMulti(unsavedParseObj, {
         ocean: {
           size:'medium',
           color:'green'
         }
       }, true)
-      expect(aParseObj.get('ocean')).toBeEquivalentObject({
+      expect(unsavedParseObj.get('ocean')).toBeEquivalentObject({
         size:'medium',
         color:'green',
         denizens:'fish'
@@ -580,13 +573,13 @@ describe('parsimonious methods', () => {
   
   describe('isPFObject', () => {
     test('checks a valid Parse.Object', () => {
-      expect(parsm.isPFObject(aParseObj)).toBe(true)
+      expect(parsm.isPFObject(unsavedParseObj)).toBe(true)
     })
     test('checks Parse.Object of a certain class', () => {
-      expect(parsm.isPFObject(aParseObj, 'TheParseObj')).toBe(true)
+      expect(parsm.isPFObject(unsavedParseObj, 'TheParseObj')).toBe(true)
     })
     test('ignores invalid "ofClass" parameter', () => {
-      expect(parsm.isPFObject(aParseObj, 3)).toBe(true)
+      expect(parsm.isPFObject(unsavedParseObj, 3)).toBe(true)
     })
     test('checks a special sub-class of Parse.Object, like "User"', () => {
       expect.assertions(1)
@@ -638,7 +631,7 @@ describe('parsimonious methods', () => {
       email:'foo@bar.com'
     })
     test('returns valid class-name of a subclass of Parse.Object without leading underscore', () => {
-      expect(parsm.getPFObjectClassName(aParseObj)).toBe('TheParseObj')
+      expect(parsm.getPFObjectClassName(unsavedParseObj)).toBe('TheParseObj')
       expect(parsm.getPFObjectClassName('User')).toBe('User')
       expect(parsm.getPFObjectClassName('_User')).toBe('User')
       expect(parsm.getPFObjectClassName(user)).toBe('User')
@@ -670,7 +663,7 @@ describe('parsimonious methods', () => {
       expect(parsm.isUser(user.toPointer())).toBe(false)
     })
     test('determines if a object is a not an instance of Parse.User', () => {
-      expect(parsm.isUser(aParseObj)).toBe(false)
+      expect(parsm.isUser(unsavedParseObj)).toBe(false)
     })
   })
   
