@@ -143,7 +143,7 @@ export default class Parsimonious {
   
   /**
    * Short-hand for this.Parse.Object.extend(className)
-   * @param className
+   * @param {string} className
    * @returns subclass of Parse.Object
    */
   getClass(className) {
