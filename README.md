@@ -22,8 +22,8 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [.joinWithTable(classes, [metadata], [opts])](#module_Parsimonious+joinWithTable) ⇒ <code>Parse.Promise</code>
     * [.unJoinWithTable(classes, [opts])](#module_Parsimonious+unJoinWithTable) ⇒ <code>Parse.Promise</code>
     * [.getJoinQuery(classes, [opts])](#module_Parsimonious+getJoinQuery) ⇒ <code>Parse.Query</code>
-    * [.isPointer(thing)](#module_Parsimonious+isPointer) ⇒ <code>boolean</code>
     * [.isPFObject(thing, [ofClass])](#module_Parsimonious+isPFObject) ⇒ <code>boolean</code>
+    * [.isPointer(thing)](#module_Parsimonious+isPointer) ⇒ <code>boolean</code>
     * [.isUser(thing)](#module_Parsimonious+isUser) ⇒ <code>boolean</code>
     * [.toJsn(thing, [deep])](#module_Parsimonious+toJsn) ⇒ <code>\*</code>
     * [.objPick(parseObj, keys)](#module_Parsimonious+objPick) ⇒ <code>object</code>
@@ -201,6 +201,18 @@ Join table must have pointer columns named like class names except first letter 
 | classes | <code>object</code> | must contain two keys corresponding to existing classes, with each key's value being either a valid parse object or null |
 | [opts] | <code>object</code> | Query restrictions (see Parsimonious.newQuery) |
 
+<a name="module_Parsimonious+isPFObject"></a>
+
+### parsimonious.isPFObject(thing, [ofClass]) ⇒ <code>boolean</code>
+Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User or Parse.CustomClass)
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
+
+| Param | Type |
+| --- | --- |
+| thing | <code>\*</code> | 
+| [ofClass] | <code>string</code> | 
+
 <a name="module_Parsimonious+isPointer"></a>
 
 ### parsimonious.isPointer(thing) ⇒ <code>boolean</code>
@@ -211,18 +223,6 @@ Return true of thing is a valid pointer to a Parse.Object, regardless of whether
 | Param |
 | --- |
 | thing | 
-
-<a name="module_Parsimonious+isPFObject"></a>
-
-### parsimonious.isPFObject(thing, [ofClass]) ⇒ <code>boolean</code>
-Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User)
-
-**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
-
-| Param | Type |
-| --- | --- |
-| thing | <code>\*</code> | 
-| [ofClass] | <code>string</code> | 
 
 <a name="module_Parsimonious+isUser"></a>
 

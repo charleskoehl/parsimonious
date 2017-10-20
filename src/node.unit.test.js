@@ -7,17 +7,29 @@ import parsm from './node'
 
 Parse.initialize('test')
 
-var savedBouquets
+const bouquets = []
+let savedBouquets,
+  TheParseObj = Parse.Object.extend('TheParseObj'),
+  aParseObj = new TheParseObj(),
+  savedParseObj
+aParseObj.set('roses', 'red')
+aParseObj.set('violets', 'blue')
+aParseObj.set('grass', 'green')
 
 beforeAll(() => {
   ParseMockDB.mockDB() // Mock the Parse RESTController
-  const bouquets = []
   for(let i = 0; i < 10; i++) {
     bouquets.push(parsm.getClassInst('Bouquet', {active:false}))
   }
+  savedParseObj = new TheParseObj({
+    garden:'planted'
+  })
   return Parse.Object.saveAll(bouquets)
     .then(objs => {
       savedBouquets = objs
+    })
+    .then( () => {
+      savedParseObj.save()
     })
 })
 
@@ -26,11 +38,6 @@ afterAll(() => {
   ParseMockDB.unMockDB(); // Un-mock the Parse RESTController
 })
 
-const TheParseObj = Parse.Object.extend('TheParseObj')
-const aParseObj = new TheParseObj()
-aParseObj.set('roses', 'red')
-aParseObj.set('violets', 'blue')
-aParseObj.set('grass', 'green')
 
 describe('parsimonious methods', () => {
   
@@ -78,7 +85,7 @@ describe('parsimonious methods', () => {
         things: ['cow', 'pencil'],
         aParseObj
       }
-      expect(parsm.toJsn(someObj, true)).toBeEquivalentObject({
+      expect(parsm.toJsn(someObj, true)).toEqual({
         foo: 'bar',
         domo: 'arigato',
         things: ['cow', 'pencil'],
@@ -571,25 +578,7 @@ describe('parsimonious methods', () => {
     
   })
   
-  describe('isPointer', () => {
-    test('should return false for scalars', () => {
-      expect(parsm.isPointer('Schnauser')).toBe(false)
-      expect(parsm.isPointer(1)).toBe(false)
-    })
-    test('should return false for non-qualifying objects', () => {
-      expect(parsm.isPointer(null)).toBe(false)
-      expect(parsm.isPointer({className:'HairBall', objectId:'kjasoiuwne'})).toBe(false)
-      expect(parsm.isPointer({__type:'Pointer',className:'HairBall'})).toBe(false)
-    })
-    test('should return true for qualifying objects', () => {
-      expect(parsm.isPointer({__type:'Pointer', className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
-      expect(parsm.isPointer({objectId:'kjasoiuwne'})).toBe(true)
-      expect(parsm.isPointer(savedBouquets[0].toPointer())).toBe(true)
-      expect(parsm.isPointer(TheParseObj.createWithoutData('ihsd978h293'))).toBe(true)
-    })
-  })
-  
-  describe('isPFObject', () => {
+  /*describe('isPFObject', () => {
     test('checks a valid Parse.Object', () => {
       expect(parsm.isPFObject(aParseObj)).toBe(true)
     })
@@ -619,6 +608,23 @@ describe('parsimonious methods', () => {
     })
     test('returns true for Parse.Object subclass reference created with Parse.Object.createWithoutData', () => {
       expect(parsm.isPFObject(TheParseObj.createWithoutData('ihsd978h293'))).toBe(true)
+    })
+  })*/
+  
+  describe('isPointer', () => {
+    test('should return false for scalars', () => {
+      expect(parsm.isPointer('Schnauser')).toBe(false)
+      expect(parsm.isPointer(1)).toBe(false)
+    })
+    test('should return false for non-qualifying objects', () => {
+      expect(parsm.isPointer(null)).toBe(false)
+      expect(parsm.isPointer(savedParseObj)).toBe(false)
+      expect(parsm.isPointer({__type:'Pointer',className:'HairBall'})).toBe(false)
+      expect(parsm.isPointer(TheParseObj.createWithoutData('ihsd978h293'))).toBe(false)
+    })
+    test('should return true for qualifying objects', () => {
+      expect(parsm.isPointer(savedParseObj.toPointer())).toBe(true)
+      expect(parsm.isPointer({className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
     })
   })
   

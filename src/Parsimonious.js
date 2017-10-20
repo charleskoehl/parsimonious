@@ -6,7 +6,6 @@ import pick from 'lodash/pick'
 import get from 'lodash/get'
 import omit from 'lodash/omit'
 import isInteger from 'lodash/isInteger'
-import isEqual from 'lodash/isEqual'
 import isPlainObject from 'lodash/isPlainObject'
 import clone from 'lodash/clone'
 import lowerFirst from 'lodash/lowerFirst'
@@ -244,46 +243,32 @@ export default class Parsimonious {
   
   
   /**
-   * Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
-   * @param thing
-   * @returns {boolean}
-   */
-  isPointer(thing) {
-    if(typeof thing === 'object' && thing !== null) {
-      const keys = Object.keys(thing)
-      return (
-        (
-          isEqual(keys, ['__type', 'className', 'objectId'])
-          && thing.__type === 'Pointer'
-          && typeof thing.objectId === 'string'
-          && typeof thing.className === 'string'
-        )
-        || (
-          isEqual(keys, ['className', '_objCount', 'id'])
-          && typeof thing.className === 'string'
-          && typeof thing.id === 'string'
-        ) || (
-          isEqual(keys, ['objectId'])
-          && typeof thing.objectId === 'string'
-        )
-      )
-    }
-    return false
-  }
-  
-  /**
-   * Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User)
+   * Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User or Parse.CustomClass)
    * @param {*} thing
    * @param {string=} ofClass
    * @returns {boolean}
    */
   isPFObject(thing, ofClass) {
-    return thing !== null
-      && typeof thing === 'object'
-      && typeof thing._objCount === 'number'
-      && typeof thing.className === 'string'
+    return thing instanceof this.Parse.Object
       // Check if correct class if specified.
       && (typeof ofClass === 'string' ? this.getPFObjectClassName(thing) === ofClass : true)
+  }
+  
+  /**
+   * Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
+   * @param thing
+   * @returns {boolean}
+   */
+  isPointer(thing) {
+    return (
+      (this.isPFObject(thing) && thing.__type === 'Pointer')
+      ||
+      (
+        isPlainObject(thing)
+        && typeof thing.className === 'string'
+        && (typeof thing.id === 'string' || typeof thing.objectId === 'string')
+      )
+    )
   }
   
   /**
@@ -294,7 +279,6 @@ export default class Parsimonious {
   isUser(thing) {
     return this.isPFObject(thing, 'User')
   }
-  
   
   /* CONVERSIONS / DATA MANIPULATION */
   
@@ -310,7 +294,7 @@ export default class Parsimonious {
    */
   toJsn(thing, deep = false) {
     let obj
-    if(this.isPFObject(thing)) {
+    if(thing instanceof this.Parse.Object) {
       obj = thing.toJSON()
     } else if(isPlainObject(thing)) {
       obj = Object.assign({}, thing)
