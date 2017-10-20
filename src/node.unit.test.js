@@ -6,27 +6,29 @@ import parsm from './node'
 
 Parse.initialize('test')
 
+let savedBouquets,
+  TheParseObj = Parse.Object.extend('TheParseObj'),
+  unsavedParseObj = new TheParseObj(),
+  savedParseObj
+
 describe('parsimonious methods', () => {
   
-  let savedBouquets,
-    TheParseObj = Parse.Object.extend('TheParseObj'),
-    unsavedParseObj = new TheParseObj(),
-    savedParseObj
-  
-  beforeAll(() => {
+  beforeAll( () => {
     unsavedParseObj.set('roses', 'red')
     unsavedParseObj.set('violets', 'blue')
     unsavedParseObj.set('grass', 'green')
     ParseMockDB.mockDB() // Mock the Parse RESTController
-    return Parse.Object.saveAll(Array(10).fill(parsm.getClassInst('Bouquet', {active:false})))
+    return Parse.Object.saveAll(Array(10).fill(parsm.getClassInst('Bouquet', {active:false}))
       .then(objs => {
         savedBouquets = objs
-        return new TheParseObj()
-          .save({car:'fast'})
-          .then(obj => {
-            savedParseObj = obj
-          })
+        return objs
       })
+      .then( () => new TheParseObj().save({car:'fast'}) )
+      .then( obj => {
+        savedParseObj = obj
+        return obj
+      })
+    )
   })
   
   afterAll(() => {
@@ -215,6 +217,7 @@ describe('parsimonious methods', () => {
           expect(objs[9].id).toBe((parseInt(objs[0].id)+9).toString())
         })
     })
+    
     test('returns a query limited to first n instances of a Parse class', () => {
       expect.assertions(4)
       return parsm.newQuery('Bouquet', {limit:5}).find()
@@ -236,6 +239,7 @@ describe('parsimonious methods', () => {
           expect(objs[4].id).toBe(savedBouquets[9].id)
         })
       })
+    
   })
   
   describe('getObjById', () => {
