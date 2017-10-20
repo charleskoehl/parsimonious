@@ -39,8 +39,9 @@ export default class Parsimonious {
    * @returns {Parse.Query}
    */
   newQuery(aClass, opts = {}) {
-    const q = new this.Parse.Query(aClass)
-    const {skip, limit, select} = opts
+    const
+      q = new this.Parse.Query(this.classStringOrSpecialClass(aClass)),
+      {skip, limit, select} = opts
     if(isPlainObject(opts)) {
       isInteger(skip) && skip > 0 && q.skip(skip)
       isInteger(limit) && limit > 0 && q.limit(limit)
@@ -391,6 +392,15 @@ export default class Parsimonious {
     if(typeof str === 'string') {
       return str.substring(0,1) === '_' && specialClasses.indexOf(str.substring(1)) !== -1 ? str.substring(1) : str
     }
+  }
+  
+  /**
+   * Returns the corresponding special Parse class if passed the name of one; otherwise, returns the value unchanged.
+   * @param {string} thing
+   * @returns {*}
+   */
+  classStringOrSpecialClass(thing) {
+    return specialClasses.indexOf(thing) !== -1 ? this.Parse[thing] : thing
   }
   
   /**
