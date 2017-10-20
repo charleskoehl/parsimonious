@@ -338,12 +338,7 @@ export default class Parsimonious {
    * @returns {object}
    */
   objPick(parseObj, keys) {
-    if(typeof keys === 'string') {
-      keys = keys.split(',')
-    }
-    if(Array.isArray(keys)) {
-      return pick(this.toJsn(parseObj), keys)
-    }
+    return pick(this.toJsn(parseObj), this._toArray(keys))
   }
   
   /**
@@ -396,6 +391,17 @@ export default class Parsimonious {
     if(typeof str === 'string') {
       return str.substring(0,1) === '_' && specialClasses.indexOf(str.substring(1)) !== -1 ? str.substring(1) : str
     }
+  }
+  
+  /**
+   * Return array from array or comma-separated string list.
+   * If passed a non-string, non-array value, returns it in an array.
+   * @param {array|string} thing
+   * @returns {any}
+   * @private
+   */
+  _toArray(thing) {
+    return Array.isArray(thing) ? thing : (typeof thing === 'string' ? thing.split(',') : [thing])
   }
   
 }
