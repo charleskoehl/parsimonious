@@ -72,7 +72,7 @@ export default class Parsimonious {
    * @returns {Parse.User}
    */
   getUserById(id, opts) {
-    return this.getObjById('User', id, opts)
+    return this.getObjById(this.Parse.User, id, opts)
   }
   
   /**
