@@ -30,6 +30,7 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [.objGetDeep(parseObj, columnAndPath)](#module_Parsimonious+objGetDeep) ⇒ <code>\*</code>
     * [.objSetMulti(parseObj, dataObj, [doMerge])](#module_Parsimonious+objSetMulti)
     * [.getPFObjectClassName(thing)](#module_Parsimonious+getPFObjectClassName) ⇒ <code>string</code>
+    * [.classStringOrSpecialClass(thing)](#module_Parsimonious+classStringOrSpecialClass) ⇒ <code>\*</code>
 
 <a name="module_Parsimonious+newQuery"></a>
 
@@ -122,9 +123,9 @@ Short-hand for this.Parse.Object.extend(className)
 **Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
 **Returns**: subclass of Parse.Object  
 
-| Param |
-| --- |
-| className | 
+| Param | Type |
+| --- | --- |
+| className | <code>string</code> | 
 
 <a name="module_Parsimonious+getClassInst"></a>
 
@@ -299,6 +300,17 @@ Returns undefined if anything else.
 | Param | Type |
 | --- | --- |
 | thing | <code>object</code> \| <code>string</code> | 
+
+<a name="module_Parsimonious+classStringOrSpecialClass"></a>
+
+### parsimonious.classStringOrSpecialClass(thing) ⇒ <code>\*</code>
+Returns the corresponding special Parse class if passed the name of one; otherwise, returns the value unchanged.
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
+
+| Param | Type |
+| --- | --- |
+| thing | <code>string</code> | 
 
 
 <a name="changelog"></a>
