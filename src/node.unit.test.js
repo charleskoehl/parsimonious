@@ -578,7 +578,7 @@ describe('parsimonious methods', () => {
     
   })
   
-  /*describe('isPFObject', () => {
+  describe('isPFObject', () => {
     test('checks a valid Parse.Object', () => {
       expect(parsm.isPFObject(aParseObj)).toBe(true)
     })
@@ -609,7 +609,7 @@ describe('parsimonious methods', () => {
     test('returns true for Parse.Object subclass reference created with Parse.Object.createWithoutData', () => {
       expect(parsm.isPFObject(TheParseObj.createWithoutData('ihsd978h293'))).toBe(true)
     })
-  })*/
+  })
   
   describe('isPointer', () => {
     test('should return false for scalars', () => {
@@ -619,12 +619,15 @@ describe('parsimonious methods', () => {
     test('should return false for non-qualifying objects', () => {
       expect(parsm.isPointer(null)).toBe(false)
       expect(parsm.isPointer(savedParseObj)).toBe(false)
+      expect(parsm.isPointer(parsm.toJsn(savedParseObj))).toBe(false)
       expect(parsm.isPointer({__type:'Pointer',className:'HairBall'})).toBe(false)
       expect(parsm.isPointer(TheParseObj.createWithoutData('ihsd978h293'))).toBe(false)
     })
     test('should return true for qualifying objects', () => {
       expect(parsm.isPointer(savedParseObj.toPointer())).toBe(true)
       expect(parsm.isPointer({className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
+      expect(parsm.isPointer(parsm.toJsn(savedParseObj.toPointer()))).toBe(true)
+      expect(parsm.isPointer(parsm.toJsn(savedParseObj.toPointer()))).toBe(true)
     })
   })
   
