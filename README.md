@@ -16,6 +16,7 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [.fetchIfNeeded(thing, [opts])](#module_Parsimonious+fetchIfNeeded) ⇒ <code>Parse.Promise</code>
     * [.getUserRoles(user, [opts])](#module_Parsimonious+getUserRoles) ⇒ <code>Parse.Promise</code>
     * [.userHasRole(user, roles, [opts])](#module_Parsimonious+userHasRole) ⇒ <code>Parse.Promise</code>
+    * [.getClass(className)](#module_Parsimonious+getClass) ⇒
     * [.getClassInst(className, [attributes], [options])](#module_Parsimonious+getClassInst) ⇒ <code>Parse.Object</code>
     * [.getJoinTableName(from, to)](#module_Parsimonious+getJoinTableName) ⇒ <code>string</code>
     * [.joinWithTable(classes, [metadata], [opts])](#module_Parsimonious+joinWithTable) ⇒ <code>Parse.Promise</code>
@@ -26,6 +27,7 @@ Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
     * [.isUser(thing)](#module_Parsimonious+isUser) ⇒ <code>boolean</code>
     * [.toJsn(thing, [deep])](#module_Parsimonious+toJsn) ⇒ <code>\*</code>
     * [.objPick(parseObj, keys)](#module_Parsimonious+objPick) ⇒ <code>object</code>
+    * [.objGetDeep(parseObj, columnAndPath)](#module_Parsimonious+objGetDeep) ⇒ <code>\*</code>
     * [.objSetMulti(parseObj, dataObj, [doMerge])](#module_Parsimonious+objSetMulti)
     * [.getPFObjectClassName(thing)](#module_Parsimonious+getPFObjectClassName) ⇒ <code>string</code>
 
@@ -109,8 +111,20 @@ Check if a user has a role, or any or all of multiple roles, return a promise re
 | Param | Type | Description |
 | --- | --- | --- |
 | user | <code>Parse.User</code> |  |
-| roles | <code>string</code> \| <code>object</code> | Can be single role name string, or object containing array of role names and 'op' key of value 'and' or 'or' |
+| roles | <code>string</code> \| <code>object</code> | Can be single role name string, or object containing 'names' key whose value is an array of role names and 'op' key with value 'and' or 'or' |
 | [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
+
+<a name="module_Parsimonious+getClass"></a>
+
+### parsimonious.getClass(className) ⇒
+Short-hand for this.Parse.Object.extend(className)
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
+**Returns**: subclass of Parse.Object  
+
+| Param |
+| --- |
+| className | 
 
 <a name="module_Parsimonious+getClassInst"></a>
 
@@ -247,6 +261,18 @@ If keys is not an array or comma-separated string, return undefined.
 | --- | --- |
 | parseObj | <code>Parse.Object</code> | 
 | keys | <code>string</code> \| <code>Array.&lt;string&gt;</code> | 
+
+<a name="module_Parsimonious+objGetDeep"></a>
+
+### parsimonious.objGetDeep(parseObj, columnAndPath) ⇒ <code>\*</code>
+Get an an object-type column from a Parse object and return the value of a nested key within it.
+
+**Kind**: instance method of [<code>Parsimonious</code>](#module_Parsimonious)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| parseObj | <code>Parse.Object</code> |  |
+| columnAndPath | <code>string</code> | Dot-notation path whose first segment is the column name. |
 
 <a name="module_Parsimonious+objSetMulti"></a>
 
