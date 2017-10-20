@@ -638,6 +638,7 @@ describe('parsimonious methods', () => {
       expect(parsm.getPFObjectClassName([1,2,3])).not.toBeDefined()
     })
   })
+  
   describe('isUser', () => {
     const user = new Parse.User()
     test('determines if an object created with new Parse.User(...) -- but not yet saved -- is an instance of Parse.User', () => {
@@ -661,6 +662,21 @@ describe('parsimonious methods', () => {
     })
     test('determines if a object is a not an instance of Parse.User', () => {
       expect(parsm.isUser(aParseObj)).toBe(false)
+    })
+  })
+  
+  describe('classStringOrSpecialClass', () => {
+    test('converts the unchanged string if not a special Parse class', () => {
+      expect(parsm.classStringOrSpecialClass('Horse')).toBe('Horse')
+    })
+    test('converts "User" to Parse.User', () => {
+      expect(parsm.classStringOrSpecialClass('User')).toBe(Parse.User)
+    })
+    test('converts "Session" to Parse.Session', () => {
+      expect(parsm.classStringOrSpecialClass('Session')).toBe(Parse.Session)
+    })
+    test('converts "Role" to Parse.Role', () => {
+      expect(parsm.classStringOrSpecialClass('Role')).toBe(Parse.Role)
     })
   })
   
