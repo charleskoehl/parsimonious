@@ -4,37 +4,37 @@ import Parse from 'parse/node'
 import ParseMockDB from 'parse-mockdb'
 import parsm from './node'
 
+
 Parse.initialize('test')
 
-let savedBouquets,
-  TheParseObj = Parse.Object.extend('TheParseObj'),
-  unsavedParseObj = new TheParseObj(),
-  savedParseObj
+beforeAll( () => {
+  ParseMockDB.mockDB() // Mock the Parse RESTController
+  let savedBouquets,
+    TheParseObj = Parse.Object.extend('TheParseObj'),
+    unsavedParseObj = new TheParseObj(),
+    savedParseObj
+  return unsavedParseObj.save({
+    roses:'red',
+    violets:'blue',
+    grass:'green'
+  })
+    .then(obj => {
+      savedParseObj = obj
+      const bouquetSaves = Array(10).fill(parsm.getClassInst('Bouquet', {active:false}))
+      return Parse.Object.saveAll(bouquetSaves)
+        .then(objs => {
+          savedBouquets = objs
+          return objs
+        })
+    })
+})
+
+afterAll(() => {
+  ParseMockDB.cleanUp(); // Clear the Database
+  ParseMockDB.unMockDB(); // Un-mock the Parse RESTController
+})
 
 describe('parsimonious methods', () => {
-  
-  beforeAll( () => {
-    unsavedParseObj.set('roses', 'red')
-    unsavedParseObj.set('violets', 'blue')
-    unsavedParseObj.set('grass', 'green')
-    ParseMockDB.mockDB() // Mock the Parse RESTController
-    return Parse.Object.saveAll(Array(10).fill(parsm.getClassInst('Bouquet', {active:false}))
-      .then(objs => {
-        savedBouquets = objs
-        return objs
-      })
-      .then( () => new TheParseObj().save({car:'fast'}) )
-      .then( obj => {
-        savedParseObj = obj
-        return obj
-      })
-    )
-  })
-  
-  afterAll(() => {
-    ParseMockDB.cleanUp(); // Clear the Database
-    ParseMockDB.unMockDB(); // Un-mock the Parse RESTController
-  })
   
   describe('toJsn', () => {
     test('returns the passed value when it is not a Parse object or a plain, non-null object', () => {
@@ -46,6 +46,7 @@ describe('parsimonious methods', () => {
       expect(parsm.toJsn(2)).toEqual(2)
       expect(parsm.toJsn('abc')).toEqual('abc')
     })
+    
     test('returns a shallow JSON representation of a Parse object', () => {
       expect(parsm.toJsn(unsavedParseObj)).toBeEquivalentObject({
         roses: 'red',
@@ -111,6 +112,7 @@ describe('parsimonious methods', () => {
         }
       })
     })
+    
   })
   
   describe('objPick', () => {
