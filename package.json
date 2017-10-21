@@ -14,7 +14,9 @@
   "scripts": {
     "compile": "babel src -d lib",
     "prepublishOnly": "npm run compile; npm run docs; git add .; git commit -m 'prepublishOnly'; git push origin master;",
-    "test": "jest -c jest-config.json",
+    "test-mockdb": "babel ./src/mockdb.unit.test.js -d lib; mocha ./lib/mockdb.unit.test.js",
+    "test-mockdb-jest": "jest -c jest-config.json --debug --no-watchman src/mockdb.jest.unit.test.js",
+    "test": "VERBOSE=1 jest -c jest-config.json",
     "test-ci": "jest -c jest-config-ci.json",
     "docs": "jsdoc2md --template README.hbs --files ./src/Parsimonious.js --param-list-format table > README.md"
   },
@@ -43,6 +45,7 @@
     "jest": "^21.2.1",
     "jest-diff": "^21.2.1",
     "jsdoc-to-markdown": "^3.0.0",
-    "parse-mockdb": "^0.1.26"
+    "parse-mockdb": "^0.1.26",
+    "mocha": "^2.2.5"
   }
 }

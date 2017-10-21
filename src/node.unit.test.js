@@ -7,12 +7,13 @@ import parsm from './node'
 
 Parse.initialize('test')
 
+let savedBouquets,
+  TheParseObj = Parse.Object.extend('TheParseObj'),
+  unsavedParseObj = new TheParseObj(),
+  savedParseObj
+
 beforeAll( () => {
   ParseMockDB.mockDB() // Mock the Parse RESTController
-  let savedBouquets,
-    TheParseObj = Parse.Object.extend('TheParseObj'),
-    unsavedParseObj = new TheParseObj(),
-    savedParseObj
   return unsavedParseObj.save({
     roses:'red',
     violets:'blue',
@@ -46,7 +47,6 @@ describe('parsimonious methods', () => {
       expect(parsm.toJsn(2)).toEqual(2)
       expect(parsm.toJsn('abc')).toEqual('abc')
     })
-    
     test('returns a shallow JSON representation of a Parse object', () => {
       expect(parsm.toJsn(unsavedParseObj)).toBeEquivalentObject({
         roses: 'red',
