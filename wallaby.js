@@ -8,12 +8,7 @@ module.exports = function (wallaby) {
     tests: [
       'src/**/*.unit.test.js'
     ],
-    testFramework: 'jest',
-    setup: (w) => {
-      w.testFramework.configure({
-        setupTestFrameworkScriptFile: '<rootDir>/set-up-jest.js'
-      });
-    },
+    testFramework: 'mocha',
     compilers: {
       '**/*.js': wallaby.compilers.babel()
     },

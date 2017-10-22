@@ -14,9 +14,7 @@
   "scripts": {
     "compile": "babel src -d lib",
     "prepublishOnly": "npm run compile; npm run docs; git add .; git commit -m 'prepublishOnly'; git push origin master;",
-    "test-mockdb": "babel ./src/mockdb.unit.test.js -d lib; mocha ./lib/mockdb.unit.test.js",
-    "test-mockdb-jest": "jest -c jest-config.json --debug --no-watchman src/mockdb.jest.unit.test.js",
-    "test": "VERBOSE=1 jest -c jest-config.json",
+    "test": "mocha --compilers js:babel-core/register ./src/node.unit.test.js",
     "test-ci": "jest -c jest-config-ci.json",
     "docs": "jsdoc2md --template README.hbs --files ./src/Parsimonious.js --param-list-format table > README.md"
   },
@@ -39,13 +37,13 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
-    "babel-jest": "^21.2.0",
     "babel-preset-env": "^1.6.1",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "chai-shallow-deep-equal": "^1.4.6",
     "codecov": "^2.3.1",
-    "jest": "^21.2.1",
-    "jest-diff": "^21.2.1",
     "jsdoc-to-markdown": "^3.0.0",
-    "parse-mockdb": "^0.1.26",
-    "mocha": "^2.2.5"
+    "mocha": "^2.2.5",
+    "parse-mockdb": "^0.1.26"
   }
 }
