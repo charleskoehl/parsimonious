@@ -1,6 +1,7 @@
 'use strict'
 
 import Parsimonious from './Parsimonious'
-import Parse from 'parse/node'
+
+const parse = Parse || require('parse/node')
 
 export default Object.freeze(new Parsimonious(Parse))
