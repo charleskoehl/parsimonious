@@ -1,6 +1,5 @@
 'use strict'
 
-import autoBind from 'auto-bind'
 import merge from 'lodash/merge'
 import pick from 'lodash/pick'
 import get from 'lodash/get'
@@ -10,7 +9,9 @@ import isPlainObject from 'lodash/isPlainObject'
 import clone from 'lodash/clone'
 import lowerFirst from 'lodash/lowerFirst'
 
-const Parse = typeof Parse === 'object' ? Parse : require('parse-shim')
+const 
+  Parse = typeof Parse === 'object' ? Parse : require('parse-shim'),
+  rej = Parse.Promise.reject
 
 /**
  * Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
@@ -21,16 +22,6 @@ const specialClasses = ['User', 'Role', 'Session']
 
 export default class Parsimonious {
   
-  constructor() {
-    if(!Parsimonious.instance) {
-      autoBind(this)
-      Parsimonious.instance = this
-      this.rej = Parse.Promise.reject
-  
-    }
-    return Parsimonious.instance
-  }
-  
   /**
    * Return a new Parse.Query instance from a Parse Object class name.
    * @param {string|object} aClass class name or constructor
@@ -40,7 +31,7 @@ export default class Parsimonious {
    * @param {string[]} [opts.select] Parameter for Parse.Query.select. Restricts the fields of the returned Parse.Objects to include only the provided keys.
    * @returns {Parse.Query}
    */
-  newQuery(aClass, opts) {
+  static newQuery(aClass, opts) {
     const q = new Parse.Query(this.classStringOrSpecialClass(aClass))
     if(isPlainObject(opts)) {
       const {skip, limit, select} = opts
@@ -57,7 +48,7 @@ export default class Parsimonious {
    * @param {string} id
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    */
-  getObjById(aClass, id, opts) {
+  static getObjById(aClass, id, opts) {
     return this.newQuery(aClass).get(id, opts)
   }
   
@@ -67,7 +58,7 @@ export default class Parsimonious {
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Parse.User}
    */
-  getUserById(id, opts) {
+  static getUserById(id, opts) {
     return this.getObjById(Parse.User, id, opts)
   }
   
@@ -81,7 +72,7 @@ export default class Parsimonious {
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @return {Parse.Promise} Promise that fulfills with saved UserPrefs object.
    */
-  fetchIfNeeded(thing, opts) {
+  static fetchIfNeeded(thing, opts) {
     if(this.isPFObject(thing)) {
       return thing.dirty() ? thing.fetch(opts) : Parse.Promise.as(thing)
     } else if(this.isPointer(thing) && typeof thing.className === 'string') {
@@ -91,7 +82,7 @@ export default class Parsimonious {
     }
   }
   
-  getRole(name, opts) {
+  static getRole(name, opts) {
     return this.newQuery(Parse.Role)
       .equalTo('name', name)
       .first(opts)
@@ -104,7 +95,7 @@ export default class Parsimonious {
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @return {Parse.Promise}
    */
-  getUserRoles(user, opts) {
+  static getUserRoles(user, opts) {
     return this.newQuery(Parse.Role)
       .equalTo('users', user)
       .find(opts)
@@ -118,9 +109,9 @@ export default class Parsimonious {
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @return {Parse.Promise}
    */
-  userHasRole(user, roles, opts) {
+  static userHasRole(user, roles, opts) {
     if(!this.isUser(user)) {
-      return this.rej('invalid user')
+      return rej('invalid user')
     }
     const roleQuery = this.newQuery(Parse.Role)
       .equalTo('users', user)
@@ -133,7 +124,7 @@ export default class Parsimonious {
       return roleQuery.count(opts)
         .then(result => roles.op === 'and' ? result === roles.names.length : result > 0)
     } else {
-      return this.rej('invalid roles')
+      return rej('invalid roles')
     }
   }
   
@@ -142,7 +133,7 @@ export default class Parsimonious {
    * @param {string} className
    * @returns subclass of Parse.Object
    */
-  getClass(className) {
+  static getClass(className) {
     return Parse.Object.extend(className)
   }
   
@@ -153,7 +144,7 @@ export default class Parsimonious {
    * @param {object=} options Options to use when creating object.
    * @returns {Parse.Object}
    */
-  getClassInst(className, attributes, options) {
+  static getClassInst(className, attributes, options) {
     const Cls = this.getClass(className)
     return new Cls(attributes, options)
   }
@@ -164,7 +155,7 @@ export default class Parsimonious {
    * @param {string} to Second class name
    * @returns {string}
    */
-  getJoinTableName(from, to) {
+  static getJoinTableName(from, to) {
     return `${from}2${to}`
   }
   
@@ -180,7 +171,7 @@ export default class Parsimonious {
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Parse.Promise}
    */
-  joinWithTable(classes, metadata=null, opts) {
+  static joinWithTable(classes, metadata=null, opts) {
     const classNames = Object.keys(classes)
     const classInstances = [classes[classNames[0]], classes[classNames[1]]]
     const joinTableName = this.getJoinTableName(classNames[0], classNames[1])
@@ -205,7 +196,7 @@ export default class Parsimonious {
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Parse.Promise}
    */
-  unJoinWithTable(classes, opts) {
+  static unJoinWithTable(classes, opts) {
     return this.getJoinQuery(classes, opts)
       .first()
       .then(joinObj => {
@@ -225,7 +216,7 @@ export default class Parsimonious {
    * @param {object=} opts Query restrictions (see Parsimonious.newQuery)
    * @returns {Parse.Query}
    */
-  getJoinQuery(classes, opts) {
+  static getJoinQuery(classes, opts) {
     const classNames = Object.keys(classes)
     const classInstances = [classes[classNames[0]], classes[classNames[1]]]
     const query = this.newQuery(this.getJoinTableName(classNames[0], classNames[1]), opts)
@@ -244,7 +235,7 @@ export default class Parsimonious {
    * @param {string=} ofClass
    * @returns {boolean}
    */
-  isPFObject(thing, ofClass) {
+  static isPFObject(thing, ofClass) {
     return thing instanceof Parse.Object
       // Check if correct class if specified.
       && (typeof ofClass === 'string' ? this.getPFObjectClassName(thing) === ofClass : true)
@@ -255,7 +246,7 @@ export default class Parsimonious {
    * @param thing
    * @returns {boolean}
    */
-  isPointer(thing) {
+  static isPointer(thing) {
     return (
       (this.isPFObject(thing) && thing.__type === 'Pointer')
       ||
@@ -272,7 +263,7 @@ export default class Parsimonious {
    * @param {*} thing
    * @returns {boolean}
    */
-  isUser(thing) {
+  static isUser(thing) {
     return this.isPFObject(thing, 'User')
   }
   
@@ -288,7 +279,7 @@ export default class Parsimonious {
    * @param {boolean=} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
    * @returns {*}
    */
-  toJsn(thing, deep = false) {
+  static toJsn(thing, deep = false) {
     let obj
     if(thing instanceof Parse.Object) {
       obj = thing.toJSON()
@@ -318,7 +309,7 @@ export default class Parsimonious {
    * @param {(string | string[])} keys
    * @returns {object}
    */
-  objPick(parseObj, keys) {
+  static objPick(parseObj, keys) {
     return pick(this.toJsn(parseObj), this._toArray(keys))
   }
   
@@ -328,7 +319,7 @@ export default class Parsimonious {
    * @param {string} columnAndPath Dot-notation path whose first segment is the column name.
    * @returns {*}
    */
-  objGetDeep(parseObj, columnAndPath) {
+  static objGetDeep(parseObj, columnAndPath) {
     if(typeof columnAndPath === 'string') {
       const
         [column, path] = columnAndPath.split(/\.(.+)/),
@@ -345,7 +336,7 @@ export default class Parsimonious {
    * @param {object} dataObj
    * @param {boolean=} doMerge If true, each column value is shallow-merged with existing value
    */
-  objSetMulti(parseObj, dataObj, doMerge = false) {
+  static objSetMulti(parseObj, dataObj, doMerge = false) {
     if(this.isPFObject(parseObj) && isPlainObject(dataObj)) {
       let key, oldVal, newVal
       for(key in dataObj) {
@@ -367,7 +358,7 @@ export default class Parsimonious {
    * @param {object|string} thing
    * @return {string}
    */
-  getPFObjectClassName(thing) {
+  static getPFObjectClassName(thing) {
     const str = typeof thing === 'string' ? thing : (this.isPFObject(thing) ? thing.className : null)
     if(typeof str === 'string') {
       return str.substring(0,1) === '_' && specialClasses.indexOf(str.substring(1)) !== -1 ? str.substring(1) : str
@@ -379,7 +370,7 @@ export default class Parsimonious {
    * @param {string} thing
    * @returns {*}
    */
-  classStringOrSpecialClass(thing) {
+  static classStringOrSpecialClass(thing) {
     return specialClasses.indexOf(thing) !== -1 ? Parse[thing] : thing
   }
   
@@ -390,7 +381,7 @@ export default class Parsimonious {
    * @returns {array}
    * @private
    */
-  _toArray(thing) {
+  static _toArray(thing) {
     return Array.isArray(thing) ? thing : (typeof thing === 'string' ? thing.split(',') : [thing])
   }
   

@@ -2,4 +2,4 @@
 
 import Parsimonious from './Parsimonious'
 
-export default new Parsimonious()
+export default Parsimonious
