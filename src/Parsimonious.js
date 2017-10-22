@@ -19,11 +19,11 @@ const specialClasses = ['User', 'Role', 'Session']
 
 export default class Parsimonious {
   
-  constructor(parse) {
+  constructor() {
     if(!Parsimonious.instance) {
       autoBind(this)
       Parsimonious.instance = this
-      this.Parse = parse
+      this.Parse = global.Parse || require('parse/node')
       this.rej = this.Parse.Promise.reject
   
     }
