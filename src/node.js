@@ -2,4 +2,4 @@
 
 import Parsimonious from './Parsimonious'
 
-export default Object.freeze(new Parsimonious())
+export default new Parsimonious()
