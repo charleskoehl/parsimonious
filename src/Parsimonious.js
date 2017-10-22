@@ -1,6 +1,5 @@
 'use strict'
 
-import Parse from 'parse-shim'
 import autoBind from 'auto-bind'
 import merge from 'lodash/merge'
 import pick from 'lodash/pick'
@@ -10,6 +9,8 @@ import isInteger from 'lodash/isInteger'
 import isPlainObject from 'lodash/isPlainObject'
 import clone from 'lodash/clone'
 import lowerFirst from 'lodash/lowerFirst'
+
+const Parse = typeof Parse === 'object' ? Parse : require('parse-shim')
 
 /**
  * Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
