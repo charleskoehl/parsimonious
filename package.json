@@ -15,7 +15,6 @@
     "compile": "babel src -d lib",
     "prepublishOnly": "npm run compile; npm run docs; git add .; git commit -m 'prepublishOnly'; git push origin master;",
     "test": "mocha --compilers js:babel-core/register ./src/node.unit.test.js",
-    "test-ci": "jest -c jest-config-ci.json",
     "docs": "jsdoc2md --template README.hbs --files ./src/Parsimonious.js --param-list-format table > README.md"
   },
   "main": "lib/node.js",
