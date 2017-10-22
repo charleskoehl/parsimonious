@@ -1,6 +1,7 @@
 'use strict'
 
 import Parsimonious from './Parsimonious'
-import Parse from 'parse'
 
-export default Object.freeze(new Parsimonious(Parse))
+const parse = window.Parse || require('parse')
+
+export default Object.freeze(new Parsimonious(parse))
