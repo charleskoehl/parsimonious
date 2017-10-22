@@ -2,6 +2,4 @@
 
 import Parsimonious from './Parsimonious'
 
-const parse = global.Parse || require('parse/node')
-
-export default Object.freeze(new Parsimonious(parse))
+export default Object.freeze(new Parsimonious())

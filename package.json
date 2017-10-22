@@ -31,7 +31,8 @@
   "dependencies": {
     "auto-bind": "^1.1.0",
     "lodash": "^4.17.4",
-    "parse": "^1.10.0"
+    "parse": "^1.10.0",
+    "parse-shim": "^1.0.6"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

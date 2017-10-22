@@ -1,5 +1,6 @@
 'use strict'
 
+import Parse from 'parse-shim'
 import autoBind from 'auto-bind'
 import merge from 'lodash/merge'
 import pick from 'lodash/pick'
@@ -23,8 +24,7 @@ export default class Parsimonious {
     if(!Parsimonious.instance) {
       autoBind(this)
       Parsimonious.instance = this
-      this.Parse = global.Parse || require('parse/node')
-      this.rej = this.Parse.Promise.reject
+      this.rej = Parse.Promise.reject
   
     }
     return Parsimonious.instance
@@ -40,7 +40,7 @@ export default class Parsimonious {
    * @returns {Parse.Query}
    */
   newQuery(aClass, opts) {
-    const q = new this.Parse.Query(this.classStringOrSpecialClass(aClass))
+    const q = new Parse.Query(this.classStringOrSpecialClass(aClass))
     if(isPlainObject(opts)) {
       const {skip, limit, select} = opts
       isInteger(skip) && skip > 0 && q.skip(skip)
@@ -67,7 +67,7 @@ export default class Parsimonious {
    * @returns {Parse.User}
    */
   getUserById(id, opts) {
-    return this.getObjById(this.Parse.User, id, opts)
+    return this.getObjById(Parse.User, id, opts)
   }
   
   /**
@@ -82,16 +82,16 @@ export default class Parsimonious {
    */
   fetchIfNeeded(thing, opts) {
     if(this.isPFObject(thing)) {
-      return thing.dirty() ? thing.fetch(opts) : this.Parse.Promise.as(thing)
+      return thing.dirty() ? thing.fetch(opts) : Parse.Promise.as(thing)
     } else if(this.isPointer(thing) && typeof thing.className === 'string') {
       return this.getObjById(thing.className, thing.objectId, opts)
     } else {
-      return this.Parse.Promise.as(thing)
+      return Parse.Promise.as(thing)
     }
   }
   
   getRole(name, opts) {
-    return this.newQuery(this.Parse.Role)
+    return this.newQuery(Parse.Role)
       .equalTo('name', name)
       .first(opts)
   }
@@ -104,7 +104,7 @@ export default class Parsimonious {
    * @return {Parse.Promise}
    */
   getUserRoles(user, opts) {
-    return this.newQuery(this.Parse.Role)
+    return this.newQuery(Parse.Role)
       .equalTo('users', user)
       .find(opts)
       .then(roles => Array.isArray(roles) && roles.length > 0 ? roles.map(role => role.get('name')) : [])
@@ -121,7 +121,7 @@ export default class Parsimonious {
     if(!this.isUser(user)) {
       return this.rej('invalid user')
     }
-    const roleQuery = this.newQuery(this.Parse.Role)
+    const roleQuery = this.newQuery(Parse.Role)
       .equalTo('users', user)
     if(typeof roles === 'string') {
       roleQuery.equalTo('name', roles)
@@ -137,12 +137,12 @@ export default class Parsimonious {
   }
   
   /**
-   * Short-hand for this.Parse.Object.extend(className)
+   * Short-hand for Parse.Object.extend(className)
    * @param {string} className
    * @returns subclass of Parse.Object
    */
   getClass(className) {
-    return this.Parse.Object.extend(className)
+    return Parse.Object.extend(className)
   }
   
   /**
@@ -211,7 +211,7 @@ export default class Parsimonious {
         if(this.isPFObject(joinObj)) {
           return joinObj.destroy(opts)
         } else {
-          return this.Parse.Promise.as(undefined)
+          return Parse.Promise.as(undefined)
         }
       })
   }
@@ -244,7 +244,7 @@ export default class Parsimonious {
    * @returns {boolean}
    */
   isPFObject(thing, ofClass) {
-    return thing instanceof this.Parse.Object
+    return thing instanceof Parse.Object
       // Check if correct class if specified.
       && (typeof ofClass === 'string' ? this.getPFObjectClassName(thing) === ofClass : true)
   }
@@ -289,7 +289,7 @@ export default class Parsimonious {
    */
   toJsn(thing, deep = false) {
     let obj
-    if(thing instanceof this.Parse.Object) {
+    if(thing instanceof Parse.Object) {
       obj = thing.toJSON()
     } else if(isPlainObject(thing)) {
       obj = Object.assign({}, thing)
@@ -379,7 +379,7 @@ export default class Parsimonious {
    * @returns {*}
    */
   classStringOrSpecialClass(thing) {
-    return specialClasses.indexOf(thing) !== -1 ? this.Parse[thing] : thing
+    return specialClasses.indexOf(thing) !== -1 ? Parse[thing] : thing
   }
   
   /**
