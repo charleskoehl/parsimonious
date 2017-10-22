@@ -24,6 +24,8 @@ export default class Parsimonious {
       autoBind(this)
       Parsimonious.instance = this
       this.Parse = parse
+      this.rej = this.Parse.Promise.reject
+  
     }
     return Parsimonious.instance
   }
@@ -37,20 +39,13 @@ export default class Parsimonious {
    * @param {string[]} [opts.select] Parameter for Parse.Query.select. Restricts the fields of the returned Parse.Objects to include only the provided keys.
    * @returns {Parse.Query}
    */
-  newQuery(aClass, opts = {}) {
-    const
-      q = new this.Parse.Query(this.classStringOrSpecialClass(aClass)),
-      {skip, limit, select} = opts
+  newQuery(aClass, opts) {
+    const q = new this.Parse.Query(this.classStringOrSpecialClass(aClass))
     if(isPlainObject(opts)) {
+      const {skip, limit, select} = opts
       isInteger(skip) && skip > 0 && q.skip(skip)
       isInteger(limit) && limit > 0 && q.limit(limit)
-      let selectArray
-      if(Array.isArray(select) && select.length) {
-        selectArray = select
-      } else if(typeof select === 'string') {
-        selectArray = [select]
-      }
-      Array.isArray(selectArray) && q.select(selectArray)
+      select && q.select(this._toArray(select))
     }
     return q
   }
@@ -124,7 +119,7 @@ export default class Parsimonious {
    */
   userHasRole(user, roles, opts) {
     if(!this.isUser(user)) {
-      throw 'no user'
+      return this.rej('invalid user')
     }
     const roleQuery = this.newQuery(this.Parse.Role)
       .equalTo('users', user)
@@ -137,7 +132,7 @@ export default class Parsimonious {
       return roleQuery.count(opts)
         .then(result => roles.op === 'and' ? result === roles.names.length : result > 0)
     } else {
-      throw 'invalid roles'
+      return this.rej('invalid roles')
     }
   }
   
@@ -391,7 +386,7 @@ export default class Parsimonious {
    * Return array from array or comma-separated string list.
    * If passed a non-string, non-array value, returns it in an array.
    * @param {array|string} thing
-   * @returns {any}
+   * @returns {array}
    * @private
    */
   _toArray(thing) {
