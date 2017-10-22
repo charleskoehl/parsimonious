@@ -14,7 +14,7 @@
   "scripts": {
     "compile": "babel src -d lib",
     "prepublishOnly": "npm run compile; npm run docs; git add .; git commit -m 'prepublishOnly'; git push origin master;",
-    "test": "mocha --compilers js:babel-core/register ./src/node.unit.test.js",
+    "test": "nyc mocha --compilers js:babel-core/register ./src/node.unit.test.js",
     "docs": "jsdoc2md --template README.hbs --files ./src/Parsimonious.js --param-list-format table > README.md"
   },
   "main": "lib/node.js",
@@ -43,6 +43,7 @@
     "codecov": "^2.3.1",
     "jsdoc-to-markdown": "^3.0.0",
     "mocha": "^2.2.5",
+    "nyc": "^11.2.1",
     "parse-mockdb": "^0.1.26"
   }
 }
