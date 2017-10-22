@@ -9,9 +9,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import clone from 'lodash/clone'
 import lowerFirst from 'lodash/lowerFirst'
 
-const 
-  Parse = typeof Parse === 'object' ? Parse : require('parse-shim'),
-  rej = Parse.Promise.reject
+const rej = Parse.Promise.reject
 
 /**
  * Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.

@@ -1,15 +1,15 @@
 'use strict'
 
-import Parse from 'parse/node'
 import ParseMockDB from 'parse-mockdb'
-import parsm from './node'
 import chai from 'chai'
 chai.use(require('chai-shallow-deep-equal'))
 chai.use(require('chai-as-promised'))
 const expect = chai.expect
 
-
+const Parse = typeof Parse === 'object' ? Parse : require('parse-shim')
 Parse.initialize('test')
+
+const parsm = require('./Parsimonious')
 
 let savedBouquets,
   TheParseObj = Parse.Object.extend('TheParseObj'),
