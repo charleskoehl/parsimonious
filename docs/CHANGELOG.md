@@ -1,5 +1,9 @@
 ## Change Log
 
+### Version 3.7.5 - 23rd October 2017
+##### Changes
+* Minor jsdoc fixes.
+
 ### Version 3.7.4 - 23rd October 2017
 ##### Fixes
 * Uses 'browser' field in package.json to hint to webpack, browserify to substitute 'parse' for 'parse/node'
