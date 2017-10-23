@@ -353,6 +353,10 @@ Returns the corresponding special Parse class if passed the name of one; otherwi
 <a name="changelog"></a>
 ## Change Log
 
+### Version 3.7.1 - 22nd October 2017
+##### Documentation Change:
+* Post-process README to remove lines added by jsdoc2md that make it look as if you can create an instance of Parsimonious.
+
 ### Version 3.7.0 - 22nd October 2017
 ##### Non-Breaking Change:
 * Exports a class with static methods, rather than a frozen singleton instance. It is still used the same way; it's just no longer a frozen instance of the class.
