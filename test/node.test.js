@@ -48,6 +48,14 @@ after(() => {
   ParseMockDB.unMockDB(); // Un-mock the Parse RESTController
 })
 
+describe('setParse', () => {
+  it('sets a valid instance of Parse to use', () => {
+    expect(() => parsm.setParse(Parse)).not.to.throw()
+  })
+  it('throws TypeError when invalid instance of Parse is passed', () => {
+    expect(() => parsm.setParse('blah')).to.throw('non-object passed as Parse object')
+  })
+})
 
 describe('toJsn', () => {
   it('returns the passed value when it is not a Parse object or a plain, non-null object', () => {
