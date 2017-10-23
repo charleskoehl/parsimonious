@@ -1,32 +1,22 @@
 // 'use strict'
 
+import parsm from './Parsimonious'
+import Parse from 'parse/node'
 import ParseMockDB from 'parse-mockdb'
 import chai from 'chai'
 chai.use(require('chai-shallow-deep-equal'))
 chai.use(require('chai-as-promised'))
 const expect = chai.expect
 
-if(typeof Parse === 'object') {
-  console.log('using existing Parse')
-} else if(typeof global === 'object' && typeof global.Parse === 'object') {
-  console.log('using global.Parse')
-} else if(typeof window === 'object' && typeof window.Parse === 'object') {
-  var Parse = window.Parse
-  console.log('using window.Parse')
-} else {
-  console.log('using parse-shim')
-  var Parse = require('parse-shim')
+
+
+try {
+  Parse.initialize('test')
+  parsm.init('')
+} catch(e) {
+  console.error('Could not initialize Parse or Parsimonious because could not find a valid Parse object:', e)
+  process.exit(1);
 }
-console.log('\n\n')
-
-
-Parse.initialize('test')
-
-const parsm = require('./Parsimonious')(Parse)
-
-console.log('\n\n')
-console.log('imported Parsmimonious')
-console.log('\n\n')
 
 let savedBouquets,
   TheParseObj = Parse.Object.extend('TheParseObj'),

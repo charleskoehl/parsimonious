@@ -1,4 +1,4 @@
-// 'use strict'
+'use strict'
 
 import merge from 'lodash/merge'
 import pick from 'lodash/pick'
@@ -9,7 +9,6 @@ import isPlainObject from 'lodash/isPlainObject'
 import clone from 'lodash/clone'
 import lowerFirst from 'lodash/lowerFirst'
 
-console.log('global:', global)
 
 /**
  * Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
@@ -21,8 +20,12 @@ const specialClasses = ['User', 'Role', 'Session']
 export default class Parsimonious {
   
   static init(parseObject) {
-    this.Parse = parseObject
-    this.rej = this.Parse.Promise.reject
+    if(typeof parseObject === 'object') {
+      this.Parse = parseObject
+      this.rej = this.Parse.Promise.reject
+    } else {
+      throw 'non-object passed to init as Parse object'
+    }
   }
   
   /**
@@ -86,7 +89,7 @@ export default class Parsimonious {
   }
   
   static getRole(name, opts) {
-    return this.newQuery(this.Parse.Role)
+    return this.newQuery('Role')
       .equalTo('name', name)
       .first(opts)
   }
@@ -99,7 +102,7 @@ export default class Parsimonious {
    * @return {Parse.Promise}
    */
   static getUserRoles(user, opts) {
-    return this.newQuery(this.Parse.Role)
+    return this.newQuery('Role')
       .equalTo('users', user)
       .find(opts)
       .then(roles => Array.isArray(roles) && roles.length > 0 ? roles.map(role => role.get('name')) : [])
@@ -116,7 +119,7 @@ export default class Parsimonious {
     if(!this.isUser(user)) {
       return this.rej('invalid user')
     }
-    const roleQuery = this.newQuery(this.Parse.Role)
+    const roleQuery = this.newQuery('Role')
       .equalTo('users', user)
     if(typeof roles === 'string') {
       roleQuery.equalTo('name', roles)
@@ -267,7 +270,7 @@ export default class Parsimonious {
    * @returns {boolean}
    */
   static isUser(thing) {
-    return this.isPFObject(thing, 'User')
+    return thing instanceof this.Parse.User
   }
   
   /* CONVERSIONS / DATA MANIPULATION */
@@ -374,7 +377,7 @@ export default class Parsimonious {
    * @returns {*}
    */
   static classStringOrSpecialClass(thing) {
-    return specialClasses.indexOf(thing) !== -1 ? Parse[thing] : thing
+    return specialClasses.indexOf(thing) !== -1 ? this.Parse[thing] : thing
   }
   
   /**
