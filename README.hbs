@@ -1,12 +1,38 @@
 [![buildstatus](https://travis-ci.org/charleskoehl/parsimonious.svg?branch=master)](https://travis-ci.org/charleskoehl/parsimonious)
 [![codecov](https://codecov.io/gh/charleskoehl/parsimonious/branch/master/graph/badge.svg)](https://codecov.io/gh/charleskoehl/parsimonious)
 
-[Change Log](#changelog)
+## Usage
+#### Basic:
+```javascript
+const parsm = require('parsimonious')
+const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
+```
+#### Override the Parse instance used:
+```
+// Initialize Parse JS SDK first:
+Parse.initialize('myAppId')
+Parse.masterKey = 'myMasterKey'
+
+// Initialize parsimonious with the initialized Parse instance:
+const parsm = require('parsimonious')
+parsm.setParse(Parse)
+
+// Call the methods:
+const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
+```
 
 {{>main}}
 
+[Change Log](#changelog)
+
 <a name="changelog"></a>
 ## Change Log
+
+### Version 3.7.0 - 22nd October 2017
+##### Non-Breaking Change:
+* Exports a class with static methods, rather than a frozen singleton instance. It is still used the same way; it's just no longer a frozen instance of the class.
+##### New Feature:
+* Added setParse method, which allows you to override the instance of the Parse JS SDK used by the module. (By default, the module will try to use the Parse instance from the global scope. If none exists, it will use the node or browser version based on which environment is detected by the 'detect-is-node' module.) If you which to use the setParse method, do it after you initialize your Parse instance and set the masterKey. (See "Usage" section at the top of this file.)
 
 ### Version 3.6.0 - 21st October 2017
 ##### New Features
