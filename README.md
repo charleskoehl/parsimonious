@@ -8,7 +8,7 @@ const parsm = require('parsimonious')
 const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
 ```
 #### Override the Parse instance used:
-```
+```javascript
 // Initialize Parse JS SDK first:
 Parse.initialize('myAppId')
 Parse.masterKey = 'myMasterKey'
