@@ -353,19 +353,14 @@ Returns the corresponding special Parse class if passed the name of one; otherwi
 <a name="changelog"></a>
 ## Change Log
 
-### Version 3.7.2 - 22nd October 2017
-##### Documentation Format Fix:
-* code block formatting fix
-
-### Version 3.7.1 - 22nd October 2017
-##### Documentation Change:
-* Post-process README to remove lines added by jsdoc2md that make it look as if you can create an instance of Parsimonious.
+### Versions 3.7.1 - 3.7.3 - 22nd October 2017
+##### Minor README changes
 
 ### Version 3.7.0 - 22nd October 2017
 ##### Non-Breaking Change:
 * Exports a class with static methods, rather than a frozen singleton instance. It is still used the same way; it's just no longer a frozen instance of the class.
 ##### New Feature:
-* Added setParse method, which allows you to override the instance of the Parse JS SDK used by the module. (By default, the module will try to use the Parse instance from the global scope. If none exists, it will use the node or browser version based on which environment is detected by the 'detect-is-node' module.) If you which to use the setParse method, do it after you initialize your Parse instance and set the masterKey. (See "Usage" section at the top of this file.)
+* Added setParse method, which allows you to override the instance of the Parse JS SDK used by the module. (By default, the module will try to use the Parse instance from the global scope. If none exists, it will use the node or browser version based on which environment is detected by the 'detect-is-node' module.) If you wish to use the setParse method, do it after you initialize your Parse instance and set the masterKey. (See "Usage" section at the top of this file.)
 
 ### Version 3.6.0 - 21st October 2017
 ##### New Features
