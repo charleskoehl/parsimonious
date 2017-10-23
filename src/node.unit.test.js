@@ -12,7 +12,7 @@ const expect = chai.expect
 
 try {
   Parse.initialize('test')
-  parsm.init(Parse)
+  parsm.setParse(Parse)
 } catch(e) {
   console.error('Could not initialize Parse or Parsimonious because could not find a valid Parse object:', e)
   process.exit(1);

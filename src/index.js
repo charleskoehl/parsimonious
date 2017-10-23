@@ -8,6 +8,7 @@ import isInteger from 'lodash/isInteger'
 import isPlainObject from 'lodash/isPlainObject'
 import clone from 'lodash/clone'
 import lowerFirst from 'lodash/lowerFirst'
+import isNode from 'detect-is-node'
 
 
 /**
@@ -19,9 +20,9 @@ const specialClasses = ['User', 'Role', 'Session']
 
 export default class {
   
-  static init(parseObject) {
-    if(typeof parseObject === 'object') {
-      this.Parse = parseObject
+  static setParse(parse) {
+    if(typeof parse === 'object') {
+      this.Parse = parse
       this.rej = this.Parse.Promise.reject
     } else {
       throw 'non-object passed to init as Parse object'
@@ -393,3 +394,15 @@ export default class {
   }
   
 }
+
+// Attempt to set the Parse JS SDK instance to be used:
+
+if (typeof Parse !== 'undefined' && Parse ) {
+  Parsimonious.setParse(Parse)
+} else if (isNode) {
+  Parsimonious.setParse(require('parse/node'))
+} else {
+  Parsimonious.setParse(require('parse'))
+}
+
+export default Parsimonious
