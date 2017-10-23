@@ -1,4 +1,4 @@
-'use strict'
+// 'use strict'
 
 import merge from 'lodash/merge'
 import pick from 'lodash/pick'
