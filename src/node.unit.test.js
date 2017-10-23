@@ -1,22 +1,23 @@
 // 'use strict'
 
-import parsm from './Parsimonious'
 import Parse from 'parse/node'
+import parsm from './index'
 import ParseMockDB from 'parse-mockdb'
 import chai from 'chai'
+
 chai.use(require('chai-shallow-deep-equal'))
 chai.use(require('chai-as-promised'))
 const expect = chai.expect
 
 
-
 try {
   Parse.initialize('test')
-  parsm.init('')
+  parsm.init(Parse)
 } catch(e) {
   console.error('Could not initialize Parse or Parsimonious because could not find a valid Parse object:', e)
   process.exit(1);
 }
+
 
 let savedBouquets,
   TheParseObj = Parse.Object.extend('TheParseObj'),
@@ -679,7 +680,10 @@ describe('isUser', () => {
     expect(parsm.isUser(user)).to.be.true
   })
   it('determines if an object created with new Parse.User(...) -- and then saved -- is an instance of Parse.User', () => {
-    return expect(user.signUp().then(parsm.isUser)).to.eventually.equal(true)
+    return user.signUp()
+      .then(signedUpUser => {
+        expect(parsm.isUser(signedUpUser)).to.be.true
+      })
   })
   it('determines if a pointer to a User is a not an instance of Parse.User', () => {
     expect(parsm.isUser(user.toPointer())).to.equal(false)
