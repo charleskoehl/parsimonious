@@ -53,6 +53,7 @@ describe('toJsn', () => {
   it('returns the passed value when it is not a Parse object or a plain, non-null object', () => {
     const mySymbol = Symbol('test')
     expect(parsm.toJsn(mySymbol)).to.equal(mySymbol)
+    expect(parsm.toJsn()).to.equal()
     expect(parsm.toJsn(undefined)).to.equal(undefined)
     expect(parsm.toJsn(null)).to.equal(null)
     expect(parsm.toJsn(true)).to.be.true
