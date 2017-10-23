@@ -334,7 +334,7 @@ Returns the corresponding special Parse class if passed the name of one; otherwi
 <a name="changelog"></a>
 ## Change Log
 
-### Version 3.7.6 - 23rd October 2017
+### Version 3.7.6 - 3.7.7 - 23rd October 2017
 ##### Changes
 * Minor README changes, but published in order to get NPM to show the last few updates to README.
 
