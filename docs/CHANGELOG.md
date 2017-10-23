@@ -1,5 +1,9 @@
 ## Change Log
 
+### Version 3.7.6 - 3.7.7 - 23rd October 2017
+##### Changes
+* Minor README changes, but published in order to get NPM to show the last few updates to README.
+
 ### Version 3.7.5 - 23rd October 2017
 ##### Changes
 * Minor jsdoc fixes.
@@ -9,7 +13,8 @@
 * Uses 'browser' field in package.json to hint to webpack, browserify to substitute 'parse' for 'parse/node'
 
 ### Versions 3.7.1 - 3.7.3 - 22nd October 2017
-##### Minor README changes
+##### Changes
+* Minor README changes
 
 ### Version 3.7.0 - 22nd October 2017
 ##### Non-Breaking Change:
