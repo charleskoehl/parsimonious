@@ -29,7 +29,7 @@ class Parsimonious {
       this.Parse = parse
       this.rej = this.Parse.Promise.reject
     } else {
-      throw 'non-object passed to init as Parse object'
+      throw new TypeError('non-object passed as Parse object')
     }
   }
   
