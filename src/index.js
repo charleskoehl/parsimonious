@@ -403,8 +403,6 @@ class Parsimonious {
 
 if (typeof Parse !== 'undefined' && Parse ) {
   Parsimonious.setParse(Parse)
-} else if (isNode) {
-  Parsimonious.setParse(require('parse/node'))
 } else {
   Parsimonious.setParse(require('parse'))
 }
