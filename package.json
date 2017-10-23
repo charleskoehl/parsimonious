@@ -17,8 +17,6 @@
     "test": "nyc mocha --compilers js:babel-core/register ./src/node.unit.test.js",
     "docs": "jsdoc2md --template README.hbs --files ./src/Parsimonious.js --param-list-format table > README.md"
   },
-  "main": "lib/node.js",
-  "browser": "lib/browser.js",
   "keywords": [
     "parse",
     "utilities",
