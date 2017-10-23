@@ -18,7 +18,7 @@ import isNode from 'detect-is-node'
 
 const specialClasses = ['User', 'Role', 'Session']
 
-export default class {
+const Parsimonious = class {
   
   static setParse(parse) {
     if(typeof parse === 'object') {
