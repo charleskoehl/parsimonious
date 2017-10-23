@@ -18,7 +18,7 @@ import isNode from 'detect-is-node'
 
 const specialClasses = ['User', 'Role', 'Session']
 
-export default class Parsimonious {
+class Parsimonious {
   
   /**
    * Set the instance of the Parse JS SDK to be used by all methods:
@@ -398,3 +398,17 @@ export default class Parsimonious {
   }
   
 }
+
+// Attempt to set the Parse JS SDK instance to be used:
+
+let parseSrc
+if (typeof Parse === 'object' ) {
+  parseSrc = Parse
+} else if (isNode) {
+  parseSrc = require('parse/node')
+} else {
+  parseSrc = require('parse')
+}
+Parsimonious.setParse(parseSrc)
+
+export default Parsimonious
