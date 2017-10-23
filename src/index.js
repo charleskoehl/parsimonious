@@ -292,6 +292,7 @@ export default class {
     } else if(isPlainObject(thing)) {
       obj = Object.assign({}, thing)
     } else {
+      // TODO: If thing is undefined, this line throws error "Cannot read property 'Object' of undefined," so make sure thing is clonable by lodash.clone.
       obj = clone(thing)
     }
     if(deep && isPlainObject(obj)) {
