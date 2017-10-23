@@ -11,15 +11,18 @@ import lowerFirst from 'lodash/lowerFirst'
 import isNode from 'detect-is-node'
 
 
+const specialClasses = ['User', 'Role', 'Session']
+
 /**
  * Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
  * @module Parsimonious
  */
-
-const specialClasses = ['User', 'Role', 'Session']
-
-const Parsimonious = class {
+class Parsimonious {
   
+  /**
+   * Set the instance of the Parse JS SDK to be used by all methods:
+   * @param {object} parse instance of the Parse JS SDK
+   */
   static setParse(parse) {
     if(typeof parse === 'object') {
       this.Parse = parse

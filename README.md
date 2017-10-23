@@ -21,13 +21,13 @@ parsm.setParse(Parse)
 const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
 ```
 
+[Change Log](#changelog)
+
 <a name="module_Parsimonious"></a>
 
 ## Parsimonious
 Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
 
-
-[Change Log](#changelog)
 
 <a name="changelog"></a>
 ## Change Log
