@@ -1,4 +1,4 @@
-'use strict'
+// 'use strict'
 
 import ParseMockDB from 'parse-mockdb'
 import chai from 'chai'
@@ -6,10 +6,27 @@ chai.use(require('chai-shallow-deep-equal'))
 chai.use(require('chai-as-promised'))
 const expect = chai.expect
 
-const Parse = typeof Parse === 'object' ? Parse : require('parse-shim')
+if(typeof Parse === 'object') {
+  console.log('using existing Parse')
+} else if(typeof global === 'object' && typeof global.Parse === 'object') {
+  console.log('using global.Parse')
+} else if(typeof window === 'object' && typeof window.Parse === 'object') {
+  var Parse = window.Parse
+  console.log('using window.Parse')
+} else {
+  console.log('using parse-shim')
+  var Parse = require('parse-shim')
+}
+console.log('\n\n')
+
+
 Parse.initialize('test')
 
-const parsm = require('./Parsimonious')
+const parsm = require('./Parsimonious')(Parse)
+
+console.log('\n\n')
+console.log('imported Parsmimonious')
+console.log('\n\n')
 
 let savedBouquets,
   TheParseObj = Parse.Object.extend('TheParseObj'),
