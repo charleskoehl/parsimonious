@@ -1,7 +1,7 @@
 // 'use strict'
 
 import Parse from 'parse/node'
-import parsm from './node'
+import parsm from '../src/node'
 import ParseMockDB from 'parse-mockdb'
 import chai from 'chai'
 

@@ -15,7 +15,7 @@
   "scripts": {
     "compile": "babel src -d lib",
     "prepublishOnly": "npm run compile; npm run docs; git add .; git commit -m 'prepublishOnly'; git push origin master;",
-    "test": "nyc mocha --compilers js:babel-core/register ./src/node.unit.test.js",
+    "test": "nyc mocha --compilers js:babel-core/register ./test/node.test.js",
     "docs": "jsdoc2md --template docs/README.hbs --files ./src/Parsimonious.js --param-list-format list > docs/README.1; cat docs/CHANGELOG.md >> docs/README.1; npm run after-jsdoc2md",
     "after-jsdoc2md": "shx sed 's/### new Parsimonious\\(\\)//' docs/README.1 > docs/README.md; shx rm -rf docs/README.1"
   },
