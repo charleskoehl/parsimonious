@@ -1,6 +1,8 @@
 [![buildstatus](https://travis-ci.org/charleskoehl/parsimonious.svg?branch=master)](https://travis-ci.org/charleskoehl/parsimonious)
 [![codecov](https://codecov.io/gh/charleskoehl/parsimonious/branch/master/graph/badge.svg)](https://codecov.io/gh/charleskoehl/parsimonious)
 
+## Utilities for Parse Server cloud code and JS SDK
+
 ## Usage
 #### Basic:
 ```javascript
@@ -23,175 +25,240 @@ const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
 
 [Change Log](#changelog)
 
+## Classes
+
+<dl>
+<dt><a href="#Parsimonious">Parsimonious</a></dt>
+<dd></dd>
+</dl>
+
+## Functions
+
+<dl>
+<dt><a href="#setParse">setParse(parse)</a></dt>
+<dd><p>Set the instance of the Parse JS SDK to be used by all methods:</p>
+</dd>
+<dt><a href="#newQuery">newQuery(aClass, [opts])</a> ⇒ <code>Parse.Query</code></dt>
+<dd><p>Return a new Parse.Query instance from a Parse Object class name.</p>
+</dd>
+<dt><a href="#getObjById">getObjById(aClass, id, [opts])</a></dt>
+<dd><p>Return a Parse.Object instance from className and id.</p>
+</dd>
+<dt><a href="#getUserById">getUserById(id, [opts])</a> ⇒ <code>Parse.User</code></dt>
+<dd><p>Return Parse.User instance from user id</p>
+</dd>
+<dt><a href="#fetchIfNeeded">fetchIfNeeded(thing, [opts])</a> ⇒ <code>Parse.Promise</code></dt>
+<dd><p>Given a value thing, return a promise that resolves to
+  thing if thing is a clean Parse.Object,
+  fetched Parse.Object if thing is a dirty Parse.Object,
+  fetched Parse.Object if thing is a pointer;
+  thing if otherwise</p>
+</dd>
+<dt><a href="#getUserRoles">getUserRoles(user, [opts])</a> ⇒ <code>Parse.Promise</code></dt>
+<dd><p>Return array of names of user&#39;s direct roles, or empty array.
+Requires that the Roles class has appropriate read permissions.</p>
+</dd>
+<dt><a href="#userHasRole">userHasRole(user, roles, [opts])</a> ⇒ <code>Parse.Promise</code></dt>
+<dd><p>Check if a user has a role, or any or all of multiple roles, return a promise resolving to true or false.</p>
+</dd>
+<dt><a href="#getClass">getClass(className)</a> ⇒</dt>
+<dd><p>Short-hand for Parse.Object.extend(className)</p>
+</dd>
+<dt><a href="#getClassInst">getClassInst(className, [attributes], [options])</a> ⇒ <code>Parse.Object</code></dt>
+<dd><p>Return instance of Parse.Object class.</p>
+</dd>
+<dt><a href="#getJoinTableName">getJoinTableName(from, to)</a> ⇒ <code>string</code></dt>
+<dd><p>Return the name of a table used to join two Parse.Object classes in a many-to-many relationship.</p>
+</dd>
+<dt><a href="#joinWithTable">joinWithTable(classes, [metadata], [opts])</a> ⇒ <code>Parse.Promise</code></dt>
+<dd><p>Join two parse objects in a many-to-many relationship by adding a document to a third join table.
+Like Parse.Relation.add except that it allows you to add metadata to describe the relationship.
+Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
+Join table must exist and have pointer columns named like class names,
+except first letter lower-case; e.g.: employee, company.
+Returns promise.</p>
+</dd>
+<dt><a href="#unJoinWithTable">unJoinWithTable(classes, [opts])</a> ⇒ <code>Parse.Promise</code></dt>
+<dd><p>Unjoin two parse objects currently joined in a many-to-many relationship by a document in a third join table.
+Like Parse.Relation.remove (see Parsimonious.joinWithTable above).
+Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
+Join table must exist and have pointer columns named like class names,
+except first letter lower-case; e.g.: employee, company.
+If can&#39;t unjoin objects, returned promise resolves to undefined.</p>
+</dd>
+<dt><a href="#getJoinQuery">getJoinQuery(classes, [opts])</a> ⇒ <code>Parse.Query</code></dt>
+<dd><p>Return a query on a many-to-many join table.
+Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
+Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.</p>
+</dd>
+<dt><a href="#isPFObject">isPFObject(thing, [ofClass])</a> ⇒ <code>boolean</code></dt>
+<dd><p>Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User or Parse.CustomClass)</p>
+</dd>
+<dt><a href="#isPointer">isPointer(thing)</a> ⇒ <code>boolean</code></dt>
+<dd><p>Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.</p>
+</dd>
+<dt><a href="#isUser">isUser(thing)</a> ⇒ <code>boolean</code></dt>
+<dd><p>Return true if thing is an instance of Parse.User.</p>
+</dd>
+<dt><a href="#toJsn">toJsn(thing, [deep])</a> ⇒ <code>*</code></dt>
+<dd><p>Return a json representation of a Parse.Object,
+sub-class of Parse.Object (such as Parse.User),
+or plain object containing any or none of those, to json, optionally recursively.
+Does not mutate parameters.</p>
+</dd>
+<dt><a href="#objPick">objPick(parseObj, keys)</a> ⇒ <code>object</code></dt>
+<dd><p>Get some columns from a Parse object and return them in a plain object.
+If keys is not an array or comma-separated string, return undefined.</p>
+</dd>
+<dt><a href="#objGetDeep">objGetDeep(parseObj, columnAndPath)</a> ⇒ <code>*</code></dt>
+<dd><p>Get an an object-type column from a Parse object and return the value of a nested key within it.</p>
+</dd>
+<dt><a href="#objSetMulti">objSetMulti(parseObj, dataObj, [doMerge])</a></dt>
+<dd><p>Set some columns on a Parse object. Mutates the Parse object.</p>
+</dd>
+<dt><a href="#getPFObjectClassName">getPFObjectClassName(thing)</a> ⇒ <code>string</code></dt>
+<dd><p>Returns valid class-name when passed either a subclass of Parse.Object or any string.
+Removes the underscore if it is one of the special classes with a leading underscore.
+Returns undefined if anything else.</p>
+</dd>
+<dt><a href="#classStringOrSpecialClass">classStringOrSpecialClass(thing)</a> ⇒ <code>*</code></dt>
+<dd><p>Returns the corresponding special Parse class if passed the name of one; otherwise, returns the value unchanged.</p>
+</dd>
+</dl>
+
 <a name="Parsimonious"></a>
 
 ## Parsimonious
 **Kind**: global class  
-
-* [Parsimonious](#Parsimonious)
-    
-    * [.setParse(parse)](#Parsimonious.setParse)
-    * [.newQuery(aClass, [opts])](#Parsimonious.newQuery) ⇒ <code>Parse.Query</code>
-    * [.getObjById(aClass, id, [opts])](#Parsimonious.getObjById)
-    * [.getUserById(id, [opts])](#Parsimonious.getUserById) ⇒ <code>Parse.User</code>
-    * [.fetchIfNeeded(thing, [opts])](#Parsimonious.fetchIfNeeded) ⇒ <code>Parse.Promise</code>
-    * [.getUserRoles(user, [opts])](#Parsimonious.getUserRoles) ⇒ <code>Parse.Promise</code>
-    * [.userHasRole(user, roles, [opts])](#Parsimonious.userHasRole) ⇒ <code>Parse.Promise</code>
-    * [.getClass(className)](#Parsimonious.getClass) ⇒
-    * [.getClassInst(className, [attributes], [options])](#Parsimonious.getClassInst) ⇒ <code>Parse.Object</code>
-    * [.getJoinTableName(from, to)](#Parsimonious.getJoinTableName) ⇒ <code>string</code>
-    * [.joinWithTable(classes, [metadata], [opts])](#Parsimonious.joinWithTable) ⇒ <code>Parse.Promise</code>
-    * [.unJoinWithTable(classes, [opts])](#Parsimonious.unJoinWithTable) ⇒ <code>Parse.Promise</code>
-    * [.getJoinQuery(classes, [opts])](#Parsimonious.getJoinQuery) ⇒ <code>Parse.Query</code>
-    * [.isPFObject(thing, [ofClass])](#Parsimonious.isPFObject) ⇒ <code>boolean</code>
-    * [.isPointer(thing)](#Parsimonious.isPointer) ⇒ <code>boolean</code>
-    * [.isUser(thing)](#Parsimonious.isUser) ⇒ <code>boolean</code>
-    * [.toJsn(thing, [deep])](#Parsimonious.toJsn) ⇒ <code>\*</code>
-    * [.objPick(parseObj, keys)](#Parsimonious.objPick) ⇒ <code>object</code>
-    * [.objGetDeep(parseObj, columnAndPath)](#Parsimonious.objGetDeep) ⇒ <code>\*</code>
-    * [.objSetMulti(parseObj, dataObj, [doMerge])](#Parsimonious.objSetMulti)
-    * [.getPFObjectClassName(thing)](#Parsimonious.getPFObjectClassName) ⇒ <code>string</code>
-    * [.classStringOrSpecialClass(thing)](#Parsimonious.classStringOrSpecialClass) ⇒ <code>\*</code>
-
 <a name="new_Parsimonious_new"></a>
 
 
 Utilities for Parse Server cloud code and JS SDK.
 
-<a name="Parsimonious.setParse"></a>
+<a name="setParse"></a>
 
-### Parsimonious.setParse(parse)
+## setParse(parse)
 Set the instance of the Parse JS SDK to be used by all methods:
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| parse | <code>object</code> | instance of the Parse JS SDK |
+- parse <code>object</code> - instance of the Parse JS SDK
 
-<a name="Parsimonious.newQuery"></a>
+<a name="newQuery"></a>
 
-### Parsimonious.newQuery(aClass, [opts]) ⇒ <code>Parse.Query</code>
+## newQuery(aClass, [opts]) ⇒ <code>Parse.Query</code>
 Return a new Parse.Query instance from a Parse Object class name.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| aClass | <code>string</code> \| <code>object</code> | class name or constructor |
-| [opts] | <code>object</code> | Query restrictions |
-| [opts.limit] | <code>number</code> | Parameter for Parse.Query.limit. Must be integer greater than zero. |
-| [opts.skip] | <code>number</code> | Parameter for Parse.Query.skip. Must be integer greater than zero. |
-| [opts.select] | <code>Array.&lt;string&gt;</code> | Parameter for Parse.Query.select. Restricts the fields of the returned Parse.Objects to include only the provided keys. |
+- aClass <code>string</code> | <code>object</code> - class name or constructor
+- [opts] <code>object</code> - Query restrictions
+    - [.limit] <code>number</code> - Parameter for Parse.Query.limit. Must be integer greater than zero.
+    - [.skip] <code>number</code> - Parameter for Parse.Query.skip. Must be integer greater than zero.
+    - [.select] <code>Array.&lt;string&gt;</code> - Parameter for Parse.Query.select. Restricts the fields of the returned Parse.Objects to include only the provided keys.
 
-<a name="Parsimonious.getObjById"></a>
+<a name="getObjById"></a>
 
-### Parsimonious.getObjById(aClass, id, [opts])
+## getObjById(aClass, id, [opts])
 Return a Parse.Object instance from className and id.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| aClass | <code>string</code> \| <code>object</code> | class name or constructor |
-| id | <code>string</code> |  |
-| [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
+- aClass <code>string</code> | <code>object</code> - class name or constructor
+- id <code>string</code>
+- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
 
-<a name="Parsimonious.getUserById"></a>
+<a name="getUserById"></a>
 
-### Parsimonious.getUserById(id, [opts]) ⇒ <code>Parse.User</code>
+## getUserById(id, [opts]) ⇒ <code>Parse.User</code>
 Return Parse.User instance from user id
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| id | <code>string</code> |  |
-| [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
+- id <code>string</code>
+- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
 
-<a name="Parsimonious.fetchIfNeeded"></a>
+<a name="fetchIfNeeded"></a>
 
-### Parsimonious.fetchIfNeeded(thing, [opts]) ⇒ <code>Parse.Promise</code>
+## fetchIfNeeded(thing, [opts]) ⇒ <code>Parse.Promise</code>
 Given a value thing, return a promise that resolves to
   thing if thing is a clean Parse.Object,
   fetched Parse.Object if thing is a dirty Parse.Object,
   fetched Parse.Object if thing is a pointer;
   thing if otherwise
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
 **Returns**: <code>Parse.Promise</code> - Promise that fulfills with saved UserPrefs object.  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| thing | <code>\*</code> |  |
-| [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
+- thing <code>\*</code>
+- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
 
-<a name="Parsimonious.getUserRoles"></a>
+<a name="getUserRoles"></a>
 
-### Parsimonious.getUserRoles(user, [opts]) ⇒ <code>Parse.Promise</code>
+## getUserRoles(user, [opts]) ⇒ <code>Parse.Promise</code>
 Return array of names of user's direct roles, or empty array.
 Requires that the Roles class has appropriate read permissions.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| user | <code>Parse.User</code> |  |
-| [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
+- user <code>Parse.User</code>
+- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
 
-<a name="Parsimonious.userHasRole"></a>
+<a name="userHasRole"></a>
 
-### Parsimonious.userHasRole(user, roles, [opts]) ⇒ <code>Parse.Promise</code>
+## userHasRole(user, roles, [opts]) ⇒ <code>Parse.Promise</code>
 Check if a user has a role, or any or all of multiple roles, return a promise resolving to true or false.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| user | <code>Parse.User</code> |  |
-| roles | <code>string</code> \| <code>object</code> | Can be single role name string, or object containing 'names' key whose value is an array of role names and 'op' key with value 'and' or 'or' |
-| [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
+- user <code>Parse.User</code>
+- roles <code>string</code> | <code>object</code> - Can be single role name string, or object containing 'names' key whose value is an array of role names and 'op' key with value 'and' or 'or'
+- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
 
-<a name="Parsimonious.getClass"></a>
+<a name="getClass"></a>
 
-### Parsimonious.getClass(className) ⇒
+## getClass(className) ⇒
 Short-hand for Parse.Object.extend(className)
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
 **Returns**: subclass of Parse.Object  
+**Params**
 
-| Param | Type |
-| --- | --- |
-| className | <code>string</code> | 
+- className <code>string</code>
 
-<a name="Parsimonious.getClassInst"></a>
+<a name="getClassInst"></a>
 
-### Parsimonious.getClassInst(className, [attributes], [options]) ⇒ <code>Parse.Object</code>
+## getClassInst(className, [attributes], [options]) ⇒ <code>Parse.Object</code>
 Return instance of Parse.Object class.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| className | <code>string</code> |  |
-| [attributes] | <code>object</code> | Properties to set on new object. |
-| [options] | <code>object</code> | Options to use when creating object. |
+- className <code>string</code>
+- [attributes] <code>object</code> - Properties to set on new object.
+- [options] <code>object</code> - Options to use when creating object.
 
-<a name="Parsimonious.getJoinTableName"></a>
+<a name="getJoinTableName"></a>
 
-### Parsimonious.getJoinTableName(from, to) ⇒ <code>string</code>
+## getJoinTableName(from, to) ⇒ <code>string</code>
 Return the name of a table used to join two Parse.Object classes in a many-to-many relationship.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| from | <code>string</code> | First class name |
-| to | <code>string</code> | Second class name |
+- from <code>string</code> - First class name
+- to <code>string</code> - Second class name
 
-<a name="Parsimonious.joinWithTable"></a>
+<a name="joinWithTable"></a>
 
-### Parsimonious.joinWithTable(classes, [metadata], [opts]) ⇒ <code>Parse.Promise</code>
+## joinWithTable(classes, [metadata], [opts]) ⇒ <code>Parse.Promise</code>
 Join two parse objects in a many-to-many relationship by adding a document to a third join table.
 Like Parse.Relation.add except that it allows you to add metadata to describe the relationship.
 Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
@@ -199,17 +266,16 @@ Join table must exist and have pointer columns named like class names,
 except first letter lower-case; e.g.: employee, company.
 Returns promise.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| classes | <code>object</code> |  | must contain two keys corresponding to existing classes; each value must be a valid parse object. |
-| [metadata] | <code>object</code> | <code></code> | optional key/value pairs to set on the new document to describe relationship. |
-| [opts] | <code>object</code> |  | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
+- classes <code>object</code> - must contain two keys corresponding to existing classes; each value must be a valid parse object.
+- [metadata] <code>object</code> <code> = </code> - optional key/value pairs to set on the new document to describe relationship.
+- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
 
-<a name="Parsimonious.unJoinWithTable"></a>
+<a name="unJoinWithTable"></a>
 
-### Parsimonious.unJoinWithTable(classes, [opts]) ⇒ <code>Parse.Promise</code>
+## unJoinWithTable(classes, [opts]) ⇒ <code>Parse.Promise</code>
 Unjoin two parse objects currently joined in a many-to-many relationship by a document in a third join table.
 Like Parse.Relation.remove (see Parsimonious.joinWithTable above).
 Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
@@ -217,141 +283,134 @@ Join table must exist and have pointer columns named like class names,
 except first letter lower-case; e.g.: employee, company.
 If can't unjoin objects, returned promise resolves to undefined.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| classes | <code>object</code> | must contain two keys corresponding to existing classes;                           each value must be a valid parse object already in db. |
-| [opts] | <code>object</code> | A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find). |
+- classes <code>object</code> - must contain two keys corresponding to existing classes;
+                          each value must be a valid parse object already in db.
+- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
 
-<a name="Parsimonious.getJoinQuery"></a>
+<a name="getJoinQuery"></a>
 
-### Parsimonious.getJoinQuery(classes, [opts]) ⇒ <code>Parse.Query</code>
+## getJoinQuery(classes, [opts]) ⇒ <code>Parse.Query</code>
 Return a query on a many-to-many join table.
 Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
 Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| classes | <code>object</code> | must contain two keys corresponding to existing classes, with each key's value being either a valid parse object or null |
-| [opts] | <code>object</code> | Query restrictions (see Parsimonious.newQuery) |
+- classes <code>object</code> - must contain two keys corresponding to existing classes, with each key's value being either a valid parse object or null
+- [opts] <code>object</code> - Query restrictions (see Parsimonious.newQuery)
 
-<a name="Parsimonious.isPFObject"></a>
+<a name="isPFObject"></a>
 
-### Parsimonious.isPFObject(thing, [ofClass]) ⇒ <code>boolean</code>
+## isPFObject(thing, [ofClass]) ⇒ <code>boolean</code>
 Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User or Parse.CustomClass)
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type |
-| --- | --- |
-| thing | <code>\*</code> | 
-| [ofClass] | <code>string</code> | 
+- thing <code>\*</code>
+- [ofClass] <code>string</code>
 
-<a name="Parsimonious.isPointer"></a>
+<a name="isPointer"></a>
 
-### Parsimonious.isPointer(thing) ⇒ <code>boolean</code>
+## isPointer(thing) ⇒ <code>boolean</code>
 Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param |
-| --- |
-| thing | 
+- thing
 
-<a name="Parsimonious.isUser"></a>
+<a name="isUser"></a>
 
-### Parsimonious.isUser(thing) ⇒ <code>boolean</code>
+## isUser(thing) ⇒ <code>boolean</code>
 Return true if thing is an instance of Parse.User.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type |
-| --- | --- |
-| thing | <code>\*</code> | 
+- thing <code>\*</code>
 
-<a name="Parsimonious.toJsn"></a>
+<a name="toJsn"></a>
 
-### Parsimonious.toJsn(thing, [deep]) ⇒ <code>\*</code>
+## toJsn(thing, [deep]) ⇒ <code>\*</code>
 Return a json representation of a Parse.Object,
 sub-class of Parse.Object (such as Parse.User),
 or plain object containing any or none of those, to json, optionally recursively.
 Does not mutate parameters.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| thing | <code>\*</code> |  | Value to create json from. |
-| [deep] | <code>boolean</code> | <code>false</code> | If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion. |
+- thing <code>\*</code> - Value to create json from.
+- [deep] <code>boolean</code> <code> = false</code> - If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
 
-<a name="Parsimonious.objPick"></a>
+<a name="objPick"></a>
 
-### Parsimonious.objPick(parseObj, keys) ⇒ <code>object</code>
+## objPick(parseObj, keys) ⇒ <code>object</code>
 Get some columns from a Parse object and return them in a plain object.
 If keys is not an array or comma-separated string, return undefined.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type |
-| --- | --- |
-| parseObj | <code>Parse.Object</code> | 
-| keys | <code>string</code> \| <code>Array.&lt;string&gt;</code> | 
+- parseObj <code>Parse.Object</code>
+- keys <code>string</code> | <code>Array.&lt;string&gt;</code>
 
-<a name="Parsimonious.objGetDeep"></a>
+<a name="objGetDeep"></a>
 
-### Parsimonious.objGetDeep(parseObj, columnAndPath) ⇒ <code>\*</code>
+## objGetDeep(parseObj, columnAndPath) ⇒ <code>\*</code>
 Get an an object-type column from a Parse object and return the value of a nested key within it.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Description |
-| --- | --- | --- |
-| parseObj | <code>Parse.Object</code> |  |
-| columnAndPath | <code>string</code> | Dot-notation path whose first segment is the column name. |
+- parseObj <code>Parse.Object</code>
+- columnAndPath <code>string</code> - Dot-notation path whose first segment is the column name.
 
-<a name="Parsimonious.objSetMulti"></a>
+<a name="objSetMulti"></a>
 
-### Parsimonious.objSetMulti(parseObj, dataObj, [doMerge])
+## objSetMulti(parseObj, dataObj, [doMerge])
 Set some columns on a Parse object. Mutates the Parse object.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| parseObj | <code>Parse.Object</code> |  |  |
-| dataObj | <code>object</code> |  |  |
-| [doMerge] | <code>boolean</code> | <code>false</code> | If true, each column value is shallow-merged with existing value |
+- parseObj <code>Parse.Object</code>
+- dataObj <code>object</code>
+- [doMerge] <code>boolean</code> <code> = false</code> - If true, each column value is shallow-merged with existing value
 
-<a name="Parsimonious.getPFObjectClassName"></a>
+<a name="getPFObjectClassName"></a>
 
-### Parsimonious.getPFObjectClassName(thing) ⇒ <code>string</code>
+## getPFObjectClassName(thing) ⇒ <code>string</code>
 Returns valid class-name when passed either a subclass of Parse.Object or any string.
 Removes the underscore if it is one of the special classes with a leading underscore.
 Returns undefined if anything else.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type |
-| --- | --- |
-| thing | <code>object</code> \| <code>string</code> | 
+- thing <code>object</code> | <code>string</code>
 
-<a name="Parsimonious.classStringOrSpecialClass"></a>
+<a name="classStringOrSpecialClass"></a>
 
-### Parsimonious.classStringOrSpecialClass(thing) ⇒ <code>\*</code>
+## classStringOrSpecialClass(thing) ⇒ <code>\*</code>
 Returns the corresponding special Parse class if passed the name of one; otherwise, returns the value unchanged.
 
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Kind**: global function  
+**Params**
 
-| Param | Type |
-| --- | --- |
-| thing | <code>string</code> | 
+- thing <code>string</code>
 
 
 <a name="changelog"></a>
 ## Change Log
+
+### Versions 3.8.0 - 23rd October 2017
+##### 
 
 ### Versions 3.7.1 - 3.7.3 - 22nd October 2017
 ##### Minor README changes
@@ -359,25 +418,25 @@ Returns the corresponding special Parse class if passed the name of one; otherwi
 ### Version 3.7.0 - 22nd October 2017
 ##### Non-Breaking Change:
 * Exports a class with static methods, rather than a frozen singleton instance. It is still used the same way; it's just no longer a frozen instance of the class.
-##### New Feature:
-* Added setParse method, which allows you to override the instance of the Parse JS SDK used by the module. (By default, the module will try to use the Parse instance from the global scope. If none exists, it will use the node or browser version based on which environment is detected by the 'detect-is-node' module.) If you wish to use the setParse method, do it after you initialize your Parse instance and set the masterKey. (See "Usage" section at the top of this file.)
+##### Added
+* setParse method, which allows you to override the instance of the Parse JS SDK used by the module. (By default, the module will try to use the Parse instance from the global scope. If none exists, it will use the node or browser version based on which environment is detected by the 'detect-is-node' module.) If you wish to use the setParse method, do it after you initialize your Parse instance and set the masterKey. (See "Usage" section at the top of this file.)
 
 ### Version 3.6.0 - 21st October 2017
-##### New Features
-* Added getClass method.
-* Added objGetDeep method.
-* Added classStringOrSpecialClass method.
-##### Improvements
+##### Added
+* getClass method.
+* objGetDeep method.
+* classStringOrSpecialClass method.
+##### Changed
 * userHasRole method rejects when passed invalid params
-##### Fixes
+##### Fixed
 * Switched test framework from jest to mocha+chai because of issue between jest and parse-mockdb module.
 
 ### Version 3.5.4 - 17th October 2017
-##### Fixes
+##### Fixed
 * Fixed isPointer method's recognition of one of the 3 different types of pointer objects it checks for.
 
 ### Version 3.5.3 - 17th October 2017
-##### Fixes
+##### Fixed
 * isPointer method' recognizes 3 different types of pointer objects.
 * More thorough tests for isPFObject method, including invalidating pointers.
 * More thorough tests for isUser method.
@@ -387,79 +446,75 @@ Returns the corresponding special Parse class if passed the name of one; otherwi
 * isPointer method was restricting to plain objects.
 
 ### Version 3.5.2 - 16th October 2017
-##### Updates
+##### Changes
 * Minor jsdoc fixes.
 
 ### Version 3.5.0 - 16th October 2017
-##### New Features
-* New [fetchIfNeeded](#module_Parsimonious+fetchIfNeeded) method.
-* New [isPointer](#module_Parsimonious+isPointer) method.
+##### Added
+* [fetchIfNeeded](#module_Parsimonious+fetchIfNeeded) method.
+* [isPointer](#module_Parsimonious+isPointer) method.
 
 ### Version 3.4.0 - 14th October 2017
-##### Updates
+##### Changes
 * Refactored into two files -- one for node environments and one for browsers. Reason: Runtime environment detection is too unreliable, even using "detect-node" module, because of problems running in webpack-dev-server.
-* Added a "browser" option in package.json as a hint to babel, browserify, etc. to use the browser version.
+* a "browser" option in package.json as a hint to babel, browserify, etc. to use the browser version.
 
 ### Version 3.3.0 - 13th October 2017
-##### New Features
-* New isUser method because I am sick of typing isPFObject(user, 'User').
-
-### Version 3.3.0 - 13th October 2017
-##### New Features
-* New isUser method because I am sick of typing isPFObject(user, 'User').
+##### Added
+* isUser method
 
 ### Version 3.2.0 - 11th October 2017
-##### New Features
-* New getUserRoles method returns array of names of user's direct roles.
+##### Added
+* getUserRoles method returns array of names of user's direct roles.
 
 ### Version 3.1.0 - 8rd October 2017
-##### New Features
+##### Added
 * userHasRole method can check if a user has any or all of an array of roles.
-##### Updates
+##### Changes
 * Improved documentation of newQuery method
 
 ### Version 3.0.0 - 3rd October 2017
-##### Breaking Changes
+##### BREAKING CHANGES
 * getJoinQuery signature has changed: The 'select' parameter has been removed. Instead, set a 'select' key in the 2nd options param object for use by newQuery method.
-##### New Features
+##### Added
 * newQuery method accepts a 'select' key in its 2nd parameter to select fields to restrict results to.
-##### Updates
+##### Other Changes
 * Improved documentation.
 
 ### Version 2.0.8 - 22nd September 2017
-##### Updates
+##### Changes
 * Improved ci config.
 * Moved Change Log to bottom of README.
 
 ### Version 2.0.7 - 21st September 2017
-##### Updates
+##### Changes
 * Removed commitizen.
 
 ### Version 2.0.6 - 21st September 2017
-##### Updates
+##### Changes
 * Removed semantic-release for now.
 
 ### Version 2.0.5 - 21st September 2017
-##### Updates
+##### Changes
 * Reconfigured ci.
 
 ### Version 2.0.4 - 21st September 2017
-##### Updates
-* Added codecov reporting and badge.
+##### Changes
+* codecov reporting and badge.
 * Reduced minimum required node version to 4.
 
 ### Version 2.0.3 - 21st September 2017
-##### Updates
+##### Changes
 * 100% test coverage with jest.
 * Use different branch of parse-shim to account for parse already being loaded in cloud code.
 
-##### Bug Fixes
+##### Bug Fixed
 * Use different branch of parse-shim to correctly detect when running in browser or node to import correct parse version.
 
 ### Version 2.0.2 - 20th September 2017
-##### New Features
-* new userHasRole method
-##### Updates
+##### Added
+* userHasRole method
+##### Changes
 * all methods that access the database now accept optional sessionToken
 * isPFObject now accepts an optional class name param
 * can pass array of field names, in addition to comma-separated list, to getJoinQuery
