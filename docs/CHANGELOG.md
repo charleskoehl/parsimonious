@@ -1,6 +1,6 @@
 ## Change Log
 
-### Versions 3.8.0 - 23rd October 2017
+### [3.8.0] - 2017-10-23
 ##### 
 
 ### Versions 3.7.1 - 3.7.3 - 22nd October 2017
