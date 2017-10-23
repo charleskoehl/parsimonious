@@ -17,7 +17,7 @@ import lowerFirst from 'lodash/lowerFirst'
 
 const specialClasses = ['User', 'Role', 'Session']
 
-export default class Parsimonious {
+export default class {
   
   static init(parseObject) {
     if(typeof parseObject === 'object') {
