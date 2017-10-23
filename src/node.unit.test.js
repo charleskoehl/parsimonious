@@ -1,7 +1,7 @@
 // 'use strict'
 
 import Parse from 'parse/node'
-import parsm from './index'
+import parsm from './node'
 import ParseMockDB from 'parse-mockdb'
 import chai from 'chai'
 
@@ -12,7 +12,7 @@ const expect = chai.expect
 
 try {
   Parse.initialize('test')
-  parsm.setParse(Parse)
+  parsm.setParse(Parse) // Works without this line, but might need if switch from mocha to jest.
 } catch(e) {
   console.error('Could not initialize Parse or Parsimonious because could not find a valid Parse object:', e)
   process.exit(1);
