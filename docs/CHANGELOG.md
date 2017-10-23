@@ -1,12 +1,12 @@
 ## Change Log
 
-### [3.8.0] - 2017-10-23
+### [3.8.0]() - 2017-10-23
 ##### 
 
 ### Versions 3.7.1 - 3.7.3 - 22nd October 2017
 ##### Minor README changes
 
-### Version 3.7.0 - 22nd October 2017
+### [3.7.0](35f04981f625e9442af57e1183680dd1b1de47a0) - 2017-10-22
 ##### Non-Breaking Change:
 * Exports a class with static methods, rather than a frozen singleton instance. It is still used the same way; it's just no longer a frozen instance of the class.
 ##### Added
