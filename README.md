@@ -353,6 +353,10 @@ Returns the corresponding special Parse class if passed the name of one; otherwi
 <a name="changelog"></a>
 ## Change Log
 
+### Version 3.7.2 - 22nd October 2017
+##### Documentation Format Fix:
+* code block formatting fix
+
 ### Version 3.7.1 - 22nd October 2017
 ##### Documentation Change:
 * Post-process README to remove lines added by jsdoc2md that make it look as if you can create an instance of Parsimonious.
