@@ -1,12 +1,12 @@
 ## Change Log
 
-### [3.8.0] - 2017-10-23
+### Version 3.8.0 - 23rd October 2017
 ##### 
 
 ### Versions 3.7.1 - 3.7.3 - 22nd October 2017
 ##### Minor README changes
 
-### [3.7.0](https://github.com/charleskoehl/parsimonious/compare/v3.6.0...v3.7.0) - 2017-10-22
+### Version 3.7.0 - 22nd October 2017
 ##### Non-Breaking Change:
 * Exports a class with static methods, rather than a frozen singleton instance. It is still used the same way; it's just no longer a frozen instance of the class.
 ##### Added
