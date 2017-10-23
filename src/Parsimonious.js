@@ -9,7 +9,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import clone from 'lodash/clone'
 import lowerFirst from 'lodash/lowerFirst'
 
-const rej = Parse.Promise.reject
+console.log('global:', global)
 
 /**
  * Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
@@ -19,6 +19,11 @@ const rej = Parse.Promise.reject
 const specialClasses = ['User', 'Role', 'Session']
 
 export default class Parsimonious {
+  
+  static init(parseObject) {
+    this.Parse = parseObject
+    this.rej = this.Parse.Promise.reject
+  }
   
   /**
    * Return a new Parse.Query instance from a Parse Object class name.
@@ -30,7 +35,7 @@ export default class Parsimonious {
    * @returns {Parse.Query}
    */
   static newQuery(aClass, opts) {
-    const q = new Parse.Query(this.classStringOrSpecialClass(aClass))
+    const q = new this.Parse.Query(this.classStringOrSpecialClass(aClass))
     if(isPlainObject(opts)) {
       const {skip, limit, select} = opts
       isInteger(skip) && skip > 0 && q.skip(skip)
@@ -57,7 +62,7 @@ export default class Parsimonious {
    * @returns {Parse.User}
    */
   static getUserById(id, opts) {
-    return this.getObjById(Parse.User, id, opts)
+    return this.getObjById(this.Parse.User, id, opts)
   }
   
   /**
@@ -72,16 +77,16 @@ export default class Parsimonious {
    */
   static fetchIfNeeded(thing, opts) {
     if(this.isPFObject(thing)) {
-      return thing.dirty() ? thing.fetch(opts) : Parse.Promise.as(thing)
+      return thing.dirty() ? thing.fetch(opts) : this.Parse.Promise.as(thing)
     } else if(this.isPointer(thing) && typeof thing.className === 'string') {
       return this.getObjById(thing.className, thing.objectId, opts)
     } else {
-      return Parse.Promise.as(thing)
+      return this.Parse.Promise.as(thing)
     }
   }
   
   static getRole(name, opts) {
-    return this.newQuery(Parse.Role)
+    return this.newQuery(this.Parse.Role)
       .equalTo('name', name)
       .first(opts)
   }
@@ -94,7 +99,7 @@ export default class Parsimonious {
    * @return {Parse.Promise}
    */
   static getUserRoles(user, opts) {
-    return this.newQuery(Parse.Role)
+    return this.newQuery(this.Parse.Role)
       .equalTo('users', user)
       .find(opts)
       .then(roles => Array.isArray(roles) && roles.length > 0 ? roles.map(role => role.get('name')) : [])
@@ -109,9 +114,9 @@ export default class Parsimonious {
    */
   static userHasRole(user, roles, opts) {
     if(!this.isUser(user)) {
-      return rej('invalid user')
+      return this.rej('invalid user')
     }
-    const roleQuery = this.newQuery(Parse.Role)
+    const roleQuery = this.newQuery(this.Parse.Role)
       .equalTo('users', user)
     if(typeof roles === 'string') {
       roleQuery.equalTo('name', roles)
@@ -122,7 +127,7 @@ export default class Parsimonious {
       return roleQuery.count(opts)
         .then(result => roles.op === 'and' ? result === roles.names.length : result > 0)
     } else {
-      return rej('invalid roles')
+      return this.rej('invalid roles')
     }
   }
   
@@ -132,7 +137,7 @@ export default class Parsimonious {
    * @returns subclass of Parse.Object
    */
   static getClass(className) {
-    return Parse.Object.extend(className)
+    return this.Parse.Object.extend(className)
   }
   
   /**
@@ -201,7 +206,7 @@ export default class Parsimonious {
         if(this.isPFObject(joinObj)) {
           return joinObj.destroy(opts)
         } else {
-          return Parse.Promise.as(undefined)
+          return this.Parse.Promise.as(undefined)
         }
       })
   }
@@ -234,7 +239,7 @@ export default class Parsimonious {
    * @returns {boolean}
    */
   static isPFObject(thing, ofClass) {
-    return thing instanceof Parse.Object
+    return thing instanceof this.Parse.Object
       // Check if correct class if specified.
       && (typeof ofClass === 'string' ? this.getPFObjectClassName(thing) === ofClass : true)
   }
@@ -279,7 +284,7 @@ export default class Parsimonious {
    */
   static toJsn(thing, deep = false) {
     let obj
-    if(thing instanceof Parse.Object) {
+    if(thing instanceof this.Parse.Object) {
       obj = thing.toJSON()
     } else if(isPlainObject(thing)) {
       obj = Object.assign({}, thing)
