@@ -15,7 +15,7 @@
     "compile": "babel src -d lib",
     "prepublishOnly": "npm run compile; npm run docs; git add .; git commit -m 'prepublishOnly'; git push origin master;",
     "test": "nyc mocha --compilers js:babel-core/register ./src/node.unit.test.js",
-    "docs": "jsdoc2md --template README.hbs --files ./src/index.js --param-list-format table > README.md"
+    "docs": "jsdoc2md --template README.hbs --files ./src/index.js --param-list-format table > README.1; shx sed 's/\\* \\[new Parsimonious\\(\\)\\]\\(#new_Parsimonious_new\\)//' README.1 > README.2; shx sed 's/### new Parsimonious\\(\\)//' README.2 > README.md; shx rm -rf README.1 README.2"
   },
   "main": "lib/index.js",
   "keywords": [
@@ -28,7 +28,6 @@
     "node": ">=4"
   },
   "dependencies": {
-    "auto-bind": "^1.1.0",
     "detect-is-node": "^1.0.3",
     "lodash": "^4.17.4",
     "parse": "^1.10.0"

@@ -1,3 +1,8 @@
+/**
+ * Utilities for Parse Server cloud code and JS SDK.
+ * @class Parsimonious
+ */
+
 'use strict'
 
 import merge from 'lodash/merge'
@@ -13,10 +18,6 @@ import isNode from 'detect-is-node'
 
 const specialClasses = ['User', 'Role', 'Session']
 
-/**
- * Utilities for Parse Server cloud code and JS SDK. Exports a singleton instance.
- * @module Parsimonious
- */
 class Parsimonious {
   
   /**
