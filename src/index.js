@@ -324,6 +324,20 @@ class Parsimonious {
   
   /**
    * Get an an object-type column from a Parse object and return the value of a nested key within it.
+   * @example
+   * const car = new Parse.Object.extend('Car')
+   * car.set('type', 'SUV')
+   * car.set('interior', {
+   *   seats:5,
+   *   leather: {
+   *     color: 'tan',
+   *     seats: true,
+   *     doors: false
+   *   }
+   * })
+   * Parsimonious.objGetDeep(car, 'interior.leather.color')
+   * // returns "tan"
+   *
    * @param {Parse.Object} parseObj
    * @param {string} columnAndPath Dot-notation path whose first segment is the column name.
    * @returns {*}
@@ -336,8 +350,20 @@ class Parsimonious {
       if(isPlainObject(columnVal)) {
         return get(columnVal, path)
       }
+      const b = {
+        interior: {
+          seats:5,
+          leather: {
+            color: 'tan',
+            seats: true,
+            doors: false
+          }
+        }
+      }
     }
   }
+
+
   
   /**
    * Set some columns on a Parse object. Mutates the Parse object.

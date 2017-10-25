@@ -296,6 +296,21 @@ Get an an object-type column from a Parse object and return the value of a neste
 - parseObj <code>Parse.Object</code>
 - columnAndPath <code>string</code> - Dot-notation path whose first segment is the column name.
 
+**Example**  
+```js
+const car = new Parse.Object.extend('Car')
+car.set('type', 'SUV')
+car.set('interior', {
+  seats:5,
+  leather: {
+    color: 'tan',
+    seats: true,
+    doors: false
+  }
+})
+Parsimonious.objGetDeep(car, 'interior.leather.color')
+// returns "tan"
+```
 <a name="Parsimonious.objSetMulti"></a>
 
 ### Parsimonious.objSetMulti(parseObj, dataObj, [doMerge])
