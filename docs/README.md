@@ -187,9 +187,6 @@ Return the name of a table used to join two Parse.Object classes in a many-to-ma
 Join two parse objects in a many-to-many relationship by adding a document to a third join table.
 Like Parse.Relation.add except that it allows you to add metadata to describe the relationship.
 Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
-Join table must exist and have pointer columns named like class names,
-except first letter lower-case; e.g.: employee, company.
-Returns promise.
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Params**
@@ -225,7 +222,7 @@ Join table must have pointer columns named like class names except first letter 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Params**
 
-- classes <code>object</code> - must contain two keys corresponding to existing classes, with each key's value being either a valid parse object or null
+- classes <code>object</code> - must contain two keys corresponding to existing classes. At least one key's value must be a valid parse object. If the other key's value is falsy, the query retrieves all objects of the 2nd key's class that are joined to the object ofthe 1st class. Same for vice-versa. If both values are valid parse objects, then the query should return zero or one row from the join table.
 - [opts] <code>object</code> - Query restrictions (see Parsimonious.newQuery)
 
 <a name="Parsimonious.isPFObject"></a>
