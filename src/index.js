@@ -154,7 +154,7 @@ class Parsimonious {
   
   /**
    * Return instance of Parse.Object class.
-   * @param {string} className
+   * @param {string} className Parse.Object subclass name.
    * @param {object=} attributes Properties to set on new object.
    * @param {object=} options Options to use when creating object.
    * @returns {Parse.Object}
