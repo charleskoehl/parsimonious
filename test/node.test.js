@@ -760,9 +760,10 @@ describe('getPointer', () => {
     })
   })
   it('throws error when passed invalid params', () => {
-    expect(() => parsm.getPointer('Horse', 23)).to.throw('getPointer called with invalid parameters')
-    expect(() => parsm.getPointer({hello:'there'}, 'asd')).to.throw('getPointer called with invalid parameters')
-    expect(() => parsm.getPointer()).to.throw('getPointer called with invalid parameters')
+    const errMsg = 'getPointer called with non-string parameters'
+    expect(() => parsm.getPointer('Horse', 23)).to.throw(errMsg)
+    expect(() => parsm.getPointer({hello:'there'}, 'asd')).to.throw(errMsg)
+    expect(() => parsm.getPointer()).to.throw(errMsg)
   })
 })
 
