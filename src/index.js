@@ -70,7 +70,7 @@ class Parsimonious {
    * @returns {Parse.User}
    */
   static getUserById(id, opts) {
-    return this.getObjById(this.Parse.User, id, opts)
+    return this.getObjById('User', id, opts)
   }
   
   /**
