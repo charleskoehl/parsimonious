@@ -316,8 +316,7 @@ class Parsimonious {
       obj = thing.toJSON()
     } else if(isPlainObject(thing)) {
       obj = Object.assign({}, thing)
-    } else {
-      // TODO: If thing is undefined, this line throws error "Cannot read property 'Object' of undefined," so make sure thing is clonable by lodash.clone.
+    } else if(thing !== undefined) {
       obj = clone(thing)
     }
     if(deep && isPlainObject(obj)) {
