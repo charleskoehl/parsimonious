@@ -235,7 +235,7 @@ class Parsimonious {
        objectId
      }
    } else {
-     throw new TypeError('getPointer called with invalid parameters')
+     throw new TypeError('getPointer called with non-string parameters')
    }
   }
   
