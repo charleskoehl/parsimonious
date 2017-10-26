@@ -217,6 +217,18 @@ class Parsimonious {
   }
   
   /**
+   * Return instance of Parse.Object class.
+   * @param {string} className
+   * @param {string} objectId
+   * @returns {object}
+   */
+  static getPointer(className, objectId) {
+   if(typeof className === 'string' && typeof objectId === 'string') {
+     return {__type: 'Pointer', className: this.classNameToParseClassName(className), objectId }
+   }
+  }
+  
+  /**
    * Return a query on a many-to-many join table.
    * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
    * Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
@@ -366,7 +378,8 @@ class Parsimonious {
 
   
   /**
-   * Set some columns on a Parse object. Mutates the Parse object.
+   * Set some columns on a Parse object.
+   * Mutates the Parse object.
    * @param {Parse.Object} parseObj
    * @param {object} dataObj
    * @param {boolean=} doMerge If true, each column value is shallow-merged with existing value
@@ -386,7 +399,7 @@ class Parsimonious {
   }
   
   /**
-   * Returns valid class-name when passed either a subclass of Parse.Object or any string.
+   * Returns valid class name when passed either a subclass of Parse.Object or any string.
    * Removes the underscore if it is one of the special classes with a leading underscore.
    * Returns undefined if anything else.
    *
@@ -406,7 +419,17 @@ class Parsimonious {
    * @returns {*}
    */
   static classStringOrSpecialClass(thing) {
-    return specialClasses.indexOf(thing) !== -1 ? this.Parse[thing] : thing
+    if(typeof thing === 'string') {
+      return specialClasses.indexOf(thing) !== -1 ? this.Parse[thing] : thing
+    }
+  }
+  
+  /**
+   * If className represents one of the special classes like 'User,' return prefixed with an underscore.
+   * @param className
+   */
+  static classNameToParseClassName(className) {
+    return specialClasses.indexOf(className) !== -1 ? '_'+className : className
   }
   
   /**
