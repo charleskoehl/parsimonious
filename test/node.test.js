@@ -14,7 +14,7 @@ try {
   Parse.initialize('test')
   parsm.setParse(Parse) // Works without this line, but might need if switch from mocha to jest.
 } catch(e) {
-  console.error('Could not initialize Parse or Parsimonious because could not find a valid Parse object:', e)
+  console.error('Could not initialize Parse or Parsimonious:', e)
   process.exit(1);
 }
 
