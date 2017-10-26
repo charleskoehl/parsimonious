@@ -415,7 +415,7 @@ class Parsimonious {
   }
   
   /**
-   * Returns the corresponding special Parse class if passed the name of one; otherwise, returns the value unchanged.
+   * Returns the corresponding special Parse class (like 'User') if passed the name of one; otherwise, returns the value unchanged.
    * @param {string} thing
    * @returns {*}
    */
