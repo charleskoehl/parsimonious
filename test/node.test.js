@@ -231,7 +231,7 @@ describe('objSetMulti', () => {
 
 describe('newQuery', () => {
   
-  it('returns a query that finds all instances of a Parse class when passed a Parse class name', () => {
+  it('returns a query that finds all instances of a Parse class when passed a custom Parse class name', () => {
     return parsm.newQuery('Bouquet').find()
       .then(objs => {
         expect(objs).to.have.lengthOf(savedBouquets.length)
@@ -241,7 +241,7 @@ describe('newQuery', () => {
       })
   })
   
-  it('returns a query that finds all instances of a Parse class when passed a Parse class instance', () => {
+  it('returns a query that finds all instances of a Parse class when passed a custom Parse class instance', () => {
     const cls = Parse.Object.extend('Bouquet')
     const inst = new cls()
     return parsm.newQuery(inst).find()
@@ -250,6 +250,23 @@ describe('newQuery', () => {
         expect(parsm.isPFObject(objs[0], 'Bouquet')).to.be.true
         expect(parsm.isPFObject(objs[9], 'Bouquet')).to.be.true
         expect(objs[9].id).to.equal((parseInt(objs[0].id)+9).toString())
+      })
+  })
+  
+  it('returns a query that finds all instances of a special Parse class when passed the class name', () => {
+    return parsm.newQuery('User').find()
+      .then(objs => {
+        expect(objs).to.have.lengthOf(1)
+        expect(objs[0].get('username')).to.equal('foo manchu')
+      })
+  })
+  
+  it('returns a query that finds all instances of a special Parse class when passed a class instance', () => {
+    const inst = new Parse.User()
+    return parsm.newQuery(inst).find()
+      .then(objs => {
+        expect(objs).to.have.lengthOf(1)
+        expect(objs[0].get('username')).to.equal('foo manchu')
       })
   })
   
