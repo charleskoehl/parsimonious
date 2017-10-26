@@ -35,7 +35,7 @@ class Parsimonious {
   
   /**
    * Return a new Parse.Query instance from a Parse Object class name.
-   * @param {(Parse class instance|string)} aClass Parse class (instance or name)
+   * @param {(Parse.Object|string)} aClass Parse class instance or name
    * @param {object=} opts Query restrictions
    * @param {number=} opts.limit Parameter for Parse.Query.limit. Must be integer greater than zero.
    * @param {number=} opts.skip Parameter for Parse.Query.skip. Must be integer greater than zero.
