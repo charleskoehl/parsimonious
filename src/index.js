@@ -373,16 +373,6 @@ class Parsimonious {
       if(isPlainObject(columnVal)) {
         return get(columnVal, path)
       }
-      const b = {
-        interior: {
-          seats:5,
-          leather: {
-            color: 'tan',
-            seats: true,
-            doors: false
-          }
-        }
-      }
     }
   }
 
