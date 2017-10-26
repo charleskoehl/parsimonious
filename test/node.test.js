@@ -702,6 +702,33 @@ describe('isUser', () => {
   })
 })
 
+describe('getPointer', () => {
+  it('returns a pointer to a custom class', () => {
+    expect(parsm.getPointer('Horse', 'hsueji22')).to.eql({
+      __type: 'Pointer',
+      className: 'Horse',
+      objectId: 'hsueji22'
+    })
+  })
+  it('returns a pointer to a special class', () => {
+    expect(parsm.getPointer('User', 'hsueji22')).to.eql({
+      __type: 'Pointer',
+      className: '_User',
+      objectId: 'hsueji22'
+    })
+    expect(parsm.getPointer('Role', 'hsueji22')).to.eql({
+      __type: 'Pointer',
+      className: '_Role',
+      objectId: 'hsueji22'
+    })
+  })
+  it('throws error when passed invalid params', () => {
+    expect(() => parsm.getPointer('Horse', 23)).to.throw('getPointer called with invalid parameters')
+    expect(() => parsm.getPointer({hello:'there'}, 'asd')).to.throw('getPointer called with invalid parameters')
+    expect(() => parsm.getPointer()).to.throw('getPointer called with invalid parameters')
+  })
+})
+
 describe('classStringOrSpecialClass', () => {
   it('converts the unchanged string if not a special Parse class', () => {
     expect(parsm.classStringOrSpecialClass('Horse')).to.equal('Horse')

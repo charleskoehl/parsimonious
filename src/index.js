@@ -217,14 +217,20 @@ class Parsimonious {
   }
   
   /**
-   * Return instance of Parse.Object class.
+   * Return a pointer to a Parse.Object.
    * @param {string} className
    * @param {string} objectId
    * @returns {object}
    */
   static getPointer(className, objectId) {
    if(typeof className === 'string' && typeof objectId === 'string') {
-     return {__type: 'Pointer', className: this.classNameToParseClassName(className), objectId }
+     return {
+       __type: 'Pointer',
+       className: this.classNameToParseClassName(className),
+       objectId
+     }
+   } else {
+     throw new TypeError('getPointer called with invalid parameters')
    }
   }
   
