@@ -35,7 +35,7 @@ class Parsimonious {
   
   /**
    * Return a new Parse.Query instance from a Parse Object class name.
-   * @param {(string|object)} aClass class name or constructor
+   * @param {(Parse class instance|string)} aClass Parse class (instance or name)
    * @param {object=} opts Query restrictions
    * @param {number=} opts.limit Parameter for Parse.Query.limit. Must be integer greater than zero.
    * @param {number=} opts.skip Parameter for Parse.Query.skip. Must be integer greater than zero.
@@ -43,7 +43,8 @@ class Parsimonious {
    * @returns {Parse.Query}
    */
   static newQuery(aClass, opts) {
-    const q = new this.Parse.Query(this.classStringOrSpecialClass(aClass))
+    const clsInst = this.isPFObject(aClass) ? aClass : this.getClassInst(aClass)
+    const q = new this.Parse.Query(clsInst)
     if(isPlainObject(opts)) {
       const {skip, limit, select} = opts
       isInteger(skip) && skip > 0 && q.skip(skip)

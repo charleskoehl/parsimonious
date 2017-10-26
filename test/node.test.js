@@ -230,8 +230,21 @@ describe('objSetMulti', () => {
 })
 
 describe('newQuery', () => {
-  it('returns a query that finds all instances of a Parse class', () => {
+  
+  it('returns a query that finds all instances of a Parse class when passed a Parse class name', () => {
     return parsm.newQuery('Bouquet').find()
+      .then(objs => {
+        expect(objs).to.have.lengthOf(savedBouquets.length)
+        expect(parsm.isPFObject(objs[0], 'Bouquet')).to.be.true
+        expect(parsm.isPFObject(objs[9], 'Bouquet')).to.be.true
+        expect(objs[9].id).to.equal((parseInt(objs[0].id)+9).toString())
+      })
+  })
+  
+  it('returns a query that finds all instances of a Parse class when passed a Parse class instance', () => {
+    const cls = Parse.Object.extend('Bouquet')
+    const inst = new cls()
+    return parsm.newQuery(inst).find()
       .then(objs => {
         expect(objs).to.have.lengthOf(savedBouquets.length)
         expect(parsm.isPFObject(objs[0], 'Bouquet')).to.be.true
