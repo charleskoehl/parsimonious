@@ -446,6 +446,9 @@ describe('getClass', () => {
     expect(typeof cls).to.equal('function')
     expect(cls.className === 'Colors').to.be.true
   })
+  it('throws an error if passed non-string', () => {
+    expect(() => parsm.getClass(2)).to.throw()
+  })
 })
 
 describe('getClassInst', () => {

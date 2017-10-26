@@ -140,12 +140,16 @@ class Parsimonious {
   }
   
   /**
-   * Short-hand for Parse.Object.extend(className)
+   * Short-hand for Parse.Object.extend(className) or Parse.<special class name like 'User'>
    * @param {string} className
    * @returns subclass of Parse.Object
    */
   static getClass(className) {
     return this.Parse.Object.extend(className)
+    if(typeof className === 'string') {
+    } else {
+      throw new TypeError(`getClass called with ${typeof className} instead of string`)
+    }
   }
   
   /**
