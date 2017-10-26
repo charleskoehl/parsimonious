@@ -22,7 +22,8 @@ try {
 let savedBouquets,
   TheParseObj = Parse.Object.extend('TheParseObj'),
   unsavedParseObj = new TheParseObj(),
-  savedParseObj
+  savedParseObj,
+  user1
 
 before( () => {
   ParseMockDB.mockDB() // Mock the Parse RESTController
@@ -38,7 +39,18 @@ before( () => {
       return Parse.Promise.when(bouquetSaves)
         .then(objs => {
           savedBouquets = objs
-          return objs
+        })
+        .then(() => {
+  
+          const user = new Parse.User({
+            username:'foo manchu',
+            password:'je9w83d',
+            email:'foo@bar.com'
+          })
+          return user.signUp()
+            .then(user => {
+              user1 = user
+            })
         })
     })
 })
