@@ -1,4 +1,4 @@
-// 'use strict'
+'use strict'
 
 import Parse from 'parse/node'
 import parsm from '../src/index'
