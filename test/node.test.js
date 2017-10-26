@@ -501,6 +501,10 @@ describe('getClassInst', () => {
     expect(inst.get('raven').color).to.equal('black')
     expect(inst.get('dove').color).to.equal('white')
   })
+  it('returns an instance of a special Parse.Object class', () => {
+    const newUser = parsm.getClassInst('User')
+    expect(newUser instanceof Parse.User).to.be.true
+  })
 })
 
 describe('Relationships', () => {
