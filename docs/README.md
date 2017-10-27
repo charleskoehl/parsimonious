@@ -42,10 +42,11 @@ const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
     * [.getClass(className)](#Parsimonious.getClass) ⇒
     * [.getClassInst(className, [attributes], [options])](#Parsimonious.getClassInst) ⇒ <code>Parse.Object</code>
     * [.getJoinTableName(from, to)](#Parsimonious.getJoinTableName) ⇒ <code>string</code>
+    * [._getJoinTableClassVars(classes)](#Parsimonious._getJoinTableClassVars) ⇒ <code>object</code>
     * [.joinWithTable(classes, [metadata], [opts])](#Parsimonious.joinWithTable) ⇒ <code>Parse.Promise</code>
+    * [.getJoinQuery(classes, [opts])](#Parsimonious.getJoinQuery) ⇒ <code>Parse.Query</code>
     * [.unJoinWithTable(classes, [opts])](#Parsimonious.unJoinWithTable) ⇒ <code>Parse.Promise</code>
     * [.getPointer(className, objectId)](#Parsimonious.getPointer) ⇒ <code>object</code>
-    * [.getJoinQuery(classes, [opts])](#Parsimonious.getJoinQuery) ⇒ <code>Parse.Query</code>
     * [.isPFObject(thing, [ofClass])](#Parsimonious.isPFObject) ⇒ <code>boolean</code>
     * [.isPointer(thing)](#Parsimonious.isPointer) ⇒ <code>boolean</code>
     * [.isUser(thing)](#Parsimonious.isUser) ⇒ <code>boolean</code>
@@ -183,6 +184,16 @@ Return the name of a table used to join two Parse.Object classes in a many-to-ma
 - from <code>string</code> - First class name
 - to <code>string</code> - Second class name
 
+<a name="Parsimonious._getJoinTableClassVars"></a>
+
+### Parsimonious._getJoinTableClassVars(classes) ⇒ <code>object</code>
+Return classes object deconstructed into 4 variables used for some join table methods.
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- classes <code>object</code> - must contain two keys corresponding to existing classes; each value must be a valid parse object.
+
 <a name="Parsimonious.joinWithTable"></a>
 
 ### Parsimonious.joinWithTable(classes, [metadata], [opts]) ⇒ <code>Parse.Promise</code>
@@ -196,6 +207,19 @@ Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
 - classes <code>object</code> - must contain two keys corresponding to existing classes; each value must be a valid parse object.
 - [metadata] <code>object</code> <code> = </code> - optional key/value pairs to set on the new document to describe relationship.
 - [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
+
+<a name="Parsimonious.getJoinQuery"></a>
+
+### Parsimonious.getJoinQuery(classes, [opts]) ⇒ <code>Parse.Query</code>
+Return a query on a many-to-many join table.
+Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
+Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- classes <code>object</code> - must contain two keys corresponding to existing classes. At least one key's value must be a valid parse object. If the other key's value is not a valid parse object, the query retrieves all objects of the 2nd key's class that are joined to the object ofthe 1st class. Same for vice-versa. If both values are valid parse objects, then the query should return zero or one row from the join table.
+- [opts] <code>object</code> - Query restrictions (see Parsimonious.newQuery)
 
 <a name="Parsimonious.unJoinWithTable"></a>
 
@@ -224,19 +248,6 @@ Return a pointer to a Parse.Object.
 
 - className <code>string</code>
 - objectId <code>string</code>
-
-<a name="Parsimonious.getJoinQuery"></a>
-
-### Parsimonious.getJoinQuery(classes, [opts]) ⇒ <code>Parse.Query</code>
-Return a query on a many-to-many join table.
-Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
-Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
-
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
-**Params**
-
-- classes <code>object</code> - must contain two keys corresponding to existing classes. At least one key's value must be a valid parse object. If the other key's value is falsy, the query retrieves all objects of the 2nd key's class that are joined to the object ofthe 1st class. Same for vice-versa. If both values are valid parse objects, then the query should return zero or one row from the join table.
-- [opts] <code>object</code> - Query restrictions (see Parsimonious.newQuery)
 
 <a name="Parsimonious.isPFObject"></a>
 

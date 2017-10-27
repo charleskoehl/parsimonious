@@ -522,13 +522,13 @@ describe('getClassInst', () => {
 describe('Relationships', () => {
   
   describe('Many-to-Many with Join Tables', () => {
-
+  
     describe('getJoinTableName', () => {
       it(`returns a name for a table used to join two other tables; format: <first table name>2<second table name>`, () => {
         expect(parsm.getJoinTableName('Employee','Company')).to.equal('Employee2Company')
       })
     })
-
+  
     describe('joinWithTable', () => {
       const Ship = parsm.getClassInst('Ship')
       const Destroyer = parsm.getClassInst('Destroyer')
@@ -645,7 +645,28 @@ describe('Relationships', () => {
             expect(joinedShip.id).to.equal(origObjs.Ship.id)
             expect(parsm.isPFObject(joinedFleet, 'Fleet')).to.be.true
             expect(joinedFleet.id).to.equal(origObjs.Fleet.id)
+            // Further verify that you can find all ships within a certain fleet:
+            return parsm.getJoinQuery({Ship: null, Fleet: joinObj.get('fleet')})
+              .find()
           })
+          .then(joinObjs => {
+            expect(joinObjs).to.be.an('array')
+            const joinObj = joinObjs[0]
+            expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).to.be.true
+            const joinedShip = joinObj.get('ship')
+            const joinedFleet = joinObj.get('fleet')
+            expect(parsm.isPFObject(joinedShip, 'Ship')).to.be.true
+            expect(joinedShip.id).to.equal(origObjs.Ship.id)
+            expect(parsm.isPFObject(joinedFleet, 'Fleet')).to.be.true
+            expect(joinedFleet.id).to.equal(origObjs.Fleet.id)
+          })
+      })
+      it(`throws on invalid classes param`, () => {
+        expect(() => parsm.getJoinQuery()).to.throw()
+        expect(() => parsm.getJoinQuery({Ship: null})).to.throw()
+        expect(() => parsm.getJoinQuery({Ship: 'blah'})).to.throw()
+        expect(() => parsm.getJoinQuery({Ship: 'blah', 'Fleet': 'blah'})).to.throw()
+        expect(() => parsm.getJoinQuery({Ship: 'blah', 'Fleet': null})).to.throw()
       })
     })
     
