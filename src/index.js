@@ -185,12 +185,11 @@ class Parsimonious {
    * @returns {Parse.Promise}
    */
   static joinWithTable(classes, metadata=null, opts) {
-    const classNames = Object.keys(classes)
-    const classInstances = [classes[classNames[0]], classes[classNames[1]]]
-    const joinTableName = this.getJoinTableName(classNames[0], classNames[1])
-    const joinObj = this.getClassInst(joinTableName)
-    joinObj.set(lowerFirst(classNames[0]), classInstances[0])
-    joinObj.set(lowerFirst(classNames[1]), classInstances[1])
+    const [cn1, cn2] = Object.keys(classes)
+    const [obj1, obj2] = [classes[cn1], classes[cn2]]
+    const joinObj = this.getClassInst(this.getJoinTableName(cn1, cn2))
+    joinObj.set(lowerFirst(cn1), obj1)
+    joinObj.set(lowerFirst(cn2), obj2)
     if(isPlainObject(metadata)) {
       this.objSetMulti(joinObj, metadata)
     }
@@ -222,6 +221,23 @@ class Parsimonious {
   }
   
   /**
+   * Return a query on a many-to-many join table.
+   * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
+   * Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
+   * @param {object} classes - must contain two keys corresponding to existing classes. At least one key's value must be a valid parse object. If the other key's value is falsy, the query retrieves all objects of the 2nd key's class that are joined to the object ofthe 1st class. Same for vice-versa. If both values are valid parse objects, then the query should return zero or one row from the join table.
+   * @param {object=} opts Query restrictions (see Parsimonious.newQuery)
+   * @returns {Parse.Query}
+   */
+  static getJoinQuery(classes, opts) {
+    const [cn1, cn2] = Object.keys(classes)
+    const [obj1, obj2] = [classes[cn1], classes[cn2]]
+    const query = this.newQuery(this.getJoinTableName(cn1, cn2), opts)
+    this.isPFObject(obj1, cn1) && query.equalTo(lowerFirst(cn1), obj1)
+    this.isPFObject(obj2, cn2) && query.equalTo(lowerFirst(cn2), obj2)
+    return query
+  }
+  
+  /**
    * Return a pointer to a Parse.Object.
    * @param {string} className
    * @param {string} objectId
@@ -237,23 +253,6 @@ class Parsimonious {
    } else {
      throw new TypeError('getPointer called with non-string parameters')
    }
-  }
-  
-  /**
-   * Return a query on a many-to-many join table.
-   * Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
-   * Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
-   * @param {object} classes - must contain two keys corresponding to existing classes. At least one key's value must be a valid parse object. If the other key's value is falsy, the query retrieves all objects of the 2nd key's class that are joined to the object ofthe 1st class. Same for vice-versa. If both values are valid parse objects, then the query should return zero or one row from the join table.
-   * @param {object=} opts Query restrictions (see Parsimonious.newQuery)
-   * @returns {Parse.Query}
-   */
-  static getJoinQuery(classes, opts) {
-    const classNames = Object.keys(classes)
-    const classInstances = [classes[classNames[0]], classes[classNames[1]]]
-    const query = this.newQuery(this.getJoinTableName(classNames[0], classNames[1]), opts)
-    this.isPFObject(classInstances[0], classNames[0]) && query.equalTo(lowerFirst(classNames[0]), classInstances[0])
-    this.isPFObject(classInstances[1], classNames[1]) && query.equalTo(lowerFirst(classNames[1]), classInstances[1])
-    return query
   }
   
   
