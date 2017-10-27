@@ -370,6 +370,8 @@ If className represents one of the special classes like 'User,' return prefixed 
 <a name="changelog"></a>
 ## Change Log
 
+### Version 4.0.1 - 26th October 2017
+##### (trying to get NPM to update README)
 ### Version 4.0.0 - 26th October 2017
 ##### BREAKING CHANGES
 * getClass method now creates constructors for special classes 'User,' 'Role,' and 'Session' with 'Parse[<special class name>],' but still creates constructors for custom classes with 'Parse.Object.extend(<custom class name>).'
