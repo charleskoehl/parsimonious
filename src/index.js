@@ -281,7 +281,6 @@ class Parsimonious {
    */
   static isPFObject(thing, ofClass) {
     return thing instanceof this.Parse.Object
-      // Check if correct class if specified.
       && (typeof ofClass === 'string' ? this.getPFObjectClassName(thing) === ofClass : true)
   }
   
@@ -290,16 +289,17 @@ class Parsimonious {
    * @param thing
    * @returns {boolean}
    */
-  static isPointer(thing) {
+  static isPointer(thing, ofClass) {
     return (
-      (this.isPFObject(thing) && thing.__type === 'Pointer')
-      ||
-      (
-        isPlainObject(thing)
-        && typeof thing.className === 'string'
-        && (typeof thing.id === 'string' || typeof thing.objectId === 'string')
+        (this.isPFObject(thing) && thing.__type === 'Pointer')
+        ||
+        (
+          isPlainObject(thing)
+          && (typeof thing.id === 'string' || typeof thing.objectId === 'string')
+          && typeof thing.className === 'string'
+        )
       )
-    )
+      && (typeof ofClass === 'string' ? this.getPFObjectClassName(thing) === ofClass : true)
   }
   
   /**
@@ -420,7 +420,7 @@ class Parsimonious {
    * @return {string}
    */
   static getPFObjectClassName(thing) {
-    const str = typeof thing === 'string' ? thing : (this.isPFObject(thing) ? thing.className : null)
+    const str = typeof thing === 'string' ? thing : (typeof thing === 'object' ? thing.className : null)
     if(typeof str === 'string') {
       return str.substring(0,1) === '_' && specialClasses.indexOf(str.substring(1)) !== -1 ? str.substring(1) : str
     }

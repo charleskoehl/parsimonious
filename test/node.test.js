@@ -722,7 +722,10 @@ describe('isPointer', () => {
     expect(parsm.isPointer(savedParseObj.toPointer())).to.be.true
     expect(parsm.isPointer({className:'HairBall', objectId:'kjasoiuwne'})).to.be.true
     expect(parsm.isPointer(parsm.toJsn(savedParseObj.toPointer()))).to.be.true
-    expect(parsm.isPointer(parsm.toJsn(savedParseObj.toPointer()))).to.be.true
+  })
+  it('should return true for qualifying objects of a specified class', () => {
+    expect(parsm.isPointer(savedParseObj.toPointer(), 'TheParseObj')).to.be.true
+    expect(parsm.isPointer({className:'HairBall', objectId:'kjasoiuwne'}, 'HairBall')).to.be.true
   })
 })
 
