@@ -743,6 +743,7 @@ describe('getPFObjectClassName', () => {
     expect(parsm.getPFObjectClassName('_Session')).to.equal('Session')
     expect(parsm.getPFObjectClassName({naughty:'object'})).not.to.be.ok
     expect(parsm.getPFObjectClassName([1,2,3])).not.to.be.ok
+    expect(parsm.getPFObjectClassName()).not.to.be.ok
   })
 })
 
