@@ -378,7 +378,7 @@ class Parsimonious {
    * @returns {*}
    */
   static objGetDeep(parseObj, columnAndPath) {
-    if(typeof columnAndPath === 'string') {
+    if(this.isPFObject(parseObj) && typeof columnAndPath === 'string') {
       const
         [column, path] = columnAndPath.split(/\.(.+)/),
         columnVal = parseObj.get(column)
