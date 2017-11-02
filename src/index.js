@@ -257,13 +257,9 @@ class Parsimonious {
    * @param {string} objectId
    * @returns {object}
    */
-  static getPointer(className, objectId) {
-   if(typeof className === 'string' && typeof objectId === 'string') {
-     return {
-       __type: 'Pointer',
-       className: this.classNameToParseClassName(className),
-       objectId
-     }
+  static getPointer(className, id) {
+   if(typeof className === 'string' && typeof id === 'string') {
+     return this.getClass(className).createWithoutData(id)
    } else {
      throw new TypeError('getPointer called with non-string parameters')
    }

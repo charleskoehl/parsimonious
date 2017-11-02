@@ -778,23 +778,27 @@ describe('isUser', () => {
 
 describe('getPointer', () => {
   it('returns a pointer to a custom class', () => {
-    expect(parsm.getPointer('Horse', 'hsueji22')).to.eql({
-      __type: 'Pointer',
-      className: 'Horse',
-      objectId: 'hsueji22'
-    })
+    const result = parsm.getPointer('Horse', 'hsueji22')
+    expect(result).to.be.an('object')
+    expect(result.className).to.equal('Horse')
+    expect(result.id).to.equal('hsueji22')
   })
   it('returns a pointer to a special class', () => {
-    expect(parsm.getPointer('User', 'hsueji22')).to.eql({
-      __type: 'Pointer',
-      className: '_User',
-      objectId: 'hsueji22'
-    })
-    expect(parsm.getPointer('Role', 'hsueji22')).to.eql({
-      __type: 'Pointer',
-      className: '_Role',
-      objectId: 'hsueji22'
-    })
+    const user = parsm.getPointer('User', 'hsueji22')
+    expect(user).to.be.an('object')
+    expect(user.className).to.equal('_User')
+    expect(user.id).to.equal('hsueji22')
+    const role = parsm.getPointer('Role', 'hsueji22')
+    expect(role).to.be.an('object')
+    expect(role.className).to.equal('_Role')
+    expect(role.id).to.equal('hsueji22')
+  })
+  it('generates pointers that can be fetched', () => {
+    const theObjPointer = parsm.getPointer('TheParseObj', savedParseObj.id)
+    return theObjPointer.fetch()
+      .then(obj => {
+        expect(obj.get('roses')).to.equal('red')
+      })
   })
   it('throws error when passed invalid params', () => {
     const errMsg = 'getPointer called with non-string parameters'
