@@ -794,10 +794,23 @@ describe('getPointer', () => {
     expect(role.id).to.equal('hsueji22')
   })
   it('generates pointers that can be fetched', () => {
-    const theObjPointer = parsm.getPointer('TheParseObj', savedParseObj.id)
-    return theObjPointer.fetch()
+    const horse = parsm.getClassInst('Horse', {
+      hair:'brown',
+      nose:'black'
+    })
+    return horse.save()
       .then(obj => {
-        expect(obj.get('roses')).to.equal('red')
+        console.log(obj)
+        console.log(obj.get('hair'))
+        expect(obj.get('hair')).to.equal('brown')
+        const horseP = parsm.getPointer('Horse', horse.id)
+        return horseP.fetch()
+      })
+      .then(fetchedHorse => {
+        expect(parsm.isPFObject(fetchedHorse, 'Horse')).to.be.true
+        expect(fetchedHorse.get('hair')).to.equal('brown')
+        expect(fetchedHorse.get('nose')).to.equal('black')
+        
       })
   })
   it('throws error when passed invalid params', () => {
