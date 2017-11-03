@@ -39,16 +39,18 @@ class Parsimonious {
    * @param {object=} opts Query restrictions
    * @param {number=} opts.limit Parameter for Parse.Query.limit. Must be integer greater than zero.
    * @param {number=} opts.skip Parameter for Parse.Query.skip. Must be integer greater than zero.
-   * @param {string[]} [opts.select] Parameter for Parse.Query.select. Restricts the fields of the returned Parse.Objects to include only the provided keys.
+   * @param {(string|string[])} [opts.include] Parameter for Parse.Query.include. May be string containing one or more comma-separated keys, or array of strings, to use as parameters of Parse.Query.include, which is called once for each.
+   * @param {(string|string[])} [opts.select] Parameter for Parse.Query.select. May be string containing one or more comma-separated keys, or array of strings.
    * @returns {Parse.Query}
    */
   static newQuery(aClass, opts) {
     const clsInst = this.isPFObject(aClass) ? aClass : this.getClassInst(aClass)
     const q = new this.Parse.Query(clsInst)
     if(isPlainObject(opts)) {
-      const {skip, limit, select} = opts
+      const {skip, limit, include, select} = opts
       isInteger(skip) && skip > 0 && q.skip(skip)
       isInteger(limit) && limit > 0 && q.limit(limit)
+      include && this._toArray(include).forEach(str => q.include(str))
       select && q.select(this._toArray(select))
     }
     return q
