@@ -356,7 +356,8 @@ class Parsimonious {
   }
   
   /**
-   * Get an an object-type column from a Parse object and return the value of a nested key within it.
+   * Get the value of a key from a Parse object and return the value of a nested key within it.
+   * If the value of the main key is a Parse.Object or pointer, it is first converted to JSON before getting the nested value.
    * @example
    * const car = new Parse.Object.extend('Car')
    * car.set('type', 'SUV')
@@ -378,11 +379,12 @@ class Parsimonious {
   static objGetDeep(parseObj, columnAndPath) {
     if(this.isPFObject(parseObj) && typeof columnAndPath === 'string') {
       const
-        [column, path] = columnAndPath.split(/\.(.+)/),
-        columnVal = parseObj.get(column)
-      if(isPlainObject(columnVal)) {
-        return get(columnVal, path)
+        [column, path] = columnAndPath.split(/\.(.+)/)
+      let columnVal = parseObj.get(column)
+      if(this.isPFObject(columnVal)) {
+        columnVal = columnVal.toJSON()
       }
+      return get(columnVal, path)
     }
   }
 
