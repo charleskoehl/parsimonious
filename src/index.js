@@ -50,7 +50,7 @@ class Parsimonious {
       const {skip, limit, include, select} = opts
       isInteger(skip) && skip > 0 && q.skip(skip)
       isInteger(limit) && limit > 0 && q.limit(limit)
-      include && this._toArray(include).forEach(str => q.include(str))
+      include && this._toArray(include).forEach(str => typeof str === 'string' && q.include(str))
       select && q.select(this._toArray(select))
     }
     return q
