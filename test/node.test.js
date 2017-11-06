@@ -314,6 +314,43 @@ describe('newQuery', () => {
         // expect(objs[6].get('active')).to.be.undefined
       })
   })
+  it('returns a query that calls Parse.Query.include on a pointer column to retrieve the entire target of the pointer', () => {
+    const car = parsm.getClassInst('Car', {
+      class: 'economy',
+      seats: 50
+    })
+    const train = parsm.getClassInst('Train', {
+      color:'white',
+      cars: 17,
+      speed: 150
+    })
+    return car.save()
+      .then(newCar => {
+        expect(car.id).to.be.a('string')
+        const carId = car.id
+        return train.save()
+          .then(newTrain => {
+            expect(newTrain.className).to.equal('Train')
+            expect(newTrain.get('color')).to.equal('white')
+            return newTrain.save({car: newCar})
+          })
+          .then(trainWithCar => {
+            expect(trainWithCar.get('car').id).to.equal(carId)
+            return parsm.newQuery('Train').first()
+          })
+          .then(foundTrainWithoutInclude => {
+            const car = foundTrainWithoutInclude.get('car')
+            expect(car).to.be.an('object')
+            expect(car.get('seats')).to.be.undefined
+            return parsm.newQuery('Train', {include:'car'}).first()
+          })
+          .then(foundTrainWithInclude => {
+            const car = foundTrainWithInclude.get('car')
+            expect(car).to.be.an('object')
+            expect(car.get('seats')).to.equal(50)
+          })
+      })
+  })
   
 })
 
