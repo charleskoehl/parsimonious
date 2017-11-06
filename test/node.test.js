@@ -162,7 +162,7 @@ describe('objPick', () => {
 })
 
 describe('objGetDeep', () => {
-  it('Get an an object-type column from a Parse object and return the value of a nested key within it', () => {
+  it('Get the value of a key nested within a plain object contained in a column of a Parse.Object.', () => {
     const someObj = parsm.getClassInst('Company', {
       depts: {
         accounting: {
@@ -193,6 +193,30 @@ describe('objGetDeep', () => {
     expect(someObj.get('depts').accounting.employees[0].name).to.equal('fred')
     expect(parsm.objGetDeep(someObj, 'depts.accounting.employees[0].name')).to.equal('fred')
     expect(parsm.objGetDeep(someObj, 'depts.accounting.employees')).to.have.lengthOf(2)
+  })
+  it('Get the value of a key nested within a Parse.Object contained in a column of a parent Parse.Object.', () => {
+    const address = parsm.getClassInst('Address', {
+      line1:'123 Main Street',
+      line2:'Suite 30',
+      city:'Boston',
+      state:'MA',
+      zip:'02110'
+    })
+    return address.save()
+      .then(addr => {
+        const company = parsm.getClassInst('Company', {
+          name:'IBM',
+          address:addr
+        })
+        return company.save()
+      })
+      .then(co => {
+        expect(co.className).to.equal('Company')
+        const addr = co.get('address')
+        expect(addr.className).to.equal('Address')
+        expect(addr.get('city')).to.equal('Boston')
+        expect(parsm.objGetDeep(co, 'address.city')).to.equal('Boston')
+      })
   })
 })
 
