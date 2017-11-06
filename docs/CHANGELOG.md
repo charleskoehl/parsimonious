@@ -1,5 +1,13 @@
 ## Change Log
 
+### 4.1.0 - 05-11-17
+##### Fixed
+* getPointer method was generating pseudo pointers that did not have a fetch function.
+* Addressed deprecation notice for the mocha "compilers" option
+##### Added
+* Added optional 'ofClass' param to isPointer method to check if it is a pointer of a specific class.
+* 'include' option to newQuery method
+* Added support for getting nested values from pointer columns to objGetDeep method.
 ### 4.0.1 - 26-10-17
 ##### (trying to get NPM to update README)
 ### 4.0.0 - 26-10-17
