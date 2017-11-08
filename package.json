@@ -11,13 +11,12 @@
     "name": "Charles Koehl",
     "email": "charles@etherscapes.com"
   },
-  "readme": "docs/README.md",
   "scripts": {
     "compile": "babel src -d lib",
     "prepublishOnly": "npm run compile; npm run docs; git add .; git commit -m 'prepublishOnly'; git push origin master;",
     "test": "nyc mocha --require babel-register ./test/node.test.js",
     "docs": "jsdoc2md --template docs/README.hbs --files ./src/index.js --param-list-format list > docs/README.1; cat docs/CHANGELOG.md >> docs/README.1; npm run after-jsdoc2md",
-    "after-jsdoc2md": "shx sed 's/### new Parsimonious\\(\\)//' docs/README.1 > docs/README.2; shx sed 's/\\* \\[new Parsimonious\\(\\)\\]\\(#new_Parsimonious_new\\)//' docs/README.2 > docs/README.md; shx rm -rf docs/README.1 docs/README.2"
+    "after-jsdoc2md": "shx sed 's/### new Parsimonious\\(\\)//' docs/README.1 > docs/README.2; shx sed 's/\\* \\[new Parsimonious\\(\\)\\]\\(#new_Parsimonious_new\\)//' docs/README.2 > README.md; shx rm -rf docs/README.1 docs/README.2"
   },
   "main": "lib/index.js",
   "browser": {

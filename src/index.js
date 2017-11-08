@@ -352,7 +352,9 @@ class Parsimonious {
    * @returns {object}
    */
   static objPick(parseObj, keys) {
-    return pick(this.toJsn(parseObj), this._toArray(keys))
+    if(this.isPFObject(parseObj) && (Array.isArray(keys) || typeof keys === 'string')) {
+      return pick(parseObj.toJSON(), this._toArray(keys))
+    }
   }
   
   /**
