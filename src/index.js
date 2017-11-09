@@ -181,15 +181,20 @@ class Parsimonious {
    * Converts a variable number of arguments into 4 variables used by {@link Parsimonious#joinWithTable}, {@link Parsimonious#unJoinWithTable}, {@link Parsimonious#getJoinQuery} methods.
    * @returns {object}
    */
-  static _getJoinTableClassVars(classes) {
-    if(isPlainObject(classes)) {
-      const [cn1, cn2] = Object.keys(classes)
-      const [obj1, obj2] = [classes[cn1], classes[cn2]]
-      if(cn1 && cn2 && (this.isPFObject(obj1) || this.isPFObject(obj2))){
-        return {cn1, cn2, obj1, obj2}
-      }
+  static _getJoinTableClassVars() {
+    let cn1, cn2, obj1, obj2
+    if(isPlainObject(arguments[0])) { // for backwards-compatibility
+      [cn1, cn2] = Object.keys(arguments[0]);
+      [obj1, obj2] = Object.values(arguments[0]);
+    } else if(this.isPFObject(arguments[0])) {
+      obj1 = arguments[0]
+      cn1 = obj1.className
+      obj2 = arguments[1]
+      cn2 = obj2.className
     }
-    throw new Error('invalid "classes" passed')
+    if(cn1 && cn2 && (this.isPFObject(obj1) || this.isPFObject(obj2))) {
+      return {cn1, cn2, obj1, obj2}
+    }
   }
   
   /**
@@ -219,25 +224,22 @@ class Parsimonious {
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Parse.Promise}
    */
-  static joinWithTable(classes, metadata=null, opts) {
-    const {cn1, cn2, obj1, obj2} = this._getJoinTableClassVars(classes)
+  static joinWithTable() {
+    const {cn1, cn2, obj1, obj2} = this._getJoinTableClassVars.apply(this, arguments)
+    const
+      argIndex = this.isPFObject(arguments[0]) ? 2 : 1,
+      meta = arguments[argIndex],
+      opts = arguments[argIndex+1]
     const joinObj = this.getClassInst(this.getJoinTableName(cn1, cn2))
     joinObj.set(lowerFirst(cn1), obj1)
     joinObj.set(lowerFirst(cn2), obj2)
-    if(isPlainObject(metadata)) {
-      this.objSetMulti(joinObj, metadata)
+    if(isPlainObject(meta)) {
+      this.objSetMulti(joinObj, meta)
     }
     return joinObj.save(null, opts)
   }
   
   /**
-  static getJoinQuery(classes, opts) {
-    const {cn1, cn2, obj1, obj2} = this._getJoinTableClassVars(classes)
-    const query = this.newQuery(this.getJoinTableName(cn1, cn2), opts)
-    this.isPFObject(obj1, cn1) && query.equalTo(lowerFirst(cn1), obj1)
-    this.isPFObject(obj2, cn2) && query.equalTo(lowerFirst(cn2), obj2)
-    return query
-  }
    * Unjoin two parse objects previously joined by {@link Parsimonious#joinWithTable}
    * If can't unjoin objects, returned promise resolves to undefined.
    * (For backwards-compatibility with v4.1.0, this method may still be called with the 2 parameters
@@ -248,9 +250,14 @@ class Parsimonious {
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Parse.Promise}
    */
-  static unJoinWithTable(classes, opts) {
-    return this.getJoinQuery(classes, opts)
-      .first()
+  static unJoinWithTable() {
+    const {cn1, cn2, obj1, obj2} = this._getJoinTableClassVars.apply(this, arguments)
+    const opts = arguments[this.isPFObject(arguments[0]) ? 2 : 1]
+    return this.getJoinQuery({
+      [cn1]: obj1,
+      [cn2]: obj2
+    })
+      .first(opts)
       .then(joinObj => {
         if(this.isPFObject(joinObj)) {
           return joinObj.destroy(opts)
@@ -303,6 +310,15 @@ class Parsimonious {
    * @param {object=} opts (Options for {@link Parsimonious#newQuery})
    * @returns {Parse.Query}
    */
+  static getJoinQuery(classes, opts) {
+    const {cn1, cn2, obj1, obj2} = this._getJoinTableClassVars.apply(this, arguments)
+    const query = this.newQuery(this.getJoinTableName(cn1, cn2), opts)
+    this.isPFObject(obj1, cn1) && query.equalTo(lowerFirst(cn1), obj1)
+    this.isPFObject(obj2, cn2) && query.equalTo(lowerFirst(cn2), obj2)
+    return query
+  }
+  
+  /**
    * Return a pointer to a Parse.Object.
    * @param {string} className
    * @param {string} objectId
@@ -463,19 +479,11 @@ class Parsimonious {
    * @param {string} path Dot-notation path whose first segment is the column name.
    * @returns {*}
    */
-  static objGetDeep(parseObj, columnAndPath) {
-    if(this.isPFObject(parseObj) && typeof columnAndPath === 'string') {
-      const
-        [column, path] = columnAndPath.split(/\.(.+)/)
-      let columnVal = parseObj.get(column)
-      if(this.isPFObject(columnVal)) {
-        columnVal = columnVal.toJSON()
-      }
-      return get(columnVal, path)
+  static objGetDeep(parseObj, path) {
+    if(this.isPFObject(parseObj) && typeof path === 'string') {
+      return get(parseObj.toJSON(), path)
     }
   }
-
-
   
   /**
    * Set some columns on a Parse object.

@@ -591,91 +591,187 @@ describe('Relationships', () => {
     })
   
     describe('joinWithTable', () => {
-      const Ship = parsm.getClassInst('Ship')
-      const Destroyer = parsm.getClassInst('Destroyer')
-      const Fleet = parsm.getClassInst('Fleet')
-      const origObjs = {}
-      it(`creates a new class of object for joining two other classes`, () => {
-        return Parse.Object.saveAll([Ship, Destroyer, Fleet])
-          .then(savedObjs => {
-            origObjs.Ship = savedObjs[0]
-            origObjs.Destroyer = savedObjs[1]
-            origObjs.Fleet = savedObjs[2]
-            return parsm.joinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
-          })
-          .then(joinObj => {
-            expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).to.be.true
-            const joinedShip = joinObj.get('ship')
-            const joinedFleet = joinObj.get('fleet')
-            expect(parsm.isPFObject(joinedShip, 'Ship')).to.be.true
-            expect(joinedShip.id).to.equal(origObjs.Ship.id)
-            expect(parsm.isPFObject(joinedFleet, 'Fleet')).to.be.true
-            expect(joinedFleet.id).to.equal(origObjs.Fleet.id)
-          })
+  
+      describe('when called with old-style parameters', () => {
+        const Ship = parsm.getClassInst('Ship')
+        const Destroyer = parsm.getClassInst('Destroyer')
+        const Fleet = parsm.getClassInst('Fleet')
+        const origObjs = {}
+        it(`creates a new class of object for joining two other classes`, () => {
+          return Parse.Object.saveAll([Ship, Destroyer, Fleet])
+            .then(savedObjs => {
+              origObjs.Ship = savedObjs[0]
+              origObjs.Destroyer = savedObjs[1]
+              origObjs.Fleet = savedObjs[2]
+              return parsm.joinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
+            })
+            .then(joinObj => {
+              expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).to.be.true
+              const joinedShip = joinObj.get('ship')
+              const joinedFleet = joinObj.get('fleet')
+              expect(parsm.isPFObject(joinedShip, 'Ship')).to.be.true
+              expect(joinedShip.id).to.equal(origObjs.Ship.id)
+              expect(parsm.isPFObject(joinedFleet, 'Fleet')).to.be.true
+              expect(joinedFleet.id).to.equal(origObjs.Fleet.id)
+            })
+        })
+        it(`creates a new class of object for joining two other classes with metadata describing their relationship`, () => {
+          return parsm.joinWithTable({Destroyer: origObjs.Destroyer, Fleet: origObjs.Fleet}, {active: true})
+            .then(joinObj => {
+              expect(parsm.isPFObject(joinObj, 'Destroyer2Fleet')).to.be.true
+              expect(joinObj.get('active')).to.be.true
+              const joinedDestroyer = joinObj.get('destroyer')
+              const joinedFleet = joinObj.get('fleet')
+              expect(parsm.isPFObject(joinedDestroyer, 'Destroyer')).to.be.true
+              expect(joinedDestroyer.id).to.equal(origObjs.Destroyer.id)
+              expect(parsm.isPFObject(joinedFleet, 'Fleet')).to.be.true
+              expect(joinedFleet.id).to.equal(origObjs.Fleet.id)
+            })
+        })
       })
-      it(`creates a new class of object for joining two other classes with metadata describing their relationship`, () => {
-        return parsm.joinWithTable({Destroyer:origObjs.Destroyer, Fleet:origObjs.Fleet}, {active:true})
-          .then(joinObj => {
-            expect(parsm.isPFObject(joinObj, 'Destroyer2Fleet')).to.be.true
-            expect(joinObj.get('active')).to.be.true
-            const joinedDestroyer = joinObj.get('destroyer')
-            const joinedFleet = joinObj.get('fleet')
-            expect(parsm.isPFObject(joinedDestroyer, 'Destroyer')).to.be.true
-            expect(joinedDestroyer.id).to.equal(origObjs.Destroyer.id)
-            expect(parsm.isPFObject(joinedFleet, 'Fleet')).to.be.true
-            expect(joinedFleet.id).to.equal(origObjs.Fleet.id)
-          })
+  
+      describe('when called with new-style parameters', () => {
+        const Ship = parsm.getClassInst('Ship')
+        const Destroyer = parsm.getClassInst('Destroyer')
+        const Fleet = parsm.getClassInst('Fleet')
+        const origObjs = {}
+        it(`creates a new class of object for joining two other classes`, () => {
+          return Parse.Object.saveAll([Ship, Destroyer, Fleet])
+            .then(savedObjs => {
+              origObjs.Ship = savedObjs[0]
+              origObjs.Destroyer = savedObjs[1]
+              origObjs.Fleet = savedObjs[2]
+              return parsm.joinWithTable(origObjs.Ship, origObjs.Fleet)
+            })
+            .then(joinObj => {
+              expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).to.be.true
+              const joinedShip = joinObj.get('ship')
+              const joinedFleet = joinObj.get('fleet')
+              expect(parsm.isPFObject(joinedShip, 'Ship')).to.be.true
+              expect(joinedShip.id).to.equal(origObjs.Ship.id)
+              expect(parsm.isPFObject(joinedFleet, 'Fleet')).to.be.true
+              expect(joinedFleet.id).to.equal(origObjs.Fleet.id)
+            })
+        })
+        it(`creates a new class of object for joining two other classes with metadata describing their relationship`, () => {
+          return parsm.joinWithTable(origObjs.Destroyer, origObjs.Fleet, {active: true})
+            .then(joinObj => {
+              expect(parsm.isPFObject(joinObj, 'Destroyer2Fleet')).to.be.true
+              expect(joinObj.get('active')).to.be.true
+              const joinedDestroyer = joinObj.get('destroyer')
+              const joinedFleet = joinObj.get('fleet')
+              expect(parsm.isPFObject(joinedDestroyer, 'Destroyer')).to.be.true
+              expect(joinedDestroyer.id).to.equal(origObjs.Destroyer.id)
+              expect(parsm.isPFObject(joinedFleet, 'Fleet')).to.be.true
+              expect(joinedFleet.id).to.equal(origObjs.Fleet.id)
+            })
+        })
       })
+      
     })
 
     describe('unJoinWithTable', () => {
-      const Ship = parsm.getClassInst('Ship')
-      const Fleet = parsm.getClassInst('Fleet')
-      const origObjs = {}
-      it(`removes document from a join table that points to two specific instances of Parse.Object`, () => {
-        // Create a couple of different objects:
-        return Parse.Object.saveAll([Ship, Fleet])
-          .then(savedObjs => {
-            origObjs.Ship = savedObjs[0]
-            origObjs.Fleet = savedObjs[1]
-            // Join them with a third table:
-            return parsm.joinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
-          })
-          .then(joinObj => {
-            // Verify existence of the new document in the join table:
-            expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).to.be.true
-            // Further verify they are joined using parsimonious.getJoinQuery:
-            return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')})
-              .first()
-          })
-          .then(joinObj => {
-            expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).to.be.true
-            const joinedShip = joinObj.get('ship')
-            const joinedFleet = joinObj.get('fleet')
-            expect(parsm.isPFObject(joinedShip, 'Ship')).to.be.true
-            expect(joinedShip.id).to.equal(origObjs.Ship.id)
-            expect(parsm.isPFObject(joinedFleet, 'Fleet')).to.be.true
-            expect(joinedFleet.id).to.equal(origObjs.Fleet.id)
-            // Un-join them by removing the document from the join table that points to both:
-            return parsm.unJoinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
-          })
-          .then(joinObj => {
-            // Should receive a copy of the join document that was destroyed:
-            expect(joinObj).to.be.ok
-            // Further verify the document was really destroyed by using parsimonious.getJoinQuery:
-            return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')})
-              .first()
-          })
-          .then(joinObj => {
-            expect(joinObj).to.not.be.ok
-            // Verify that unJoinWithTable returns undefined when it cannot find
-            return parsm.unJoinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
-          })
-          .then(joinObj => {
-            expect(joinObj).to.not.be.ok
-          })
+  
+      describe('when called with old-style parameters', () => {
+        const Ship = parsm.getClassInst('Ship')
+        const Fleet = parsm.getClassInst('Fleet')
+        const origObjs = {}
+        it(`removes document from a join table that points to two specific instances of Parse.Object`, () => {
+          // Create a couple of different objects:
+          return Parse.Object.saveAll([Ship, Fleet])
+            .then(savedObjs => {
+              origObjs.Ship = savedObjs[0]
+              origObjs.Fleet = savedObjs[1]
+              // Join them with a third table:
+              return parsm.joinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
+            })
+            .then(joinObj => {
+              // Verify existence of the new document in the join table:
+              expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).to.be.true
+              // Further verify they are joined using parsimonious.getJoinQuery:
+              return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')})
+                .first()
+            })
+            .then(joinObj => {
+              expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).to.be.true
+              const joinedShip = joinObj.get('ship')
+              const joinedFleet = joinObj.get('fleet')
+              expect(parsm.isPFObject(joinedShip, 'Ship')).to.be.true
+              expect(joinedShip.id).to.equal(origObjs.Ship.id)
+              expect(parsm.isPFObject(joinedFleet, 'Fleet')).to.be.true
+              expect(joinedFleet.id).to.equal(origObjs.Fleet.id)
+              // Un-join them by removing the document from the join table that points to both:
+              return parsm.unJoinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
+            })
+            .then(joinObj => {
+              // Should receive a copy of the join document that was destroyed:
+              expect(joinObj).to.be.ok
+              // Further verify the document was really destroyed by using parsimonious.getJoinQuery:
+              return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')})
+                .first()
+            })
+            .then(joinObj => {
+              expect(joinObj).to.not.be.ok
+              // Verify that unJoinWithTable returns undefined when it cannot find
+              return parsm.unJoinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
+            })
+            .then(joinObj => {
+              expect(joinObj).to.not.be.ok
+            })
     
+        })
       })
+  
+      describe('when called with new-style parameters', () => {
+        const Ship = parsm.getClassInst('Ship')
+        const Fleet = parsm.getClassInst('Fleet')
+        const origObjs = {}
+        it(`removes document from a join table that points to two specific instances of Parse.Object`, () => {
+          // Create a couple of different objects:
+          return Parse.Object.saveAll([Ship, Fleet])
+            .then(savedObjs => {
+              origObjs.Ship = savedObjs[0]
+              origObjs.Fleet = savedObjs[1]
+              // Join them with a third table:
+              return parsm.joinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
+            })
+            .then(joinObj => {
+              // Verify existence of the new document in the join table:
+              expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).to.be.true
+              // Further verify they are joined using parsimonious.getJoinQuery:
+              return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')})
+                .first()
+            })
+            .then(joinObj => {
+              expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).to.be.true
+              const joinedShip = joinObj.get('ship')
+              const joinedFleet = joinObj.get('fleet')
+              expect(parsm.isPFObject(joinedShip, 'Ship')).to.be.true
+              expect(joinedShip.id).to.equal(origObjs.Ship.id)
+              expect(parsm.isPFObject(joinedFleet, 'Fleet')).to.be.true
+              expect(joinedFleet.id).to.equal(origObjs.Fleet.id)
+              // Un-join them by removing the document from the join table that points to both:
+              return parsm.unJoinWithTable(origObjs.Ship, origObjs.Fleet)
+            })
+            .then(joinObj => {
+              // Should receive a copy of the join document that was destroyed:
+              expect(joinObj).to.be.ok
+              // Further verify the document was really destroyed by using parsimonious.getJoinQuery:
+              return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')})
+                .first()
+            })
+            .then(joinObj => {
+              expect(joinObj).to.not.be.ok
+              // Verify that unJoinWithTable returns undefined when it cannot find
+              return parsm.unJoinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
+            })
+            .then(joinObj => {
+              expect(joinObj).to.not.be.ok
+            })
+    
+        })
+      })
+      
     })
 
     describe('getJoinQuery', () => {
@@ -894,6 +990,15 @@ describe('classStringOrSpecialClass', () => {
   })
   it('converts "Role" to Parse.Role', () => {
     expect(parsm.classStringOrSpecialClass('Role')).to.equal(Parse.Role)
+  })
+})
+
+describe('classNameToParseClassName', () => {
+  it('does not change a custom subclass name', () => {
+    expect(parsm.classNameToParseClassName('Horse')).to.equal('Horse')
+  })
+  it('prefixes special Parse class with underscore', () => {
+    expect(parsm.classNameToParseClassName('User')).to.equal('_User')
   })
 })
   
