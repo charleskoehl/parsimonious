@@ -42,17 +42,17 @@ const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
     * [.getClass(className)](#Parsimonious.getClass) ⇒
     * [.getClassInst(className, [attributes], [options])](#Parsimonious.getClassInst) ⇒ <code>Parse.Object</code>
     * [.getJoinTableName(from, to)](#Parsimonious.getJoinTableName) ⇒ <code>string</code>
-    * [._getJoinTableClassVars(classes)](#Parsimonious._getJoinTableClassVars) ⇒ <code>object</code>
-    * [.joinWithTable(classes, [metadata], [opts])](#Parsimonious.joinWithTable) ⇒ <code>Parse.Promise</code>
+    * [._getJoinTableClassVars()](#Parsimonious._getJoinTableClassVars) ⇒ <code>object</code>
+    * [.joinWithTable(object1, object2, [metadata], [opts])](#Parsimonious.joinWithTable) ⇒ <code>Parse.Promise</code>
+    * [.unJoinWithTable(object1, object2, [opts])](#Parsimonious.unJoinWithTable) ⇒ <code>Parse.Promise</code>
     * [.getJoinQuery(classes, [opts])](#Parsimonious.getJoinQuery) ⇒ <code>Parse.Query</code>
-    * [.unJoinWithTable(classes, [opts])](#Parsimonious.unJoinWithTable) ⇒ <code>Parse.Promise</code>
     * [.getPointer(className, objectId)](#Parsimonious.getPointer) ⇒ <code>object</code>
     * [.isPFObject(thing, [ofClass])](#Parsimonious.isPFObject) ⇒ <code>boolean</code>
     * [.isPointer(thing)](#Parsimonious.isPointer) ⇒ <code>boolean</code>
     * [.isUser(thing)](#Parsimonious.isUser) ⇒ <code>boolean</code>
     * [.toJsn(thing, [deep])](#Parsimonious.toJsn) ⇒ <code>\*</code>
     * [.objPick(parseObj, keys)](#Parsimonious.objPick) ⇒ <code>object</code>
-    * [.objGetDeep(parseObj, columnAndPath)](#Parsimonious.objGetDeep) ⇒ <code>\*</code>
+    * [.objGetDeep(parseObj, path)](#Parsimonious.objGetDeep) ⇒ <code>\*</code>
     * [.objSetMulti(parseObj, dataObj, [doMerge])](#Parsimonious.objSetMulti)
     * [.getPFObjectClassName(thing)](#Parsimonious.getPFObjectClassName) ⇒ <code>string</code>
     * [.classStringOrSpecialClass(thing)](#Parsimonious.classStringOrSpecialClass) ⇒ <code>\*</code>
@@ -115,13 +115,12 @@ Return Parse.User instance from user id
 
 ### Parsimonious.fetchIfNeeded(thing, [opts]) ⇒ <code>Parse.Promise</code>
 Given a value thing, return a promise that resolves to
-  thing if thing is a clean Parse.Object,
-  fetched Parse.Object if thing is a dirty Parse.Object,
-  fetched Parse.Object if thing is a pointer;
-  thing if otherwise
+- thing if thing is a clean Parse.Object,
+- fetched Parse.Object if thing is a dirty Parse.Object,
+- fetched Parse.Object if thing is a pointer;
+- thing if otherwise
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
-**Returns**: <code>Parse.Promise</code> - Promise that fulfills with saved UserPrefs object.  
 **Params**
 
 - thing <code>\*</code>
@@ -154,7 +153,7 @@ Check if a user has a role, or any or all of multiple roles, return a promise re
 <a name="Parsimonious.getClass"></a>
 
 ### Parsimonious.getClass(className) ⇒
-Short-hand for Parse.Object.extend(className) or Parse.<special class name like 'User'>
+Short-hand for Parse.Object.extend(className) or a special class like Parse.User
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Returns**: subclass of Parse.Object  
@@ -187,58 +186,111 @@ Return the name of a table used to join two Parse.Object classes in a many-to-ma
 
 <a name="Parsimonious._getJoinTableClassVars"></a>
 
-### Parsimonious._getJoinTableClassVars(classes) ⇒ <code>object</code>
-Return classes object deconstructed into 4 variables used for some join table methods.
+### Parsimonious._getJoinTableClassVars() ⇒ <code>object</code>
+Converts a variable number of arguments into 4 variables used by [Parsimonious#joinWithTable](Parsimonious#joinWithTable), [Parsimonious#unJoinWithTable](Parsimonious#unJoinWithTable), [Parsimonious#getJoinQuery](Parsimonious#getJoinQuery) methods.
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
-**Params**
-
-- classes <code>object</code> - must contain two keys corresponding to existing classes; each value must be a valid parse object.
-
 <a name="Parsimonious.joinWithTable"></a>
 
-### Parsimonious.joinWithTable(classes, [metadata], [opts]) ⇒ <code>Parse.Promise</code>
+### Parsimonious.joinWithTable(object1, object2, [metadata], [opts]) ⇒ <code>Parse.Promise</code>
 Join two parse objects in a many-to-many relationship by adding a document to a third join table.
 Like Parse.Relation.add except that it allows you to add metadata to describe the relationship.
-Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
+Creates join tables which are named with the class names separated with the numeral 2; e.g.: Student2Course.
+(For backwards-compatibility with v4.1.0, this method may still be called with the 3 parameters
+'classes', 'metadata', and 'opts', where 'classes' is a plain object whose two keys are the classes to join,
+and whose values are the Parse.Object instances.)
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Params**
 
-- classes <code>object</code> - must contain two keys corresponding to existing classes; each value must be a valid parse object.
-- [metadata] <code>object</code> <code> = </code> - optional key/value pairs to set on the new document to describe relationship.
+- object1 <code>Parse.Object</code> - Parse object or pointer
+- object2 <code>Parse.Object</code> - Parse object or pointer
+- [metadata] <code>object</code> - optional key/value pairs to set on the new document to describe relationship.
+- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
+
+**Example**  
+```js
+// Record the fact that a student completed a course, with date of completion and grade earned:
+const student = <instance of Parse.Student subclass>
+const course = <instance of Parse.Course subclass>
+const meta = {completed: new Date(2017, 11, 17), grade: 3.2}
+const opts = {sessionToken: 'r:cbd9ac93162d0ba1287970fb85d8d168'}
+Parsimonious.joinWithTable(student, course, meta, opts)
+   .then(joinObj => {
+     // joinObj is now an instance of the class 'Student2Course', which was created if it didn't exist.
+     // The Student2Course class has pointer columns 'student' and 'course',
+     // plus a date column named 'completed' and a numeric column named 'grade'.
+   })
+```
+<a name="Parsimonious.unJoinWithTable"></a>
+
+### Parsimonious.unJoinWithTable(object1, object2, [opts]) ⇒ <code>Parse.Promise</code>
+Unjoin two parse objects previously joined by [Parsimonious#joinWithTable](Parsimonious#joinWithTable)
+If can't unjoin objects, returned promise resolves to undefined.
+(For backwards-compatibility with v4.1.0, this method may still be called with the 2 parameters
+'classes' and 'opts', where 'classes' is a plain object whose two keys are the classes to join,
+and whose values are the Parse.Object instances.)
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- object1 <code>Parse.Object</code> - Parse object or pointer
+- object2 <code>Parse.Object</code> - Parse object or pointer
 - [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
 
 <a name="Parsimonious.getJoinQuery"></a>
 
 ### Parsimonious.getJoinQuery(classes, [opts]) ⇒ <code>Parse.Query</code>
-Return a query on a many-to-many join table.
-Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
-Join table must have pointer columns named like class names except first letter lower-case; e.g.: employee, company.
+Return a query on a many-to-many join table created by [Parsimonious#joinWithTable](Parsimonious#joinWithTable).
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Params**
 
-- classes <code>object</code> - must contain two keys corresponding to existing classes. At least one key's value must be a valid parse object. If the other key's value is not a valid parse object, the query retrieves all objects of the 2nd key's class that are joined to the object ofthe 1st class. Same for vice-versa. If both values are valid parse objects, then the query should return zero or one row from the join table.
-- [opts] <code>object</code> - Query restrictions (see Parsimonious.newQuery)
+- classes <code>object</code> - Must contain two keys corresponding to existing classes. At least one key's value must be a valid parse object. If the other key's value is not a valid parse object, the query retrieves all objects of the 2nd key's class that are joined to the object of the 1st class. Same for vice-versa. If both values are valid parse objects, then the query should return zero or one row from the join table.
+- [opts] <code>object</code> - (Options for [Parsimonious#newQuery](Parsimonious#newQuery))
 
-<a name="Parsimonious.unJoinWithTable"></a>
-
-### Parsimonious.unJoinWithTable(classes, [opts]) ⇒ <code>Parse.Promise</code>
-Unjoin two parse objects currently joined in a many-to-many relationship by a document in a third join table.
-Like Parse.Relation.remove (see Parsimonious.joinWithTable above).
-Join table must be named <ClassName1>2<ClassName2>; e.g.: Employee2Company.
-Join table must exist and have pointer columns named like class names,
-except first letter lower-case; e.g.: employee, company.
-If can't unjoin objects, returned promise resolves to undefined.
-
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
-**Params**
-
-- classes <code>object</code> - must contain two keys corresponding to existing classes;
-                          each value must be a valid parse object already in db.
-- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-
+**Example**  
+```js
+// Find the join table record linking a particular student and course together:
+const classes = {
+   Student: <instance of Student class>,
+   Course: <instance of Course class>
+}
+Parsimonious.getJoinQuery(classes)
+   .first()
+   .then(joinObj => {
+     // joinObj is the instance of the class 'Student2Course'
+     // that was created by [Parsimonious#joinWithTable](Parsimonious#joinWithTable)
+     // to link that particular student and course together,
+     // along with any metadata describing the relationship.
+   })
+```
+**Example**  
+```js
+// Find all courses taken by a particular student:
+const classes = {
+   Student: <instance of Student class>,
+   Course: null
+}
+Parsimonious.getJoinQuery(classes)
+   .find()
+   .then(joinObjs => {
+     // joinObj is an array of instances of the class 'Student2Course'
+     // that were created by [Parsimonious#joinWithTable](Parsimonious#joinWithTable).
+   })
+```
+**Example**  
+```js
+// Find the top 10 students who have taken a particular course and received a grade of at least 3:
+const classes = {
+   Student: null,
+   Course: <instance of Course class>
+}
+Parsimonious.getJoinQuery(classes)
+   .descending('grade')
+   .greaterThanOrEqualTo('grade', 3)
+   .find({ limit:10 })
+```
 <a name="Parsimonious.getPointer"></a>
 
 ### Parsimonious.getPointer(className, objectId) ⇒ <code>object</code>
@@ -253,7 +305,7 @@ Return a pointer to a Parse.Object.
 <a name="Parsimonious.isPFObject"></a>
 
 ### Parsimonious.isPFObject(thing, [ofClass]) ⇒ <code>boolean</code>
-Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User or Parse.CustomClass)
+Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User or Parse.MyCustomClass)
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Params**
@@ -307,17 +359,55 @@ If keys is not an array or comma-separated string, return undefined.
 - parseObj <code>Parse.Object</code>
 - keys <code>string</code> | <code>Array.&lt;string&gt;</code>
 
+**Example**  
+```js
+const car = new Parse.Object.extend('Car')
+
+car.set('type', 'SUV')
+car.set('interior', {
+  seats:5,
+  leather: {
+    color: 'tan',
+    seats: true,
+    doors: false
+  }
+})
+car.set('specs', {
+  length: 8,
+  height: 4,
+  performance: {
+    speed: 120,
+    zeroTo60: 6
+  }
+})
+
+Parsimonious.objPick(car, 'type,interior.leather,specs.performance.speed')
+// returns
+ {
+   type: 'SUV',
+   interior: {
+     leather: {
+      color: 'tan',
+      seats: true,
+     doors: false
+   },
+   specs: {
+     performance: {
+       speed: 120
+     }
+   }
+ }
+```
 <a name="Parsimonious.objGetDeep"></a>
 
-### Parsimonious.objGetDeep(parseObj, columnAndPath) ⇒ <code>\*</code>
+### Parsimonious.objGetDeep(parseObj, path) ⇒ <code>\*</code>
 Get the value of a key from a Parse object and return the value of a nested key within it.
-If the value of the main key is a Parse.Object or pointer, it is first converted to JSON before getting the nested value.
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Params**
 
 - parseObj <code>Parse.Object</code>
-- columnAndPath <code>string</code> - Dot-notation path whose first segment is the column name.
+- path <code>string</code> - Dot-notation path whose first segment is the column name.
 
 **Example**  
 ```js
@@ -383,6 +473,12 @@ If className represents one of the special classes like 'User,' return prefixed 
 <a name="changelog"></a>
 ## Change Log
 
+### 4.2.0 - 08-11-17
+##### Added
+* Support for calling [joinWithTable](#module_Parsimonious+joinWithTable) with two Parse.Object instances, while still supporting the original parameter format. 
+* Examples for join-table methods.
+##### Changed
+* Improved some other documentation.
 ### 4.1.0 - 05-11-17
 ##### Fixed
 * getPointer method was generating pseudo pointers that did not have a fetch function.

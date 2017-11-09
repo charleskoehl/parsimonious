@@ -1,5 +1,11 @@
 ## Change Log
 
+### 4.2.0 - 08-11-17
+##### Added
+* Support for calling [joinWithTable](#module_Parsimonious+joinWithTable) with two Parse.Object instances, while still supporting the original parameter format. 
+* Examples for join-table methods.
+##### Changed
+* Improved some other documentation.
 ### 4.1.0 - 05-11-17
 ##### Fixed
 * getPointer method was generating pseudo pointers that did not have a fetch function.
