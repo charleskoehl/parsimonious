@@ -185,7 +185,7 @@ class Parsimonious {
     let cn1, cn2, obj1, obj2
     if(isPlainObject(arguments[0])) { // for backwards-compatibility
       [cn1, cn2] = Object.keys(arguments[0]);
-      [obj1, obj2] = Object.values(arguments[0]);
+      [obj1, obj2] = [arguments[0][cn1], arguments[0][cn2]]
     } else if(this.isPFObject(arguments[0])) {
       obj1 = arguments[0]
       cn1 = obj1.className
