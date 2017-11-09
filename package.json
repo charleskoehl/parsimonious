@@ -34,7 +34,7 @@
   "dependencies": {
     "detect-is-node": "^1.0.3",
     "lodash": "^4.17.4",
-    "parse": "^1.10.1"
+    "parse": "^1.10.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -44,7 +44,7 @@
     "chai-as-promised": "^7.1.1",
     "chai-shallow-deep-equal": "^1.4.6",
     "codecov": "^3.0.0",
-    "jsdoc-to-markdown": "^3.0.0",
+    "jsdoc-to-markdown": "^3.0.1",
     "mocha": "^4.0.1",
     "nyc": "^11.3.0",
     "parse-mockdb": "^0.1.26",
