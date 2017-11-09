@@ -1,11 +1,16 @@
 ## Change Log
 
+### 4.2.1 - 08-11-17
+##### Fixed
+* README
+
 ### 4.2.0 - 08-11-17
 ##### Added
 * Support for calling [joinWithTable](#module_Parsimonious+joinWithTable) with two Parse.Object instances, while still supporting the original parameter format. 
 * Examples for join-table methods.
 ##### Changed
 * Improved some other documentation.
+
 ### 4.1.0 - 05-11-17
 ##### Fixed
 * getPointer method was generating pseudo pointers that did not have a fetch function.
@@ -14,8 +19,10 @@
 * Added optional 'ofClass' param to isPointer method to check if it is a pointer of a specific class.
 * 'include' option to newQuery method
 * Added support for getting nested values from pointer columns to objGetDeep method.
+
 ### 4.0.1 - 26-10-17
 ##### (trying to get NPM to update README)
+
 ### 4.0.0 - 26-10-17
 ##### BREAKING CHANGES
 * getClass method now creates constructors for special classes 'User,' 'Role,' and 'Session' with 'Parse[<special class name>],' but still creates constructors for custom classes with 'Parse.Object.extend(<custom class name>).'
