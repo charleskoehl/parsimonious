@@ -36,24 +36,60 @@ class Parsimonious {
   /**
    * Return a new Parse.Query instance from a Parse Object class name.
    * @param {(Parse.Object|string)} aClass Parse class instance or name
-   * @param {object=} opts Query restrictions
-   * @param {number=} opts.limit Parameter for Parse.Query.limit. Must be integer greater than zero.
-   * @param {number=} opts.skip Parameter for Parse.Query.skip. Must be integer greater than zero.
-   * @param {(string|string[])} [opts.include] Parameter for Parse.Query.include. May be string containing one or more comma-separated keys, or array of strings, to use as parameters of Parse.Query.include, which is called once for each.
-   * @param {(string|string[])} [opts.select] Parameter for Parse.Query.select. May be string containing one or more comma-separated keys, or array of strings.
+   * @param {object=} constraints Plain object whose keys are Parse.Query constraint methods and whose values are arrays of arguments for those methods.
    * @returns {Parse.Query}
    */
-  static newQuery(aClass, opts) {
+  static newQuery(aClass, constraints) {
     const clsInst = this.isPFObject(aClass) ? aClass : this.getClassInst(aClass)
-    const q = new this.Parse.Query(clsInst)
-    if(isPlainObject(opts)) {
-      const {skip, limit, include, select} = opts
-      isInteger(skip) && skip > 0 && q.skip(skip)
-      isInteger(limit) && limit > 0 && q.limit(limit)
-      include && this._toArray(include).forEach(str => typeof str === 'string' && q.include(str))
-      select && q.select(this._toArray(select))
+    const query = new this.Parse.Query(clsInst)
+    constraints && this.constrainQuery(query, constraints)
+    return query
+  }
+  
+  /**
+   * Calls one or more query constraint methods on a query with arbitrary number of arguments for each method.
+   * Mutates the 'query' parameter because it calls constraint methods on it.
+   * Returns the query, so you can chain this call.
+   * @example
+   * // Modify a query with 'startsWith,' 'limit,' and 'select' constraints:
+   *
+   * const query = Parsimonious.newQuery('User')
+   * const constraints = {
+   *   startsWith: ['name', 'Sal'],
+   *   limit: 10, // If there is only one argument, does not need to be in an array
+   *   select: [ ['name', 'email', 'birthDate'] ] // If any argument is an array, it still must be within another array to indicate that its array items are not individual arguments.
+   * }
+   *
+   * Parsimonious.constrainQuery(constraints)
+   * // Equivalent to query.startsWith('name', 'Sal').limit(10)
+   * // This method is useful when, for example, building a complex query configuration to pass to another function that may modify the configuration further and then generate the actual query.
+   * 
+   * @param {Parse.Query} query The query on which to call the constraint methods
+   * @param {object[]} constraints Array of plain objects containing query constraint methods and arguments
+   * @returns {Parse.Query}
+   */
+  static constrainQuery(query, constraints) {
+    if(query instanceof this.Parse.Query && isPlainObject(constraints)) {
+      const nonConstraints = ['count','each','find','first','get','toJSON']
+      Object.keys(constraints).forEach(constraint => {
+        if(typeof query[constraint] === 'function' && nonConstraints.indexOf(constraint) === -1) {
+          let args = constraints[constraint]
+          if(!Array.isArray(args)) {
+            args = [args]
+          }
+          try {
+            query[constraint](...args)
+            return query
+          } catch(e) {
+            throw new Error(`constrainQuery error calling the "${constraint}" function on Parse.Query instance`)
+          }
+        } else {
+          throw new RangeError(`Parse.Query does not have a constraint method named "${constraint}"`)
+        }
+      })
+    } else {
+      throw new TypeError('invalid query or constraints')
     }
-    return q
   }
   
   /**

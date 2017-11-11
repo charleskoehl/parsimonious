@@ -273,7 +273,7 @@ describe('newQuery', () => {
         expect(objs).to.have.lengthOf(savedBouquets.length)
         expect(parsm.isPFObject(objs[0], 'Bouquet')).to.be.true
         expect(parsm.isPFObject(objs[9], 'Bouquet')).to.be.true
-        expect(objs[9].id).to.equal((parseInt(objs[0].id)+9).toString())
+        expect(objs[9].id).to.equal((parseInt(objs[0].id) + 9).toString())
       })
   })
   
@@ -285,7 +285,7 @@ describe('newQuery', () => {
         expect(objs).to.have.lengthOf(savedBouquets.length)
         expect(parsm.isPFObject(objs[0], 'Bouquet')).to.be.true
         expect(parsm.isPFObject(objs[9], 'Bouquet')).to.be.true
-        expect(objs[9].id).to.equal((parseInt(objs[0].id)+9).toString())
+        expect(objs[9].id).to.equal((parseInt(objs[0].id) + 9).toString())
       })
   })
   
@@ -307,16 +307,16 @@ describe('newQuery', () => {
   })
   
   it('returns a query limited to first n instances of a Parse class', () => {
-    return parsm.newQuery('Bouquet', {limit:5}).find()
+    return parsm.newQuery('Bouquet', {limit: 5}).find()
       .then(objs => {
         expect(objs).to.have.lengthOf(5)
         expect(parsm.isPFObject(objs[0], 'Bouquet')).to.be.true
         expect(parsm.isPFObject(objs[4], 'Bouquet')).to.be.true
-        expect(objs[4].id).to.equal((parseInt(objs[0].id)+4).toString())
+        expect(objs[4].id).to.equal((parseInt(objs[0].id) + 4).toString())
       })
   })
   it('returns a query skipping first n instances of a Parse class', () => {
-    return parsm.newQuery('Bouquet', {skip:5}).find()
+    return parsm.newQuery('Bouquet', {skip: 5}).find()
       .then(objs => {
         expect(objs).to.have.lengthOf(5)
         expect(parsm.isPFObject(objs[0], 'Bouquet')).to.be.true
@@ -326,7 +326,7 @@ describe('newQuery', () => {
       })
   })
   it('returns a query that selects only a certain column to be returned', () => {
-    return parsm.newQuery('Bouquet', {select:'aNum'}).find()
+    return parsm.newQuery('Bouquet', {select: 'aNum'}).find()
       .then(objs => {
         expect(objs).to.have.lengthOf(10)
         expect(parsm.isPFObject(objs[0], 'Bouquet')).to.be.true
@@ -338,41 +338,89 @@ describe('newQuery', () => {
         // expect(objs[6].get('active')).to.be.undefined
       })
   })
-  it('returns a query that calls Parse.Query.include on a pointer column to retrieve the entire target of the pointer', () => {
+  it('returns a query that calls Parse.Query.include on two pointer columns to retrieve the entire targets of the pointers', () => {
     const car = parsm.getClassInst('Car', {
       class: 'economy',
       seats: 50
     })
-    const train = parsm.getClassInst('Train', {
-      color:'white',
-      cars: 17,
-      speed: 150
+    const engine = parsm.getClassInst('Engine', {
+      horsepower: 3000
     })
-    return car.save()
-      .then(newCar => {
-        expect(car.id).to.be.a('string')
-        const carId = car.id
-        return train.save()
+    const train = parsm.getClassInst('Train')
+    return Parse.Object.saveAll([car, engine])
+      .then(([newCar, newEngine]) => {
+        expect(newCar.id).to.be.a('string')
+        expect(newEngine.id).to.be.a('string')
+        return train.save({
+          color: 'white',
+          cars: 17,
+          speed: 150,
+          car: newCar,
+          engine: newEngine
+        })
           .then(newTrain => {
-            expect(newTrain.className).to.equal('Train')
-            expect(newTrain.get('color')).to.equal('white')
-            return newTrain.save({car: newCar})
-          })
-          .then(trainWithCar => {
-            expect(trainWithCar.get('car').id).to.equal(carId)
-            return parsm.newQuery('Train').first()
-          })
-          .then(foundTrainWithoutInclude => {
-            const car = foundTrainWithoutInclude.get('car')
-            expect(car).to.be.an('object')
-            expect(car.get('seats')).to.be.undefined
-            return parsm.newQuery('Train', {include:'car'}).first()
-          })
-          .then(foundTrainWithInclude => {
-            const car = foundTrainWithInclude.get('car')
+            const car = newTrain.get('car')
+            const engine = newTrain.get('engine')
             expect(car).to.be.an('object')
             expect(car.get('seats')).to.equal(50)
+            expect(engine).to.be.an('object')
+            expect(engine.get('horsepower')).to.equal(3000)
+            const query = parsm.newQuery('Train')
+            query.include(['engine','car'])
+            return query.first()
           })
+          .then(trainWithIncludes => {
+            const car = trainWithIncludes.get('car')
+            const engine = trainWithIncludes.get('engine')
+            expect(car).to.be.an('object')
+            expect(car.get('seats')).to.equal(50)
+            expect(engine).to.be.an('object')
+            expect(engine.get('horsepower')).to.equal(3000)
+          })
+      })
+    
+  })
+  
+})
+
+describe('constrainQuery', () => {
+  
+  it('constrains a query with "limit"', () => {
+    const query = parsm.newQuery('Bouquet')
+    parsm.constrainQuery(query, {limit: 5})
+    return query.find()
+      .then(objs => {
+        expect(objs).to.have.lengthOf(5)
+        expect(parsm.isPFObject(objs[0], 'Bouquet')).to.be.true
+        expect(parsm.isPFObject(objs[4], 'Bouquet')).to.be.true
+        expect(objs[4].id).to.equal((parseInt(objs[0].id)+4).toString())
+      })
+  })
+  it('constrains a query with "skip"', () => {
+    const query = parsm.newQuery('Bouquet')
+    parsm.constrainQuery(query, {skip: 5})
+    return query.find()
+      .then(objs => {
+        expect(objs).to.have.lengthOf(5)
+        expect(parsm.isPFObject(objs[0], 'Bouquet')).to.be.true
+        expect(parsm.isPFObject(objs[4], 'Bouquet')).to.be.true
+        expect(objs[0].id).to.equal(savedBouquets[5].id)
+        expect(objs[4].id).to.equal(savedBouquets[9].id)
+      })
+  })
+  it('constrains a query with "', () => {
+    const query = parsm.newQuery('Bouquet')
+    parsm.constrainQuery(query, {select: [['aNum']]})
+    return query.find()
+      .then(objs => {
+        expect(objs).to.have.lengthOf(10)
+        expect(parsm.isPFObject(objs[0], 'Bouquet')).to.be.true
+        expect(parsm.isPFObject(objs[9], 'Bouquet')).to.be.true
+        expect(objs[0].id).to.equal(savedBouquets[0].id)
+        expect(objs[9].id).to.equal(savedBouquets[9].id)
+        expect(objs[6].get('aNum')).to.equal(6)
+        // TODO parse-mockdb module does not seem to apply Parse.Query.select function, so next line fails:
+        // expect(objs[6].get('active')).to.be.undefined
       })
   })
   
