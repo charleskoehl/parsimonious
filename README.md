@@ -33,7 +33,8 @@ const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
 * [Parsimonious](#Parsimonious)
     
     * [.setParse(parse)](#Parsimonious.setParse)
-    * [.newQuery(aClass, [opts])](#Parsimonious.newQuery) ⇒ <code>Parse.Query</code>
+    * [.newQuery(aClass, [constraints])](#Parsimonious.newQuery) ⇒ <code>Parse.Query</code>
+    * [.constrainQuery(query, constraints)](#Parsimonious.constrainQuery) ⇒ <code>Parse.Query</code>
     * [.getObjById(aClass, id, [opts])](#Parsimonious.getObjById)
     * [.getUserById(id, [opts])](#Parsimonious.getUserById) ⇒ <code>Parse.User</code>
     * [.fetchIfNeeded(thing, [opts])](#Parsimonious.fetchIfNeeded) ⇒ <code>Parse.Promise</code>
@@ -75,19 +76,91 @@ Set the instance of the Parse JS SDK to be used by all methods:
 
 <a name="Parsimonious.newQuery"></a>
 
-### Parsimonious.newQuery(aClass, [opts]) ⇒ <code>Parse.Query</code>
-Return a new Parse.Query instance from a Parse Object class name.
+### Parsimonious.newQuery(aClass, [constraints]) ⇒ <code>Parse.Query</code>
+Returns a new Parse.Query instance from a Parse Object class name.
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Params**
 
 - aClass <code>Parse.Object</code> | <code>string</code> - Parse class instance or name
-- [opts] <code>object</code> - Query restrictions
-    - [.limit] <code>number</code> - Parameter for Parse.Query.limit. Must be integer greater than zero.
-    - [.skip] <code>number</code> - Parameter for Parse.Query.skip. Must be integer greater than zero.
-    - [.include] <code>string</code> | <code>Array.&lt;string&gt;</code> - Parameter for Parse.Query.include. May be string containing one or more comma-separated keys, or array of strings, to use as parameters of Parse.Query.include, which is called once for each.
-    - [.select] <code>string</code> | <code>Array.&lt;string&gt;</code> - Parameter for Parse.Query.select. May be string containing one or more comma-separated keys, or array of strings.
+- [constraints] <code>object</code> - Plain object whose keys may be any Parse.Query constraint methods and whose values are arrays of arguments for those methods.
 
+**Example**  
+```js
+// Generate a new Parse.Query on the User class,
+
+const query = Parsimonious.newQuery('User')
+
+// which is equivalent to:
+
+const query = new Parse.Query(Parse.User)
+```
+**Example**  
+```js
+// Generate a new Parse.Query on a custom class,
+
+const query = Parsimonious.newQuery('Company')
+
+// which is equivalent to:
+
+const Company = Parse.Object.extend('Company')
+const query = new Parse.Query(Company)
+```
+**Example**  
+```js
+// Generate a new Parse.Query on the User class, adding constraints 'startsWith,' 'limit,' and 'select.' (See [Parsimonious#constrainQuery](Parsimonious#constrainQuery) for constraints parameter details.)
+
+const query = Parsimonious.newQuery('Company', {
+  startsWith: ['name', 'tar'],
+  limit: 10, // If there is only one argument, does not need to be in an array
+  select: [ ['name', 'address', 'url'] ] // If any argument for a constraint is an array, it must be passed to constrainQuery within another array to indicate that its array items are not individual arguments.
+})
+
+// which is equivalent to:
+
+const Company = Parse.Object.extend('Company')
+const query = new Parse.Query(Company)
+query.startsWith('name', 'tar')
+query.limit(10)
+query.select('name')
+query.select('address')
+query.select('url')
+```
+<a name="Parsimonious.constrainQuery"></a>
+
+### Parsimonious.constrainQuery(query, constraints) ⇒ <code>Parse.Query</code>
+Calls one or more query constraint methods on a query with arbitrary number of arguments for each method.
+This method is useful when, for example, building a complex query configuration to pass to another function that may modify the configuration further and then generate the actual query.
+Mutates the 'query' parameter because it calls constraint methods on it.
+Returns the query, so you can chain this call.
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- query <code>Parse.Query</code> - The query on which to call the constraint methods
+- constraints <code>Array.&lt;object&gt;</code> - Array of plain objects containing query constraint methods and arguments
+
+**Example**  
+```js
+// Modify a query with 'startsWith,' 'limit,' and 'select' constraints,
+
+const query = Parsimonious.newQuery('User')
+const constraints = {
+  startsWith: ['name', 'Sal'],
+  limit: 10, // If there is only one argument, does not need to be in an array
+  select: [ ['name', 'email', 'birthDate'] ] // If a constraint argument is an array, it must be within another array to indicate that its items are not individual arguments.
+}
+Parsimonious.constrainQuery(query, constraints)
+
+// which is equivalent to:
+
+const query = new Parse.Query(Parse.User)
+query.startsWith('name', 'Sal')
+query.limit(10)
+query.select('name')
+query.select('email')
+query.select('birthDate')
+```
 <a name="Parsimonious.getObjById"></a>
 
 ### Parsimonious.getObjById(aClass, id, [opts])
@@ -472,6 +545,12 @@ If className represents one of the special classes like 'User,' return prefixed 
 
 <a name="changelog"></a>
 ## Change Log
+
+### 4.3.0 - 11-11-17
+##### Added
+* [constrainQuery](#module_Parsimonious+constrainQuery) method, which newQuery now uses for optional constraints.
+##### Changed
+* [newQuery](#module_Parsimonious+newQuery) method now supports all query constraints ()instead of just limit, skip, select and include).
 
 ### 4.2.1 - 08-11-17
 ##### Fixed

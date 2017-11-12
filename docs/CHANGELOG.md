@@ -1,5 +1,11 @@
 ## Change Log
 
+### 4.3.0 - 11-11-17
+##### Added
+* [constrainQuery](#module_Parsimonious+constrainQuery) method, which newQuery now uses for optional constraints.
+##### Changed
+* [newQuery](#module_Parsimonious+newQuery) method now supports all query constraints ()instead of just limit, skip, select and include).
+
 ### 4.2.1 - 08-11-17
 ##### Fixed
 * README
