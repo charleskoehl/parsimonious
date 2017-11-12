@@ -546,6 +546,10 @@ If className represents one of the special classes like 'User,' return prefixed 
 <a name="changelog"></a>
 ## Change Log
 
+### 4.3.1 - 4.3.2 - 11-11-17
+##### Fixed
+* README
+
 ### 4.3.0 - 11-11-17
 ##### Added
 * [constrainQuery](#constrainQuery) method, which newQuery now uses for optional constraints.
