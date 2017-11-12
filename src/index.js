@@ -9,7 +9,6 @@ import merge from 'lodash/merge'
 import pick from 'lodash/pick'
 import get from 'lodash/get'
 import omit from 'lodash/omit'
-import isInteger from 'lodash/isInteger'
 import isPlainObject from 'lodash/isPlainObject'
 import clone from 'lodash/clone'
 import lowerFirst from 'lodash/lowerFirst'
@@ -17,6 +16,7 @@ import isNode from 'detect-is-node'
 
 
 const specialClasses = ['User', 'Role', 'Session']
+
 
 class Parsimonious {
   
@@ -257,7 +257,7 @@ class Parsimonious {
   }
   
   /**
-   * Converts a variable number of arguments into 4 variables used by [joinWithTable]{@link Parsimonious#joinWithTable}, {@link unJoinWithTable}, {@link getJoinQuery} methods.
+   * Converts a variable number of arguments into 4 variables used by [joinWithTable]{#Parsimonious.joinWithTable}, {@link unJoinWithTable}, {@link getJoinQuery} methods.
    * @returns {object}
    */
   static _getJoinTableClassVars() {

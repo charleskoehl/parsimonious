@@ -260,7 +260,7 @@ Return the name of a table used to join two Parse.Object classes in a many-to-ma
 <a name="Parsimonious._getJoinTableClassVars"></a>
 
 ### Parsimonious._getJoinTableClassVars() ⇒ <code>object</code>
-Converts a variable number of arguments into 4 variables used by [joinWithTable](joinWithTable), [unJoinWithTable](unJoinWithTable), [getJoinQuery](getJoinQuery) methods.
+Converts a variable number of arguments into 4 variables used by [joinWithTable]{#Parsimonious.joinWithTable}, [unJoinWithTable](unJoinWithTable), [getJoinQuery](getJoinQuery) methods.
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 <a name="Parsimonious.joinWithTable"></a>
