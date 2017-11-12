@@ -1,5 +1,9 @@
 ## Change Log
 
+### 4.3.3 - 11-11-17
+##### Changed
+* Remove links from change log as I can't get jsdoc-to-markdown to generate them correctly.
+
 ### 4.3.1 - 4.3.2 - 11-11-17
 ##### Fixed
 * README
