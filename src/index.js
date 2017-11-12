@@ -257,7 +257,7 @@ class Parsimonious {
   }
   
   /**
-   * Converts a variable number of arguments into 4 variables used by {@link joinWithTable}, {@link unJoinWithTable}, {@link getJoinQuery} methods.
+   * Converts a variable number of arguments into 4 variables used by [joinWithTable]{@link Parsimonious#joinWithTable}, {@link unJoinWithTable}, {@link getJoinQuery} methods.
    * @returns {object}
    */
   static _getJoinTableClassVars() {
