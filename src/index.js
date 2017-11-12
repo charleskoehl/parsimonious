@@ -122,14 +122,14 @@ class Parsimonious {
           }
           try {
             query[constraint](...args)
-            return query
           } catch(e) {
-            throw new Error(`constrainQuery error calling the "${constraint}" function on Parse.Query instance`)
+            throw new Error(`constrainQuery error calling the "${constraint}" function on Parse.Query instance: ${e.toString()}`)
           }
         } else {
           throw new RangeError(`Parse.Query does not have a constraint method named "${constraint}"`)
         }
       })
+      return query
     } else {
       throw new TypeError('invalid query or constraints')
     }
