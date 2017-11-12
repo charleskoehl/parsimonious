@@ -396,6 +396,19 @@ describe('constrainQuery', () => {
         expect(objs[4].id).to.equal((parseInt(objs[0].id)+4).toString())
       })
   })
+  it('throws TypeError when params are invalid', () => {
+    expect(parsm.constrainQuery).to.throw(TypeError)
+    expect(() => parsm.constrainQuery('blah')).to.throw(TypeError)
+    expect(() => parsm.constrainQuery('blah', 'blah')).to.throw(TypeError)
+  })
+  it('throws RangeError when one or more constraints are not valid methods of Parse.Query', () => {
+    const query = parsm.newQuery('Bouquet')
+    expect(() => parsm.constrainQuery(query, {blah: [3,4,5]})).to.throw(RangeError)
+  })
+  it('throws Error when calling a valid constraint method on a valid query throws an error', () => {
+    const query = parsm.newQuery('Bouquet')
+    expect(() => parsm.constrainQuery(query, {limit: 'blah'})).to.throw(Error)
+  })
   it('constrains a query with "skip"', () => {
     const query = parsm.newQuery('Bouquet')
     parsm.constrainQuery(query, {skip: 5})
@@ -408,7 +421,7 @@ describe('constrainQuery', () => {
         expect(objs[4].id).to.equal(savedBouquets[9].id)
       })
   })
-  it('constrains a query with "', () => {
+  it('constrains a query with "select"', () => {
     const query = parsm.newQuery('Bouquet')
     parsm.constrainQuery(query, {select: [['aNum']]})
     return query.find()
@@ -421,6 +434,69 @@ describe('constrainQuery', () => {
         expect(objs[6].get('aNum')).to.equal(6)
         // TODO parse-mockdb module does not seem to apply Parse.Query.select function, so next line fails:
         // expect(objs[6].get('active')).to.be.undefined
+      })
+  })
+  it('constrains a query with multiple constraints', () => {
+    // Generate 10 new objects:
+    const car = parsm.getClassInst('Car', {
+      class: 'economy',
+      seats: 50
+    })
+    const engine = parsm.getClassInst('Engine', {
+      horsepower: 3000
+    })
+    const trainInfo = [
+      {name: 'A', speed: 100},
+      {name: 'B', speed: 200},
+      {name: 'C', speed: 300},
+      {name: 'D', speed: 400},
+      {name: 'E', speed: 500},
+      {name: 'F', speed: 600},
+      {name: 'G', speed: 700},
+      {name: 'H', speed: 800},
+      {name: 'I', speed: 900},
+      {name: 'J', speed: 1000}
+    ]
+    const trains = trainInfo.map(info => parsm.getClassInst('Train', {car, engine, ...info}))
+    return Parse.Object.saveAll(trains)
+      .then(savedTrains => {
+        expect(savedTrains).to.be.an('array')
+        expect(savedTrains.length).to.equal(10)
+        expect(savedTrains[9].get('name')).to.equal('J')
+        const query = parsm.newQuery('Train')
+        parsm.constrainQuery(query, {
+          include: 'car',
+          greaterThan: ['speed', 300],
+          lessThan: ['speed', 800]
+        })
+        return query.find()
+      })
+      .then(someTrains => {
+        expect(someTrains).to.be.an('array')
+        expect(someTrains.length).to.equal(4)
+        expect(someTrains[1].get('name')).to.equal('E')
+        expect(someTrains[2].get('speed')).to.equal(600)
+        expect(someTrains[2].get('car')).to.be.an('object')
+        expect(someTrains[2].get('car').get('seats')).to.equal(50)
+        expect(someTrains[2].get('engine')).to.be.an('object')
+        expect(someTrains[2].get('engine').get('horsepower')).to.be.undefined
+        const query = parsm.newQuery('Train')
+        parsm.constrainQuery(query, {
+          include: [['car', 'engine']], // an array arg of a constraint must be nested in another array so that its items are not treated as separate args of the constraint
+          greaterThan: ['speed', 300],
+          lessThan: ['speed', 800]
+        })
+        return query.find()
+      })
+      .then(someTrains => {
+        expect(someTrains).to.be.an('array')
+        expect(someTrains.length).to.equal(4)
+        expect(someTrains[1].get('name')).to.equal('E')
+        expect(someTrains[2].get('speed')).to.equal(600)
+        expect(someTrains[2].get('car')).to.be.an('object')
+        expect(someTrains[2].get('car').get('seats')).to.equal(50)
+        expect(someTrains[2].get('engine')).to.be.an('object')
+        expect(someTrains[2].get('engine').get('horsepower')).to.equal(3000)
       })
   })
   
