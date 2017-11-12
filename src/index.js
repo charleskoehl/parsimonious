@@ -34,9 +34,44 @@ class Parsimonious {
   }
   
   /**
-   * Return a new Parse.Query instance from a Parse Object class name.
+   * Returns a new Parse.Query instance from a Parse Object class name.
+   * @example
+   * // Generate a new Parse.Query on the User class,
+   *
+   * const query = Parsimonious.newQuery('User')
+   *
+   * // which is equivalent to:
+   *
+   * const query = new Parse.Query(Parse.User)
+   * @example
+   * // Generate a new Parse.Query on a custom class,
+   *
+   * const query = Parsimonious.newQuery('Company')
+   *
+   * // which is equivalent to:
+   *
+   * const Company = Parse.Object.extend('Company')
+   * const query = new Parse.Query(Company)
+   * @example
+   * // Generate a new Parse.Query on the User class, adding constraints 'startsWith,' 'limit,' and 'select.' (See {@link Parsimonious#constrainQuery} for constraints parameter details.)
+   *
+   * const query = Parsimonious.newQuery('Company', {
+   *   startsWith: ['name', 'tar'],
+   *   limit: 10, // If there is only one argument, does not need to be in an array
+   *   select: [ ['name', 'address', 'url'] ] // If any argument for a constraint is an array, it must be passed to constrainQuery within another array to indicate that its array items are not individual arguments.
+   * })
+   *
+   * // which is equivalent to:
+   *
+   * const Company = Parse.Object.extend('Company')
+   * const query = new Parse.Query(Company)
+   * query.startsWith('name', 'tar')
+   * query.limit(10)
+   * query.select('name')
+   * query.select('address')
+   * query.select('url')
    * @param {(Parse.Object|string)} aClass Parse class instance or name
-   * @param {object=} constraints Plain object whose keys are Parse.Query constraint methods and whose values are arrays of arguments for those methods.
+   * @param {object=} constraints Plain object whose keys may be any Parse.Query constraint methods and whose values are arrays of arguments for those methods.
    * @returns {Parse.Query}
    */
   static newQuery(aClass, constraints) {
@@ -48,22 +83,30 @@ class Parsimonious {
   
   /**
    * Calls one or more query constraint methods on a query with arbitrary number of arguments for each method.
+   * This method is useful when, for example, building a complex query configuration to pass to another function that may modify the configuration further and then generate the actual query.
    * Mutates the 'query' parameter because it calls constraint methods on it.
    * Returns the query, so you can chain this call.
    * @example
-   * // Modify a query with 'startsWith,' 'limit,' and 'select' constraints:
+   * // Modify a query with 'startsWith,' 'limit,' and 'select' constraints,
    *
    * const query = Parsimonious.newQuery('User')
    * const constraints = {
    *   startsWith: ['name', 'Sal'],
    *   limit: 10, // If there is only one argument, does not need to be in an array
-   *   select: [ ['name', 'email', 'birthDate'] ] // If any argument is an array, it still must be within another array to indicate that its array items are not individual arguments.
+   *   select: [ ['name', 'email', 'birthDate'] ] // If a constraint argument is an array, it must be within another array to indicate that its items are not individual arguments.
    * }
+   * Parsimonious.constrainQuery(query, constraints)
    *
-   * Parsimonious.constrainQuery(constraints)
-   * // Equivalent to query.startsWith('name', 'Sal').limit(10)
-   * // This method is useful when, for example, building a complex query configuration to pass to another function that may modify the configuration further and then generate the actual query.
-   * 
+   * // which is equivalent to:
+   *
+   * const query = new Parse.Query(Parse.User)
+   * query.startsWith('name', 'Sal')
+   * query.limit(10)
+   * query.select('name')
+   * query.select('email')
+   * query.select('birthDate')
+   *
+   *
    * @param {Parse.Query} query The query on which to call the constraint methods
    * @param {object[]} constraints Array of plain objects containing query constraint methods and arguments
    * @returns {Parse.Query}
