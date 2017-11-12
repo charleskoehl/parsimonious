@@ -48,7 +48,7 @@
     "jsdoc-to-markdown": "^3.0.1",
     "mocha": "^4.0.1",
     "nyc": "^11.3.0",
-    "parse-mockdb": "^0.1.26",
+    "parse-mockdb": "^0.1.27",
     "shx": "^0.2.2"
   }
 }
