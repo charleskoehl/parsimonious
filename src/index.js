@@ -257,7 +257,7 @@ class Parsimonious {
   }
   
   /**
-   * Converts a variable number of arguments into 4 variables used by {@link Parsimonious joinWithTable}, {@link Parsimonious#unJoinWithTable}, {@link Parsimonious#getJoinQuery} methods.
+   * Converts a variable number of arguments into 4 variables used by {@link joinWithTable}, {@link unJoinWithTable}, {@link getJoinQuery} methods.
    * @returns {object}
    */
   static _getJoinTableClassVars() {
@@ -347,7 +347,7 @@ class Parsimonious {
   }
   
   /**
-   * Return a query on a many-to-many join table created by {@link Parsimonious.joinWithTable}.
+   * Return a query on a many-to-many join table created by {@link Parsimonious#joinWithTable}.
    *
    * @example
    * // Find the join table record linking a particular student and course together:
