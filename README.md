@@ -108,7 +108,7 @@ const query = new Parse.Query(Company)
 ```
 **Example**  
 ```js
-// Generate a new Parse.Query on the User class, adding constraints 'startsWith,' 'limit,' and 'select.' (See [Parsimonious#constrainQuery](Parsimonious#constrainQuery) for constraints parameter details.)
+// Generate a new Parse.Query on the User class, adding constraints 'startsWith,' 'limit,' and 'select.' (See [constrainQuery](#Parsimonious.constrainQuery) for constraints parameter details.)
 
 const query = Parsimonious.newQuery('Company', {
   startsWith: ['name', 'tar'],
@@ -260,7 +260,7 @@ Return the name of a table used to join two Parse.Object classes in a many-to-ma
 <a name="Parsimonious._getJoinTableClassVars"></a>
 
 ### Parsimonious._getJoinTableClassVars() ⇒ <code>object</code>
-Converts a variable number of arguments into 4 variables used by [Parsimonious#joinWithTable](Parsimonious#joinWithTable), [Parsimonious#unJoinWithTable](Parsimonious#unJoinWithTable), [Parsimonious#getJoinQuery](Parsimonious#getJoinQuery) methods.
+Converts a variable number of arguments into 4 variables used by [joinWithTable](joinWithTable), [Parsimonious#unJoinWithTable](Parsimonious#unJoinWithTable), [Parsimonious#getJoinQuery](Parsimonious#getJoinQuery) methods.
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 <a name="Parsimonious.joinWithTable"></a>
@@ -548,9 +548,9 @@ If className represents one of the special classes like 'User,' return prefixed 
 
 ### 4.3.0 - 11-11-17
 ##### Added
-* [constrainQuery](#module_Parsimonious+constrainQuery) method, which newQuery now uses for optional constraints.
+* [constrainQuery](#constrainQuery) method, which newQuery now uses for optional constraints.
 ##### Changed
-* [newQuery](#module_Parsimonious+newQuery) method now supports all query constraints ()instead of just limit, skip, select and include).
+* [newQuery](#module_Parsimonious+newQuery) method now supports all query constraints (instead of just limit, skip, select and include).
 
 ### 4.2.1 - 08-11-17
 ##### Fixed

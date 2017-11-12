@@ -53,7 +53,7 @@ class Parsimonious {
    * const Company = Parse.Object.extend('Company')
    * const query = new Parse.Query(Company)
    * @example
-   * // Generate a new Parse.Query on the User class, adding constraints 'startsWith,' 'limit,' and 'select.' (See {@link Parsimonious#constrainQuery} for constraints parameter details.)
+   * // Generate a new Parse.Query on the User class, adding constraints 'startsWith,' 'limit,' and 'select.' (See {@link Parsimonious.constrainQuery} for constraints parameter details.)
    *
    * const query = Parsimonious.newQuery('Company', {
    *   startsWith: ['name', 'tar'],
@@ -257,7 +257,7 @@ class Parsimonious {
   }
   
   /**
-   * Converts a variable number of arguments into 4 variables used by {@link Parsimonious#joinWithTable}, {@link Parsimonious#unJoinWithTable}, {@link Parsimonious#getJoinQuery} methods.
+   * Converts a variable number of arguments into 4 variables used by {@link joinWithTable}, {@link Parsimonious#unJoinWithTable}, {@link Parsimonious#getJoinQuery} methods.
    * @returns {object}
    */
   static _getJoinTableClassVars() {
