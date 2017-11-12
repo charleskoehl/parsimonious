@@ -546,15 +546,19 @@ If className represents one of the special classes like 'User,' return prefixed 
 <a name="changelog"></a>
 ## Change Log
 
+### 4.3.3 - 11-11-17
+##### Changed
+* Remove links from change log as I can't get jsdoc-to-markdown to generate them correctly.
+
 ### 4.3.1 - 4.3.2 - 11-11-17
 ##### Fixed
 * README
 
 ### 4.3.0 - 11-11-17
 ##### Added
-* [constrainQuery](#constrainQuery) method, which newQuery now uses for optional constraints.
+* constrainQuery method, which newQuery now uses for optional constraints.
 ##### Changed
-* [newQuery](#module_Parsimonious+newQuery) method now supports all query constraints (instead of just limit, skip, select and include).
+* newQuery method now supports all query constraints (instead of just limit, skip, select and include).
 
 ### 4.2.1 - 08-11-17
 ##### Fixed
@@ -562,7 +566,7 @@ If className represents one of the special classes like 'User,' return prefixed 
 
 ### 4.2.0 - 08-11-17
 ##### Added
-* Support for calling [joinWithTable](#module_Parsimonious+joinWithTable) with two Parse.Object instances, while still supporting the original parameter format. 
+* Support for calling joinWithTable with two Parse.Object instances, while still supporting the original parameter format. 
 * Examples for join-table methods.
 ##### Changed
 * Improved some other documentation.
@@ -644,8 +648,8 @@ If className represents one of the special classes like 'User,' return prefixed 
 
 ### 3.5.0 - 16-10-17
 ##### Added
-* [fetchIfNeeded](#module_Parsimonious+fetchIfNeeded) method.
-* [isPointer](#module_Parsimonious+isPointer) method.
+* fetchIfNeeded method.
+* isPointer method.
 
 ### 3.4.0 - 14-10-17
 ##### Changed
