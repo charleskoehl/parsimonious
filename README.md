@@ -108,7 +108,7 @@ const query = new Parse.Query(Company)
 ```
 **Example**  
 ```js
-// Generate a new Parse.Query on the User class, adding constraints 'startsWith,' 'limit,' and 'select.' (See [constrainQuery](#Parsimonious.constrainQuery) for constraints parameter details.)
+// Generate a new Parse.Query on the User class, adding constraints 'startsWith,' 'limit,' and 'select.' (See Parsimonious.constrainQuery for constraints parameter details.)
 
 const query = Parsimonious.newQuery('Company', {
   startsWith: ['name', 'tar'],
@@ -260,7 +260,7 @@ Return the name of a table used to join two Parse.Object classes in a many-to-ma
 <a name="Parsimonious._getJoinTableClassVars"></a>
 
 ### Parsimonious._getJoinTableClassVars() ⇒ <code>object</code>
-Converts a variable number of arguments into 4 variables used by [joinWithTable]{#Parsimonious.joinWithTable}, [unJoinWithTable](unJoinWithTable), [getJoinQuery](getJoinQuery) methods.
+Converts a variable number of arguments into 4 variables used by the joinWithTable, unJoinWithTable, getJoinQuery methods.
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 <a name="Parsimonious.joinWithTable"></a>
@@ -298,7 +298,7 @@ Parsimonious.joinWithTable(student, course, meta, opts)
 <a name="Parsimonious.unJoinWithTable"></a>
 
 ### Parsimonious.unJoinWithTable(object1, object2, [opts]) ⇒ <code>Parse.Promise</code>
-Unjoin two parse objects previously joined by [Parsimonious#joinWithTable](Parsimonious#joinWithTable)
+Unjoin two parse objects previously joined by Parsimonious.joinWithTable
 If can't unjoin objects, returned promise resolves to undefined.
 (For backwards-compatibility with v4.1.0, this method may still be called with the 2 parameters
 'classes' and 'opts', where 'classes' is a plain object whose two keys are the classes to join,
@@ -314,13 +314,13 @@ and whose values are the Parse.Object instances.)
 <a name="Parsimonious.getJoinQuery"></a>
 
 ### Parsimonious.getJoinQuery(classes, [opts]) ⇒ <code>Parse.Query</code>
-Return a query on a many-to-many join table created by [Parsimonious#joinWithTable](Parsimonious#joinWithTable).
+Return a query on a many-to-many join table created by Parsimonious.joinWithTable.
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Params**
 
 - classes <code>object</code> - Must contain two keys corresponding to existing classes. At least one key's value must be a valid parse object. If the other key's value is not a valid parse object, the query retrieves all objects of the 2nd key's class that are joined to the object of the 1st class. Same for vice-versa. If both values are valid parse objects, then the query should return zero or one row from the join table.
-- [opts] <code>object</code> - (Options for [Parsimonious#newQuery](Parsimonious#newQuery))
+- [opts] <code>object</code> - (Options for Parsimonious.newQuery})
 
 **Example**  
 ```js
@@ -333,7 +333,7 @@ Parsimonious.getJoinQuery(classes)
    .first()
    .then(joinObj => {
      // joinObj is the instance of the class 'Student2Course'
-     // that was created by [Parsimonious#joinWithTable](Parsimonious#joinWithTable)
+     // that was created by Parsimonious.joinWithTable}
      // to link that particular student and course together,
      // along with any metadata describing the relationship.
    })
@@ -349,7 +349,7 @@ Parsimonious.getJoinQuery(classes)
    .find()
    .then(joinObjs => {
      // joinObj is an array of instances of the class 'Student2Course'
-     // that were created by [Parsimonious#joinWithTable](Parsimonious#joinWithTable).
+     // that were created by Parsimonious.joinWithTable}.
    })
 ```
 **Example**  
