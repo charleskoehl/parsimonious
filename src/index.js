@@ -120,7 +120,6 @@ class Parsimonious {
           if(!Array.isArray(args)) {
             args = [args]
           }
-          console.log(`constrainQuery calling ${constraint} with args ${args}`)
           try {
             query[constraint](...args)
           } catch(e) {
