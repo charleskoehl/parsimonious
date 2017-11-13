@@ -499,45 +499,6 @@ describe('constrainQuery', () => {
         expect(someTrains[2].get('engine').get('horsepower')).to.equal(3000)
       })
   })
-  it('constrains a query with startWith constraint', () => {
-    // Generate 10 new objects:
-    const car = parsm.getClassInst('Car', {
-      class: 'economy',
-      seats: 50
-    })
-    const engine = parsm.getClassInst('Engine', {
-      horsepower: 3000
-    })
-    const trainInfo = [
-      {name: 'A', speed: 100},
-      {name: 'B', speed: 200},
-      {name: 'C', speed: 300},
-      {name: 'D', speed: 400},
-      {name: 'E', speed: 500},
-      {name: 'F', speed: 600},
-      {name: 'G', speed: 700},
-      {name: 'H', speed: 800},
-      {name: 'I', speed: 900},
-      {name: 'J', speed: 1000}
-    ]
-    const trains = trainInfo.map(info => parsm.getClassInst('Train', {car, engine, ...info}))
-    return Parse.Object.saveAll(trains)
-      .then(savedTrains => {
-        expect(savedTrains).to.be.an('array')
-        expect(savedTrains.length).to.equal(10)
-        expect(savedTrains[9].get('name')).to.equal('J')
-        const query = parsm.newQuery('Train')
-        parsm.constrainQuery(query, {
-          startsWith: ['name', 'D'],
-        })
-        return query.find()
-      })
-      .then(someTrains => {
-        expect(someTrains).to.be.an('array')
-        expect(someTrains.length).to.equal(1)
-        expect(someTrains[0].get('name')).to.equal('D')
-      })
-  })
   
 })
 
