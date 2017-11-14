@@ -381,10 +381,11 @@ class Parsimonious {
    *    Student: null,
    *    Course: <instance of Course class>
    * }
-   * Parsimonious.getJoinQuery(classes)
-   *    .descending('grade')
-   *    .greaterThanOrEqualTo('grade', 3)
-   *    .find({ limit:10 })
+   * Parsimonious.getJoinQuery(classes, {
+   *    descending: 'grade',
+   *    greaterThanOrEqualTo: ['grade', 3],
+   *    limit: 10
+   * }).find()
    * @param {object} classes Must contain two keys corresponding to existing classes. At least one key's value must be a valid parse object. If the other key's value is not a valid parse object, the query retrieves all objects of the 2nd key's class that are joined to the object of the 1st class. Same for vice-versa. If both values are valid parse objects, then the query should return zero or one row from the join table.
    * @param {object=} opts (Options for Parsimonious.newQuery})
    * @returns {Parse.Query}

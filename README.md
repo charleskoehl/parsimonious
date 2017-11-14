@@ -359,10 +359,11 @@ const classes = {
    Student: null,
    Course: <instance of Course class>
 }
-Parsimonious.getJoinQuery(classes)
-   .descending('grade')
-   .greaterThanOrEqualTo('grade', 3)
-   .find({ limit:10 })
+Parsimonious.getJoinQuery(classes, {
+   descending: 'grade',
+   greaterThanOrEqualTo: ['grade', 3],
+   limit: 10
+}).find()
 ```
 <a name="Parsimonious.getPointer"></a>
 
