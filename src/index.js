@@ -458,9 +458,8 @@ class Parsimonious {
   
   /**
    * Return a json representation of a Parse.Object,
-   * sub-class of Parse.Object (such as Parse.User),
-   * or plain object containing any or none of those, to json, optionally recursively.
-   * Does not mutate parameters.
+   * or of plain object that may contain Parse.Object instances,
+   * optionally recursively.
    *
    * @param {*} thing Value to create json from.
    * @param {boolean=} deep If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
