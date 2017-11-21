@@ -14,7 +14,7 @@
   "scripts": {
     "compile": "babel src -d lib",
     "prepublishOnly": "npm run compile; npm run docs; git add .; git commit -m 'prepublishOnly'; git push origin master;",
-    "test": "nyc mocha --require babel-register ./test/node.test.js",
+    "test": "VERBOSE=1 PARSE_EXPERIMENTAL_CONFIG_ENABLED=1 jest --config=jest-config.json --runInBand --forceExit",
     "docs": "jsdoc2md --template docs/README.hbs --files ./src/index.js --param-list-format list > docs/README.1; cat docs/CHANGELOG.md >> docs/README.1; npm run after-jsdoc2md",
     "after-jsdoc2md": "shx sed 's/### new Parsimonious\\(\\)//' docs/README.1 > docs/README.2; shx sed 's/\\* \\[new Parsimonious\\(\\)\\]\\(#new_Parsimonious_new\\)//' docs/README.2 > README.md; shx rm -rf docs/README.1 docs/README.2"
   },
@@ -40,16 +40,19 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.2",
+    "babel-jest": "^21.2.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
-    "chai": "^4.1.2",
-    "chai-as-promised": "^7.1.1",
-    "chai-shallow-deep-equal": "^1.4.6",
     "codecov": "^3.0.0",
+    "express": "^4.16.2",
+    "http-shutdown": "^1.2.0",
+    "jest": "^21.2.1",
+    "jest-diff": "^21.2.1",
     "jsdoc-to-markdown": "^3.0.1",
-    "mocha": "^4.0.1",
+    "mongodb-memory-server": "^1.6.3",
+    "new-port": "^1.0.0",
     "nyc": "^11.3.0",
-    "parse-mockdb": "^0.1.27",
+    "parse-server": "^2.6.5",
     "shx": "^0.2.2"
   }
 }

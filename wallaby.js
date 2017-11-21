@@ -8,7 +8,7 @@ module.exports = function (wallaby) {
     tests: [
       'test/**/*'
     ],
-    testFramework: 'mocha',
+    testFramework: 'jest',
     compilers: {
       '**/*.js': wallaby.compilers.babel()
     },
