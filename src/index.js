@@ -270,6 +270,8 @@ class Parsimonious {
       cn1 = obj1.className
       obj2 = arguments[1]
       cn2 = obj2.className
+    } else {
+      throw new TypeError('_getJoinTableClassVars called with invalid parameters')
     }
     if(cn1 && cn2 && (this.isPFObject(obj1) || this.isPFObject(obj2))) {
       return {cn1, cn2, obj1, obj2}
