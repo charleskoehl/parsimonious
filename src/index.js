@@ -634,14 +634,14 @@ class Parsimonious {
 
 // Attempt to set the Parse JS SDK instance to be used:
 
-let parseSrc
+let whichParse
 if (typeof Parse === 'object' ) {
-  parseSrc = Parse
+  whichParse = Parse
 } else if (isNode) {
-  parseSrc = require('parse/node')
+  whichParse = require('parse/node')
 } else {
-  parseSrc = require('parse')
+  whichParse = require('parse')
 }
-Parsimonious.setParse(parseSrc)
+Parsimonious.setParse(whichParse)
 
 export default Parsimonious
