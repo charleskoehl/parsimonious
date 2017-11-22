@@ -25,7 +25,7 @@ class Parsimonious {
    * @param {object} parse instance of the Parse JS SDK
    */
   static setParse(parse) {
-    if(typeof parse === 'object') {
+    if(typeof parse === 'object' && typeof parse.ACL === 'function') {
       this.Parse = parse
       this.rej = this.Parse.Promise.reject
     } else {
