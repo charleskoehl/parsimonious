@@ -455,7 +455,7 @@ class Parsimonious {
   /**
    * Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User or Parse.MyCustomClass)
    * @param {*} thing
-   * @param {string=} ofClass
+   * @param {string=} ofClass Optionally check if it's of a specific ParseObjectSubclass
    * @returns {boolean}
    */
   static isPFObject(thing, ofClass) {
@@ -465,7 +465,8 @@ class Parsimonious {
   
   /**
    * Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
-   * @param thing
+   * @param {*} thing
+   * @param {string=} ofClass Optionally check if it's of a specific ParseObjectSubclass
    * @returns {boolean}
    */
   static isPointer(thing, ofClass) {
