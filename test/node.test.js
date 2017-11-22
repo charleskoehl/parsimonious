@@ -1353,6 +1353,33 @@ describe('getPointer', () => {
   })
 })
 
+describe('copyPFObjectAttributes',  () => {
+  
+  test('copies attributes from one pfObject to another', () => {
+    const dog1 = parsm.getClassInst('Dog', {
+      name: 'Banshee',
+      length: 36,
+      width: 15,
+      clean: true
+    })
+    const dog2 = parsm.getClassInst('Dog', {
+      name: 'Kujo',
+      length: 40,
+      width: 21,
+      clean: false
+    })
+    expect(dog1.get('length')).toBe(36)
+    expect(dog1.get('width')).toBe(15)
+    expect(dog2.get('length')).toBe(40)
+    expect(dog2.get('width')).toBe(21)
+    parsm.copyPFObjectAttributes(dog1, dog2, 'length,width')
+    expect(dog2.get('length')).toBe(36)
+    expect(dog2.get('width')).toBe(15)
+    expect(dog2.get('clean')).toBe(false)
+  })
+  
+})
+
 describe('classStringOrSpecialClass', () => {
   test('converts the unchanged string if not a special Parse class', () => {
     expect(parsm.classStringOrSpecialClass('Horse')).toBe('Horse')

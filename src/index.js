@@ -662,6 +662,22 @@ class Parsimonious {
   }
   
   /**
+   * Copy a set of attributes from one instance of Parse.Object to another.
+   * Mutates target Parse.Object.
+   * @param {Parse.Object} from
+   * @param {Parse.Object} to Is mutated.
+   * @param {(string|string[])} attributeNames
+   */
+  static copyPFObjectAttributes(from, to, attributeNames) {
+    if(this.isPFObject(from) && this.isPFObject(to)) {
+      const arr = this._toArray(attributeNames, 'string')
+      if(Array.isArray(arr) && arr.length > 0) {
+        this.objSetMulti(to, this.objPick(from, arr))
+      }
+    }
+  }
+  
+  /**
    * Returns valid class name when passed either a subclass of Parse.Object or any string.
    * Removes the underscore if it is one of the special classes with a leading underscore.
    * Returns undefined if anything else.
