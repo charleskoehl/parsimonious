@@ -87,13 +87,15 @@ class Parsimonious {
    * Mutates the 'query' parameter because it calls constraint methods on it.
    * Returns the query, so you can chain this call.
    * @example
-   * // Modify a query with 'startsWith,' 'limit,' and 'select' constraints,
+   * // Modify a query with startsWith, limit, select, equalTo, and notEqualTo constraints:
    *
    * const query = Parsimonious.newQuery('User')
    * const constraints = {
    *   startsWith: ['name', 'Sal'],
    *   limit: 10, // If there is only one argument, does not need to be in an array
-   *   select: [ ['name', 'email', 'birthDate'] ] // If a constraint argument is an array, it must be within another array to indicate that its items are not individual arguments.
+   *   select: [ ['name', 'email', 'birthDate'] ], // If a single constraint argument is an array, it must be within another array to indicate that its items are not individual arguments.
+   *   equalTo: [ ['gender', 'f'], ['country', 'US'] ], // An array of 2 or more arrays indicates that the constraint method should be called once with each inner array as its arguments.
+   *   notEqualTo: ['company', 'IBM'] // There is just one set of parameters, so there is no need to enclose in another array.
    * }
    * Parsimonious.constrainQuery(query, constraints)
    *
@@ -108,7 +110,7 @@ class Parsimonious {
    *
    *
    * @param {Parse.Query} query The query on which to call the constraint methods
-   * @param {object[]} constraints Array of plain objects containing query constraint methods and arguments
+   * @param {object} constraints Plain object containing query constraint methods as keys and arguments as values
    * @returns {Parse.Query}
    */
   static constrainQuery(query, constraints) {
@@ -116,15 +118,19 @@ class Parsimonious {
       const nonConstraints = ['count','each','find','first','get','toJSON']
       Object.keys(constraints).forEach(constraint => {
         if(typeof query[constraint] === 'function' && nonConstraints.indexOf(constraint) === -1) {
+          // constraint is the string name of a Query constraint method
           let args = constraints[constraint]
           if(!Array.isArray(args)) {
             args = [args]
           }
-          try {
-            query[constraint](...args)
-          } catch(e) {
-            throw new Error(`constrainQuery error calling the "${constraint}" function on Parse.Query instance: ${e.toString()}`)
-          }
+          const argSets = args.length > 1 && args.every(Array.isArray) ? args : [args]
+          argSets.forEach(argSet => {
+            try {
+              query[constraint](...argSet)
+            } catch(e) {
+              throw new Error(`constrainQuery error calling the "${constraint}" function with args "${argSet.toString()}" on Parse.Query instance: ${e.toString()}`)
+            }
+          })
         } else {
           throw new RangeError(`Parse.Query does not have a constraint method named "${constraint}"`)
         }
