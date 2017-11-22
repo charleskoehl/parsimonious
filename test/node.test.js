@@ -122,7 +122,7 @@ describe('setParse', () => {
   })
   
   test('throws TypeError when invalid instance of Parse is passed', () => {
-    expect(() => parsm.setParse('blah')).toThrow('non-object passed as Parse object')
+    expect(() => parsm.setParse('blah')).toThrow()
   })
   
 })
@@ -269,6 +269,7 @@ describe('objGetDeep', () => {
   })
   
   test('Get the value of a key nested within a Parse.Object contained in a column of a parent Parse.Object.', () => {
+    expect.assertions(4)
     const address = parsm.getClassInst('Address', {
       line1:'123 Main Street',
       line2:'Suite 30',
@@ -351,6 +352,7 @@ describe('newQuery', () => {
   beforeAll(setTestObjects)
   
   test('returns a query that finds all instances of a Parse class when passed a custom Parse class name', () => {
+    expect.assertions(3)
     return parsm.newQuery('Bouquet').find()
       .then(objs => {
         expect(objs).toHaveLength(savedBouquets.length)
@@ -360,6 +362,7 @@ describe('newQuery', () => {
   })
   
   test('returns a query that finds all instances of a Parse class when passed a custom Parse class instance', () => {
+    expect.assertions(3)
     const inst = new Bouquet()
     return parsm.newQuery(inst).find()
       .then(objs => {
@@ -370,6 +373,7 @@ describe('newQuery', () => {
   })
   
   test('returns a query limited to first n instances of a Parse class', () => {
+    expect.assertions(3)
     return parsm.newQuery('Bouquet', {limit: 5}).find()
       .then(objs => {
         expect(objs).toHaveLength(5)
@@ -378,6 +382,7 @@ describe('newQuery', () => {
       })
   })
   test('returns a query skipping first n instances of a Parse class', () => {
+    expect.assertions(3)
     return parsm.newQuery('Bouquet', {skip: 5}).find()
       .then(objs => {
         expect(objs).toHaveLength(5)
@@ -386,7 +391,11 @@ describe('newQuery', () => {
       })
   })
   test('returns a query that selects only a certain column to be returned', () => {
-    return parsm.newQuery('Bouquet', {select: 'aNum'}).find()
+    expect.assertions(5)
+    return parsm.newQuery('Bouquet', {
+      ascending: 'aNum',
+      select: 'aNum'
+    }).find()
       .then(objs => {
         expect(objs).toHaveLength(10)
         expect(sameBouquetIDs(objs, 0, 0)).toBe(true)
@@ -397,6 +406,7 @@ describe('newQuery', () => {
   })
   
   test('returns a query that finds all instances of a special Parse class when passed the class name', () => {
+    expect.assertions(2)
     return parsm.newQuery('User').find()
       .then(objs => {
         expect(objs).toHaveLength(1)
@@ -405,6 +415,7 @@ describe('newQuery', () => {
   })
   
   test('returns a query that finds all instances of a special Parse class when passed a class instance', () => {
+    expect.assertions(2)
     const inst = new Parse.User()
     return parsm.newQuery(inst).find()
       .then(objs => {
@@ -414,6 +425,7 @@ describe('newQuery', () => {
   })
   
   test('returns a query that calls Parse.Query.include on two pointer columns to retrieve the entire targets of the pointers', () => {
+    expect.assertions(10)
     const car = parsm.getClassInst('Car', {
       class: 'economy',
       seats: 50
@@ -463,6 +475,7 @@ describe('constrainQuery', () => {
   beforeAll(setTestObjects)
   
   test('constrains a query with "limit"', () => {
+    expect.assertions(3)
     const query = parsm.newQuery('Bouquet')
     parsm.constrainQuery(query, {limit: 5})
     return query.find()
@@ -486,6 +499,7 @@ describe('constrainQuery', () => {
     expect(() => parsm.constrainQuery(query, {limit: 'blah'})).toThrow(Error)
   })
   test('constrains a query with "skip"', () => {
+    expect.assertions(5)
     const query = parsm.newQuery('Bouquet')
     parsm.constrainQuery(query, {skip: 5})
     return query.find()
@@ -493,11 +507,12 @@ describe('constrainQuery', () => {
         expect(objs).toHaveLength(5)
         expect(parsm.isPFObject(objs[0], 'Bouquet')).toBe(true)
         expect(parsm.isPFObject(objs[4], 'Bouquet')).toBe(true)
-        expect(objs[0].id).toBe(savedBouquets[5].id)
-        expect(objs[4].id).toBe(savedBouquets[9].id)
+        expect(objs[0].id).toMatch(savedBouquets[5].id)
+        expect(objs[4].id).toMatch(savedBouquets[9].id)
       })
   })
   test('constrains a query with "select"', () => {
+    expect.assertions(6)
     const query = parsm.newQuery('Bouquet')
     parsm.constrainQuery(query, {select: [['aNum']]})
     return query.find()
@@ -513,6 +528,7 @@ describe('constrainQuery', () => {
       })
   })
   test('constrains a query with multiple constraints', () => {
+    expect.assertions(19)
     // Generate 10 new objects:
     const car = parsm.getClassInst('Car', {
       class: 'economy',
@@ -582,6 +598,7 @@ describe('constrainQuery', () => {
 
 describe('getObjById', () => {
   test('gets a Parse object from db by id', () => {
+    expect.assertions(2)
     const aParseObj = new TheParseObj()
     let newObjId
     return aParseObj
@@ -616,12 +633,14 @@ describe('fetchIfNeeded, given a value <thing>, return a promise that resolves t
   beforeAll(setTestObjects)
   
   test('thing if thing is a clean Parse.Object', () => {
+    expect.assertions(1)
     return parsm.fetchIfNeeded(savedBouquets[0])
     .then(result => {
       expect(result).toBe(savedBouquets[0])
     })
   })
   test('fetched Parse.Object if thing is a dirty Parse.Object', () => {
+    expect.assertions(1)
     savedBouquets[0].set('active',true)
     return parsm.fetchIfNeeded(savedBouquets[0])
       .then(result => {
@@ -629,6 +648,7 @@ describe('fetchIfNeeded, given a value <thing>, return a promise that resolves t
       })
   })
   test('fetched Parse.Object if thing is a pointer', () => {
+    expect.assertions(3)
     return parsm.fetchIfNeeded(savedBouquets[0].toPointer())
       .then(result => {
         expect(result).toBeTruthy()
@@ -650,6 +670,7 @@ describe('Roles', () => {
       .then(() => {
         const roleACL = new Parse.ACL()
         roleACL.setPublicReadAccess(true)
+        roleACL.setPublicWriteAccess(true)
         adminRole = new Parse.Role("Administrator", roleACL)
         modRole = new Parse.Role("Moderator", roleACL)
       })
@@ -658,6 +679,7 @@ describe('Roles', () => {
   describe('userHasRole', () => {
     
     test('determines if a user has a single role', () => {
+      expect.assertions(5)
         return parsm.userHasRole(testUser, 'Administrator')
           .then(hasRole => {
             expect(hasRole).toBe(false)
@@ -704,8 +726,8 @@ describe('Roles', () => {
   })
 
   describe('getRole', () => {
-    expect.assertions(1)
     test('returns Role object by name', () => {
+      expect.assertions(1)
       return parsm.getRole('Administrator')
         .then(role => {
           expect(parsm.isPFObject(role, 'Role')).toBe(true)
@@ -714,8 +736,8 @@ describe('Roles', () => {
   })
 
   describe('getUserRoles', () => {
-    expect.assertions(4)
     test('returns array of names of user\'s direct roles, or empty array if none', () => {
+      expect.assertions(4)
       const user = new Parse.User({
         username:'blastois',
         password:'je9w83d',
@@ -725,17 +747,15 @@ describe('Roles', () => {
         .then(aUser => {
           return parsm.getUserRoles(aUser)
             .then(roles => {
-              expect(roles).toBeInstanceOf(Array)
+              expect(Array.isArray(roles)).toBe(true)
               expect(roles).toHaveLength(0)
-              return adminRole
-                .getUsers()
-                .add(aUser)
-                .save()
-                .then(() => parsm.getUserRoles(aUser))
-                .then(roles => {
-                  expect(roles.length).toBe(1)
-                  expect(roles[0]).toBe("Administrator")
-                })
+              adminRole.getUsers().add(aUser)
+              return adminRole.save()
+            })
+            .then(() => parsm.getUserRoles(aUser))
+            .then(roles => {
+              expect(roles.length).toBe(1)
+              expect(roles[0]).toBe("Administrator")
             })
         })
     })
@@ -780,9 +800,7 @@ describe('getClassInst', () => {
   })
 })
 
-describe.only('Relationships', () => {
-  
-  beforeAll(setTestObjects)
+describe('Relationships', () => {
   
   describe('Many-to-Many with Join Tables', () => {
   
@@ -795,83 +813,80 @@ describe.only('Relationships', () => {
     describe('joinWithTable', () => {
   
       describe('when called with deprecated parameter types', () => {
-        
-        const Ship = parsm.getClassInst('Ship')
-        const Destroyer = parsm.getClassInst('Destroyer')
-        const Fleet = parsm.getClassInst('Fleet')
-        const origObjs = {}
-        
-        beforeAll(() => {
-          return Parse.Object.saveAll([Ship, Destroyer, Fleet])
-            .then(savedObjs => {
-              origObjs.Ship = savedObjs[0]
-              origObjs.Destroyer = savedObjs[1]
-              origObjs.Fleet = savedObjs[2]
-            })
+  
+        let Ship, Fleet, Destroyer
+  
+        beforeAll(async (done) => {
+          Ship = await parsm.getClassInst('Ship').save()
+          Fleet = await parsm.getClassInst('Fleet').save()
+          Destroyer = await parsm.getClassInst('Destroyer').save()
+          done()
         })
         
         test(`creates a new class of object for joining two other classes`, () => {
           expect.assertions(5)
-          return parsm.joinWithTable({Ship:origObjs.Ship, Fleet:origObjs.Fleet})
+          return parsm.joinWithTable({Ship:Ship, Fleet:Fleet})
             .then(joinObj => {
               expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
               const joinedShip = joinObj.get('ship')
               const joinedFleet = joinObj.get('fleet')
               expect(parsm.isPFObject(joinedShip, 'Ship')).toBe(true)
-              expect(joinedShip.id).toBe(origObjs.Ship.id)
+              expect(joinedShip.id).toBe(Ship.id)
               expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
-              expect(joinedFleet.id).toBe(origObjs.Fleet.id)
+              expect(joinedFleet.id).toBe(Fleet.id)
             })
         })
         test(`creates a new class of object for joining two other classes with metadata describing their relationship`, () => {
-          return parsm.joinWithTable({Destroyer:origObjs.Destroyer, Fleet:origObjs.Fleet}, {active: true})
+          return parsm.joinWithTable({Destroyer:Destroyer, Fleet:Fleet}, {active: true})
             .then(joinObj => {
               expect(parsm.isPFObject(joinObj, 'Destroyer2Fleet')).toBe(true)
               expect(joinObj.get('active')).toBe(true)
               const joinedDestroyer = joinObj.get('destroyer')
               const joinedFleet = joinObj.get('fleet')
               expect(parsm.isPFObject(joinedDestroyer, 'Destroyer')).toBe(true)
-              expect(joinedDestroyer.id).toBe(origObjs.Destroyer.id)
+              expect(joinedDestroyer.id).toBe(Destroyer.id)
               expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
-              expect(joinedFleet.id).toBe(origObjs.Fleet.id)
+              expect(joinedFleet.id).toBe(Fleet.id)
             })
         })
       })
   
       describe('when called with current parameter types', () => {
-        const Ship = parsm.getClassInst('Ship')
-        const Destroyer = parsm.getClassInst('Destroyer')
-        const Fleet = parsm.getClassInst('Fleet')
-        const origObjs = {}
+  
+        let Ship, Fleet, Destroyer
+  
+        beforeAll(async (done) => {
+          Ship = await parsm.getClassInst('Ship').save()
+          Fleet = await parsm.getClassInst('Fleet').save()
+          Destroyer = await parsm.getClassInst('Destroyer').save()
+          done()
+        })
+        
         test(`creates a new class of object for joining two other classes`, () => {
-          return Parse.Object.saveAll([Ship, Destroyer, Fleet])
-            .then(savedObjs => {
-              origObjs.Ship = savedObjs[0]
-              origObjs.Destroyer = savedObjs[1]
-              origObjs.Fleet = savedObjs[2]
-              return parsm.joinWithTable(origObjs.Ship, origObjs.Fleet)
-            })
+          expect.assertions(5)
+          return parsm.joinWithTable(Ship, Fleet)
             .then(joinObj => {
               expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
               const joinedShip = joinObj.get('ship')
               const joinedFleet = joinObj.get('fleet')
               expect(parsm.isPFObject(joinedShip, 'Ship')).toBe(true)
-              expect(joinedShip.id).toBe(origObjs.Ship.id)
+              expect(joinedShip.id).toBe(Ship.id)
               expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
-              expect(joinedFleet.id).toBe(origObjs.Fleet.id)
+              expect(joinedFleet.id).toBe(Fleet.id)
             })
         })
         test(`creates a new class of object for joining two other classes with metadata describing their relationship`, () => {
-          return parsm.joinWithTable(origObjs.Destroyer, origObjs.Fleet, {active: true})
+          expect.assertions(6)
+          return parsm.joinWithTable(Destroyer, Fleet, {active: true})
             .then(joinObj => {
               expect(parsm.isPFObject(joinObj, 'Destroyer2Fleet')).toBe(true)
               expect(joinObj.get('active')).toBe(true)
               const joinedDestroyer = joinObj.get('destroyer')
               const joinedFleet = joinObj.get('fleet')
               expect(parsm.isPFObject(joinedDestroyer, 'Destroyer')).toBe(true)
-              expect(joinedDestroyer.id).toBe(origObjs.Destroyer.id)
+              expect(joinedDestroyer.id).toBe(Destroyer.id)
               expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
-              expect(joinedFleet.id).toBe(origObjs.Fleet.id)
+              expect(joinedFleet.id).toBe(Fleet.id)
             })
         })
       })
@@ -880,130 +895,71 @@ describe.only('Relationships', () => {
 
     describe('unJoinWithTable', () => {
   
-      describe('when called with old-style parameters', () => {
-        const Ship = parsm.getClassInst('Ship')
-        const Fleet = parsm.getClassInst('Fleet')
-        const origObjs = {}
-        test(`removes document from a join table that points to two specific instances of Parse.Object`, () => {
-          // Create a couple of different objects:
-          return Parse.Object.saveAll([Ship, Fleet])
-            .then(savedObjs => {
-              origObjs.Ship = savedObjs[0]
-              origObjs.Fleet = savedObjs[1]
-              // Join them with a third table:
-              return parsm.joinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
-            })
-            .then(joinObj => {
-              // Verify existence of the new document in the join table:
-              expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
-              // Further verify they are joined using parsimonious.getJoinQuery:
-              return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')})
-                .first()
-            })
-            .then(joinObj => {
-              expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
-              const joinedShip = joinObj.get('ship')
-              const joinedFleet = joinObj.get('fleet')
-              expect(parsm.isPFObject(joinedShip, 'Ship')).toBe(true)
-              expect(joinedShip.id).toBe(origObjs.Ship.id)
-              expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
-              expect(joinedFleet.id).toBe(origObjs.Fleet.id)
-              // Un-join them by removing the document from the join table that points to both:
-              return parsm.unJoinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
-            })
-            .then(joinObj => {
-              // Should receive a copy of the join document that was destroyed:
-              expect(joinObj).toBeTruthy()
-              // Further verify the document was really destroyed by using parsimonious.getJoinQuery:
-              return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')})
-                .first()
-            })
-            .then(joinObj => {
-              expect(joinObj).toBeFalsy()
-              // Verify that unJoinWithTable returns undefined when it cannot find
-              return parsm.unJoinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
-            })
-            .then(joinObj => {
-              expect(joinObj).toBeFalsy()
-            })
-    
-        })
+      let Ship, Fleet
+  
+      beforeAll(async (done) => {
+        Ship = await parsm.getClassInst('Ship').save()
+        Fleet = await parsm.getClassInst('Fleet').save()
+        done()
       })
   
-      describe('when called with new-style parameters', () => {
-        const Ship = parsm.getClassInst('Ship')
-        const Fleet = parsm.getClassInst('Fleet')
-        const origObjs = {}
-        test(`removes document from a join table that points to two specific instances of Parse.Object`, () => {
-          // Create a couple of different objects:
-          return Parse.Object.saveAll([Ship, Fleet])
-            .then(savedObjs => {
-              origObjs.Ship = savedObjs[0]
-              origObjs.Fleet = savedObjs[1]
-              // Join them with a third table:
-              return parsm.joinWithTable(origObjs.Ship, origObjs.Fleet)
-            })
-            .then(joinObj => {
-              // Verify existence of the new document in the join table:
-              expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
-              // Further verify they are joined using parsimonious.getJoinQuery:
-              return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')}).first()
-            })
-            .then(joinObj => {
-              expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
-              const joinedShip = joinObj.get('ship')
-              const joinedFleet = joinObj.get('fleet')
-              expect(parsm.isPFObject(joinedShip, 'Ship')).toBe(true)
-              expect(joinedShip.id).toBe(origObjs.Ship.id)
-              expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
-              expect(joinedFleet.id).toBe(origObjs.Fleet.id)
-              // Un-join them by removing the document from the join table that points to both:
-              return parsm.unJoinWithTable(origObjs.Ship, origObjs.Fleet)
-            })
-            .then(joinObj => {
-              // Should receive a copy of the join document that was destroyed:
-              expect(joinObj).toBeTruthy()
-              // Further verify the document was really destroyed by using parsimonious.getJoinQuery:
-              return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')})
-                .first()
-            })
-            .then(joinObj => {
-              expect(joinObj).toBeFalsy()
-              // Verify that unJoinWithTable returns undefined when it cannot find
-              return parsm.unJoinWithTable({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
-            })
-            .then(joinObj => {
-              expect(joinObj).toBeFalsy()
-            })
-    
-        })
-      })
-      
-    })
-
-    describe('getJoinQuery', () => {
-      
-      const Ship = parsm.getClassInst('Ship')
-      const Fleet = parsm.getClassInst('Fleet')
-      const origObjs = {}
-      
-      beforeAll(() => {
-        return Parse.Object.saveAll([Ship, Fleet])
-          .then(savedObjs => {
-            origObjs.Ship = savedObjs[0]
-            origObjs.Fleet = savedObjs[1]
-          })
-      })
-      
-      test(`returns a Parse.Query on a table that joins two subclasses of Parse.Object with pointers`, () => {
-        expect.assertions(12)
+      test(`when called with deprecated parameter types, removes document from a join table that points to two specific instances of Parse.Object`, () => {
+        expect.assertions(10)
         // Create a couple of different objects:
-        return parsm.joinWithTable(origObjs.Ship, origObjs.Fleet, {active:true, position:'flank'})
+        return parsm.joinWithTable({Ship, Fleet})
+          .then(joinObj => {
+            expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
+            // Verify existence of the new document in the join table:
+            return parsm.newQuery('Ship2Fleet', {
+              equalTo: ['objectId', joinObj.id],
+              include: [['ship', 'fleet']]
+            }).first()
+          })
+          .then(joinObjFound => {
+            expect(parsm.isPFObject(joinObjFound, 'Ship2Fleet')).toBe(true)
+            // Further verify they are joined using parsimonious.getJoinQuery:
+            return parsm.getJoinQuery({
+              Ship: parsm.getPointer('Ship', Ship.id),
+              Fleet: parsm.getPointer('Fleet', Fleet.id)
+            }).first()
+          })
+          .then(joinObj => {
+            expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
+            const joinedShip = joinObj.get('ship')
+            const joinedFleet = joinObj.get('fleet')
+            expect(parsm.isPFObject(joinedShip, 'Ship')).toBe(true)
+            expect(joinedShip.id).toBe(Ship.id)
+            expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
+            expect(joinedFleet.id).toBe(Fleet.id)
+            // Un-join them by removing the document from the join table that points to both:
+            return parsm.unJoinWithTable({Ship, Fleet})
+          })
+          .then(joinObj => {
+            // Should receive a copy of the join document that was destroyed:
+            expect(joinObj).toBeTruthy()
+            // Further verify the document was really destroyed by using parsimonious.getJoinQuery:
+            return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')})
+              .first()
+          })
+          .then(joinObj => {
+            expect(joinObj).toBeFalsy()
+            // Verify that unJoinWithTable returns undefined when it cannot find
+            return parsm.unJoinWithTable({Ship, Fleet})
+          })
+          .then(joinObj => {
+            expect(joinObj).toBeFalsy()
+          })
+    
+      })
+  
+      test(`when called with current parameter types, removes document from a join table that points to two specific instances of Parse.Object`, () => {
+        expect.assertions(9)
+        return parsm.joinWithTable(Ship, Fleet)
           .then(joinObj => {
             // Verify existence of the new document in the join table:
             expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
             // Further verify they are joined using parsimonious.getJoinQuery:
-            return parsm.getJoinQuery({Ship: origObjs.Ship, Fleet: origObjs.Fleet})
+            return parsm.getJoinQuery({Ship, Fleet})
               .first()
           })
           .then(joinObj => {
@@ -1011,23 +967,78 @@ describe.only('Relationships', () => {
             const joinedShip = joinObj.get('ship')
             const joinedFleet = joinObj.get('fleet')
             expect(parsm.isPFObject(joinedShip, 'Ship')).toBe(true)
-            expect(joinedShip.id).toBe(origObjs.Ship.id)
+            expect(joinedShip.id).toBe(Ship.id)
             expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
-            expect(joinedFleet.id).toBe(origObjs.Fleet.id)
+            expect(joinedFleet.id).toBe(Fleet.id)
+            // Un-join them by removing the document from the join table that points to both:
+            return parsm.unJoinWithTable(Ship, Fleet)
+          })
+          .then(joinObj => {
+            // Should receive a copy of the join document that was destroyed:
+            expect(joinObj).toBeTruthy()
+            // Further verify the document was really destroyed by using parsimonious.getJoinQuery:
+            return parsm.getJoinQuery({Ship: joinObj.get('ship'), Fleet: joinObj.get('fleet')})
+              .first()
+          })
+          .then(joinObj => {
+            expect(joinObj).toBeFalsy()
+            // Verify that unJoinWithTable returns undefined when it cannot find
+            return parsm.unJoinWithTable(Ship, Fleet)
+          })
+          .then(joinObj => {
+            expect(joinObj).toBeFalsy()
+          })
+    
+      })
+  
+    })
+
+    describe('getJoinQuery', () => {
+  
+      let Ship, Fleet
+  
+      beforeAll(async (done) => {
+        Ship = await parsm.getClassInst('Ship').save()
+        Fleet = await parsm.getClassInst('Fleet').save()
+        done()
+      })
+      
+      test(`returns a Parse.Query on a table that joins two subclasses of Parse.Object with pointers`, () => {
+        expect.assertions(13)
+        // Create a couple of different objects:
+        return parsm.joinWithTable(Ship, Fleet, {active:true, position:'flank'})
+          .then(joinObj => {
+            // Verify existence of the new document in the join table:
+            expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
+            // Further verify they are joined using parsimonious.getJoinQuery:
+            return parsm.getJoinQuery({
+              Ship,
+              Fleet
+            }).first()
+          })
+          .then(joinObj => {
+            expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
+            const joinedShip = joinObj.get('ship')
+            const joinedFleet = joinObj.get('fleet')
+            expect(parsm.isPFObject(joinedShip, 'Ship')).toBe(true)
+            expect(joinedShip.id).toBe(Ship.id)
+            expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
+            expect(joinedFleet.id).toBe(Fleet.id)
             // Further verify that you can find all ships within a certain fleet:
-            return parsm.getJoinQuery({Ship: null, Fleet: joinObj.get('fleet')})
+            return parsm.getJoinQuery({Ship: null, Fleet})
               .find()
           })
           .then(joinObjs => {
             expect(joinObjs).toBeInstanceOf(Array)
+            expect(joinObjs).toHaveLength(1)
             const joinObj = joinObjs[0]
             expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
             const joinedShip = joinObj.get('ship')
             const joinedFleet = joinObj.get('fleet')
             expect(parsm.isPFObject(joinedShip, 'Ship')).toBe(true)
-            expect(joinedShip.id).toBe(origObjs.Ship.id)
+            expect(joinedShip.id).toBe(Ship.id)
             expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
-            expect(joinedFleet.id).toBe(origObjs.Fleet.id)
+            expect(joinedFleet.id).toBe(Fleet.id)
           })
       })
       test(`throws on invalid classes param`, () => {
