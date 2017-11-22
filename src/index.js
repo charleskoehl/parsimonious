@@ -482,6 +482,16 @@ class Parsimonious {
   }
   
   /**
+   * Return true if thing is a Parse.Object or pointer
+   * @param {*} thing
+   * @param {string=} ofClass Optionally check if it's of a specific ParseObjectSubclass
+   * @returns {boolean}
+   */
+  static isPFObjectOrPointer(thing, className) {
+    return this.isPFObject(thing, className) || this.isPointer(thing, className)
+  }
+  
+  /**
    * Return true if thing is an instance of Parse.User.
    * @param {*} thing
    * @returns {boolean}

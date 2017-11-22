@@ -1143,6 +1143,73 @@ describe('isPointer', () => {
   })
 })
 
+describe('isPFObjectOrPointer', () => {
+  
+  describe('returns true for Parse.Objects',  () => {
+  
+    beforeAll(setTestObjects)
+  
+    test('checks a valid Parse.Object', () => {
+      expect(parsm.isPFObjectOrPointer(unsavedParseObj)).toBe(true)
+    })
+    test('checks Parse.Object of a certain class by class name', () => {
+      expect(parsm.isPFObjectOrPointer(unsavedParseObj, 'TheParseObj')).toBe(true)
+    })
+    test('ignores invalid "ofClass" parameter', () => {
+      expect(parsm.isPFObjectOrPointer(unsavedParseObj, 3)).toBe(true)
+    })
+    test('checks a special sub-class of Parse.Object, like "User"', () => {
+      expect(parsm.isPFObjectOrPointer(testUser, 'User')).toBe(true)
+    })
+    test('returns true for pointer created locally as plain object', () => {
+      expect(parsm.isPFObjectOrPointer({__type:'Pointer', className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
+    })
+    test('returns false for pointer created with Parse.Object.toPointer', () => {
+      expect(parsm.isPFObjectOrPointer(savedBouquets[0].toPointer())).toBe(true)
+    })
+    test('returns true for Parse.Object subclass reference created with Parse.Object.createWithoutData', () => {
+      expect(parsm.isPFObjectOrPointer(TheParseObj.createWithoutData('ihsd978h293'))).toBe(true)
+    })
+    
+  })
+  
+  describe('returns true for pointers', () => {
+    
+    let savedParseObj
+    
+    beforeAll(() => {
+        return setTestObjects()
+          .then(() => unsavedParseObj.save())
+          .then(obj => {
+            savedParseObj = obj
+          })
+      }
+    )
+    
+    test('should return false for scalars', () => {
+      expect(parsm.isPFObjectOrPointer('Schnauser')).toBe(false)
+      expect(parsm.isPFObjectOrPointer(1)).toBe(false)
+    })
+    test('should return true for qualifying objects', () => {
+      expect(parsm.isPFObjectOrPointer(null)).toBe(false)
+      expect(parsm.isPFObjectOrPointer(savedParseObj)).toBe(true)
+      expect(parsm.isPFObjectOrPointer(parsm.toJsn(savedParseObj))).toBe(false)
+      expect(parsm.isPFObjectOrPointer({__type:'Pointer',className:'HairBall'})).toBe(false)
+      expect(parsm.isPFObjectOrPointer(TheParseObj.createWithoutData('ihsd978h293'))).toBe(true)
+    })
+    test('should return true for qualifying objects', () => {
+      expect(parsm.isPFObjectOrPointer(savedParseObj.toPointer())).toBe(true)
+      expect(parsm.isPFObjectOrPointer({className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
+      expect(parsm.isPFObjectOrPointer(parsm.toJsn(savedParseObj.toPointer()))).toBe(true)
+    })
+    test('should return true for qualifying objects of a specified class', () => {
+      expect(parsm.isPFObjectOrPointer(savedParseObj.toPointer(), 'TheParseObj')).toBe(true)
+      expect(parsm.isPFObjectOrPointer({className:'HairBall', objectId:'kjasoiuwne'}, 'HairBall')).toBe(true)
+    })
+  })
+  
+})
+
 describe('getPFObjectClassName', () => {
   
   beforeAll(setTestObjects)
