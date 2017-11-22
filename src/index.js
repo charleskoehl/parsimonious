@@ -395,15 +395,25 @@ class Parsimonious {
    *    limit: 10
    * }).find()
    * @param {object} classes Must contain two keys corresponding to existing classes. At least one key's value must be a valid parse object. If the other key's value is not a valid parse object, the query retrieves all objects of the 2nd key's class that are joined to the object of the 1st class. Same for vice-versa. If both values are valid parse objects, then the query should return zero or one row from the join table.
-   * @param {object=} opts (Options for Parsimonious.newQuery})
+   * @param {object=} constraints (Options for Parsimonious.newQuery})
    * @returns {Parse.Query}
    */
-  static getJoinQuery(classes, opts) {
+  static getJoinQuery(classes, constraints={}) {
     const {cn1, cn2, obj1, obj2} = this._getJoinTableClassVars.apply(this, arguments)
-    const query = this.newQuery(this.getJoinTableName(cn1, cn2), opts)
-    this.isPFObject(obj1, cn1) && query.equalTo(lowerFirst(cn1), obj1)
-    this.isPFObject(obj2, cn2) && query.equalTo(lowerFirst(cn2), obj2)
-    return query
+    if(typeof constraints !== 'object') {
+      throw new TypeError('getJoinQuery called with invalid constraints')
+    }
+    let equalToArgSets = []
+    if(this.isPFObject(obj1, cn1)) {
+      equalToArgSets.push([lowerFirst(cn1), obj1])
+    }
+    if(this.isPFObject(obj2, cn2)) {
+      equalToArgSets.push([lowerFirst(cn2), obj2])
+    }
+    if(equalToArgSets.length) {
+      constraints.equalTo = equalToArgSets.length > 1 ? equalToArgSets : equalToArgSets[0]
+    }
+    return this.newQuery(this.getJoinTableName(cn1, cn2), constraints)
   }
   
   /**
