@@ -115,7 +115,7 @@ class Parsimonious {
    */
   static constrainQuery(query, constraints) {
     if(query instanceof this.Parse.Query && isPlainObject(constraints)) {
-      const nonConstraints = ['count','each','find','first','get','toJSON']
+      const nonConstraints = ['count', 'each', 'find', 'first', 'get', 'toJSON']
       Object.keys(constraints).forEach(constraint => {
         if(typeof query[constraint] === 'function' && nonConstraints.indexOf(constraint) === -1) {
           // constraint is the string name of a Query constraint method
@@ -334,7 +334,7 @@ class Parsimonious {
     const
       argIndex = this.isPFObject(arguments[0]) ? 2 : 1,
       meta = arguments[argIndex],
-      opts = arguments[argIndex+1]
+      opts = arguments[argIndex + 1]
     const joinObj = this.getClassInst(this.getJoinTableName(cn1, cn2))
     joinObj.set(lowerFirst(cn1), obj1)
     joinObj.set(lowerFirst(cn2), obj2)
@@ -416,7 +416,7 @@ class Parsimonious {
    * @param {object=} constraints (Options for Parsimonious.newQuery})
    * @returns {Parse.Query}
    */
-  static getJoinQuery(classes, constraints={}) {
+  static getJoinQuery(classes, constraints = {}) {
     const {cn1, cn2, obj1, obj2} = this._getJoinTableClassVars.apply(this, arguments)
     if(typeof constraints !== 'object') {
       throw new TypeError('getJoinQuery called with invalid constraints')
@@ -441,16 +441,14 @@ class Parsimonious {
    * @returns {object}
    */
   static getPointer(className, id) {
-   if(typeof className === 'string' && typeof id === 'string') {
-     return this.getClass(className).createWithoutData(id)
-   } else {
-     throw new TypeError('getPointer called with non-string parameters')
-   }
+    if(typeof className === 'string' && typeof id === 'string') {
+      return this.getClass(className).createWithoutData(id)
+    } else {
+      throw new TypeError('getPointer called with non-string parameters')
+    }
   }
   
-  
   /* TYPE CHECKS  */
-  
   
   /**
    * Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse.User or Parse.MyCustomClass)
@@ -501,9 +499,7 @@ class Parsimonious {
     return thing instanceof this.Parse.User
   }
   
-  
   /* COMPARISONS */
-  
   
   /**
    * Return true if values both represent the same Parse.Object instance (same class and id) even if one is a pointer and the other is a Parse.Object instance.
@@ -518,9 +514,7 @@ class Parsimonious {
       && this.getId(thing1) === this.getId(thing2)
   }
   
-  
   /* CONVERSIONS / DATA MANIPULATION */
-  
   
   /**
    * Return a json representation of a Parse.Object,
@@ -689,7 +683,7 @@ class Parsimonious {
   static getPFObjectClassName(thing) {
     const str = typeof thing === 'string' ? thing : (typeof thing === 'object' ? thing.className : null)
     if(typeof str === 'string') {
-      return str.substring(0,1) === '_' && specialClasses.indexOf(str.substring(1)) !== -1 ? str.substring(1) : str
+      return str.substring(0, 1) === '_' && specialClasses.indexOf(str.substring(1)) !== -1 ? str.substring(1) : str
     }
   }
   
@@ -709,7 +703,7 @@ class Parsimonious {
    * @param className
    */
   static classNameToParseClassName(className) {
-    return specialClasses.indexOf(className) !== -1 ? '_'+className : className
+    return specialClasses.indexOf(className) !== -1 ? '_' + className : className
   }
   
   /**

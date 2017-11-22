@@ -7,7 +7,6 @@ import express from 'express'
 import http from 'http'
 import MongodbMemoryServer from 'mongodb-memory-server'
 
-
 const TheParseObj = Parse.Object.extend('TheParseObj')
 const Bouquet = Parse.Object.extend('Bouquet')
 let unsavedParseObj, savedBouquets, testUser
@@ -24,19 +23,20 @@ const setTestObjects = async () => {
   if(oldUser) {
     toDelete.push(oldUser)
   }
-  deleted = await Parse.Object.destroyAll(toDelete, {useMasterKey:true})
+  deleted = await Parse.Object.destroyAll(toDelete, {useMasterKey: true})
   // Create fresh new objects:
   unsavedParseObj = new TheParseObj({
-    roses:'red',
-    violets:'blue',
-    grass:'green'
+    roses: 'red',
+    violets: 'blue',
+    grass: 'green'
   })
-  savedBouquets = await Parse.Promise.when(Array.from(Array(10).keys()).map(n => parsm.getClassInst('Bouquet').save({active:false, aNum:n})))
+  const getNewBouquet = n => parsm.getClassInst('Bouquet').save({active: false, aNum: n})
+  savedBouquets = await Parse.Promise.when(Array.from(Array(10).keys()).map(getNewBouquet))
   testUser = new Parse.User({
-    username:'foomanchoo',
-    password:'je9w83d',
+    username: 'foomanchoo',
+    password: 'je9w83d',
     name: 'Foo Manchoo',
-    email:'foo@manchoo.com'
+    email: 'foo@manchoo.com'
   })
   testUser = await testUser.signUp()
 }
@@ -56,54 +56,54 @@ const sameBouquetIDs = (foundBouquets, foundIndex, savedIndex) => {
 
 let mongod, parseServer
 
-beforeAll( () => {
+beforeAll(() => {
   const appId = 'parsimonious-test-server'
   const host = '127.0.0.1'
   const masterKey = 'abc123'
   mongod = new MongodbMemoryServer()
-    return new Parse.Promise( (resolve, reject) => {
-      Promise.all([require('new-port'), mongod.getConnectionString(), mongod.getPort()])
-        .then(([httpPort, dbUri, dbPort]) => {
-          console.log(`\nMongodbMemoryServer started at ${dbUri}, port ${dbPort}`)
-          const parseMount = '/parse'
-          const serverURL = `http://${host}:${httpPort}${parseMount}`
-          const parseConfig = {
-            appId,
-            appName: 'Parsimonious Test Server',
-            masterKey,
-            serverURL,
-            databaseURI: dbUri,
-            publicServerURL: serverURL,
-            preventLoginWithUnverifiedEmail: false,
-            enableSingleSchemaCache: true, // without this option, the _schema is called upon every request
-          }
-          const app = express()
-          const api = new ParseServer(parseConfig)
-          app.use(parseMount, api)
-          try {
-            parseServer = require('http-shutdown')(http.createServer(app)) // adds graceful 'shutdown' method
-            parseServer.listen(httpPort, host, () => {
-              console.log(`\nParse server running on port ${httpPort}`)
-              try {
-                Parse.initialize(appId, null, masterKey)
-                Parse.serverURL = serverURL
-                parsm.setParse(Parse)
-                resolve()
-              } catch(e) {
-                reject('Could not initialize Parse or Parsimonious:', e)
-              }
-            })
-          } catch(err) {
-            console.error(err)
-            reject(`\ncould not create http server`)
-          }
-        })
-    })
+  return new Parse.Promise((resolve, reject) => {
+    Promise.all([require('new-port'), mongod.getConnectionString(), mongod.getPort()])
+      .then(([httpPort, dbUri, dbPort]) => {
+        console.log(`\nMongodbMemoryServer started at ${dbUri}, port ${dbPort}`)
+        const parseMount = '/parse'
+        const serverURL = `http://${host}:${httpPort}${parseMount}`
+        const parseConfig = {
+          appId,
+          appName: 'Parsimonious Test Server',
+          masterKey,
+          serverURL,
+          databaseURI: dbUri,
+          publicServerURL: serverURL,
+          preventLoginWithUnverifiedEmail: false,
+          enableSingleSchemaCache: true, // without this option, the _schema is called upon every request
+        }
+        const app = express()
+        const api = new ParseServer(parseConfig)
+        app.use(parseMount, api)
+        try {
+          parseServer = require('http-shutdown')(http.createServer(app)) // adds graceful 'shutdown' method
+          parseServer.listen(httpPort, host, () => {
+            console.log(`\nParse server running on port ${httpPort}`)
+            try {
+              Parse.initialize(appId, null, masterKey)
+              Parse.serverURL = serverURL
+              parsm.setParse(Parse)
+              resolve()
+            } catch(e) {
+              reject('Could not initialize Parse or Parsimonious:', e)
+            }
+          })
+        } catch(err) {
+          console.error(err)
+          reject(`\ncould not create http server`)
+        }
+      })
+  })
 })
 
 afterAll(() => {
   console.log('shutting down test environment')
-  return new Parse.Promise( (resolve, reject) => {
+  return new Parse.Promise((resolve, reject) => {
     parseServer.shutdown(() => {
       console.log('app server has shut down gracefully')
       mongod.stop()
@@ -113,7 +113,6 @@ afterAll(() => {
       .catch(reject)
   })
 })
-
 
 describe('setParse', () => {
   
@@ -215,9 +214,9 @@ describe('objPick', () => {
   const
     TheParseObj = Parse.Object.extend('TheParseObj'),
     unsavedParseObj = new TheParseObj({
-      roses:'red',
-      violets:'blue',
-      grass:'green'
+      roses: 'red',
+      violets: 'blue',
+      grass: 'green'
     })
   
   test('gets some columns from a Parse object and returns them in a plain object', () => {
@@ -271,17 +270,17 @@ describe('objGetDeep', () => {
   test('Get the value of a key nested within a Parse.Object contained in a column of a parent Parse.Object.', () => {
     expect.assertions(4)
     const address = parsm.getClassInst('Address', {
-      line1:'123 Main Street',
-      line2:'Suite 30',
-      city:'Boston',
-      state:'MA',
-      zip:'02110'
+      line1: '123 Main Street',
+      line2: 'Suite 30',
+      city: 'Boston',
+      state: 'MA',
+      zip: '02110'
     })
     return address.save()
       .then(addr => {
         const company = parsm.getClassInst('Company', {
-          name:'IBM',
-          address:addr
+          name: 'IBM',
+          address: addr
         })
         return company.save()
       })
@@ -310,38 +309,38 @@ describe('objSetMulti', () => {
   
   test('sets some columns on a Parse object from a plain object, not merging sub-objects', () => {
     unsavedParseObj.set('ocean', {
-      size:'large',
-      color:'blue',
-      denizens:'fish'
+      size: 'large',
+      color: 'blue',
+      denizens: 'fish'
     })
     parsm.objSetMulti(unsavedParseObj, {
       ocean: {
-        size:'medium',
-        color:'green'
+        size: 'medium',
+        color: 'green'
       }
     })
     expect(unsavedParseObj.get('ocean')).toEqual({
-      size:'medium',
-      color:'green'
+      size: 'medium',
+      color: 'green'
     })
   })
   
   test('sets some columns on a Parse object from a plain object, merging sub-objects', () => {
     unsavedParseObj.set('ocean', {
-      size:'large',
-      color:'blue',
-      denizens:'fish'
+      size: 'large',
+      color: 'blue',
+      denizens: 'fish'
     })
     parsm.objSetMulti(unsavedParseObj, {
       ocean: {
-        size:'medium',
-        color:'green'
+        size: 'medium',
+        color: 'green'
       }
     }, true)
     expect(unsavedParseObj.get('ocean')).toEqual({
-      size:'medium',
-      color:'green',
-      denizens:'fish'
+      size: 'medium',
+      color: 'green',
+      denizens: 'fish'
     })
   })
   
@@ -453,7 +452,7 @@ describe('newQuery', () => {
             expect(engine).toBeInstanceOf(Object)
             expect(engine.get('horsepower')).toBe(3000)
             const query = parsm.newQuery('Train')
-            query.include(['engine','car'])
+            query.include(['engine', 'car'])
             return query.first()
           })
           .then(trainWithIncludes => {
@@ -492,7 +491,7 @@ describe('constrainQuery', () => {
   })
   test('throws RangeError when one or more constraints are not valid methods of Parse.Query', () => {
     const query = parsm.newQuery('Bouquet')
-    expect(() => parsm.constrainQuery(query, {blah: [3,4,5]})).toThrow(RangeError)
+    expect(() => parsm.constrainQuery(query, {blah: [3, 4, 5]})).toThrow(RangeError)
   })
   test('throws Error when calling a valid constraint method on a valid query throws an error', () => {
     const query = parsm.newQuery('Bouquet')
@@ -613,12 +612,12 @@ describe('getId', () => {
 })
 
 describe('getObjById', () => {
-  test('gets a Parse object from db by id', () => {
+  test('gets a Parse object from server by id', () => {
     expect.assertions(2)
     const aParseObj = new TheParseObj()
     let newObjId
     return aParseObj
-      .save({roses:'red'})
+      .save({roses: 'red'})
       .then(savedObj => {
         newObjId = savedObj.id
         return parsm.getObjById('TheParseObj', newObjId)
@@ -643,7 +642,6 @@ describe('getUserById', () => {
       })
   })
 })
-
 
 describe('getPFObject', () => {
   
@@ -678,13 +676,13 @@ describe('fetchIfNeeded, given a value <thing>, return a promise that resolves t
   test('thing if thing is a clean Parse.Object', () => {
     expect.assertions(1)
     return parsm.fetchIfNeeded(savedBouquets[0])
-    .then(result => {
-      expect(result).toBe(savedBouquets[0])
-    })
+      .then(result => {
+        expect(result).toBe(savedBouquets[0])
+      })
   })
   test('fetched Parse.Object if thing is a dirty Parse.Object', () => {
     expect.assertions(1)
-    savedBouquets[0].set('active',true)
+    savedBouquets[0].set('active', true)
     return parsm.fetchIfNeeded(savedBouquets[0])
       .then(result => {
         expect(result.get('active')).toBe(false)
@@ -696,7 +694,7 @@ describe('fetchIfNeeded, given a value <thing>, return a promise that resolves t
       .then(result => {
         expect(result).toBeTruthy()
         expect(parsm.isPFObject(result)).toBe(true)
-        expect(parsm.isPFObject(result,'Bouquet')).toBe(true)
+        expect(parsm.isPFObject(result, 'Bouquet')).toBe(true)
       })
   })
   test('thing if otherwise', () => {
@@ -714,52 +712,52 @@ describe('Roles', () => {
         const roleACL = new Parse.ACL()
         roleACL.setPublicReadAccess(true)
         roleACL.setPublicWriteAccess(true)
-        adminRole = new Parse.Role("Administrator", roleACL)
-        modRole = new Parse.Role("Moderator", roleACL)
+        adminRole = new Parse.Role('Administrator', roleACL)
+        modRole = new Parse.Role('Moderator', roleACL)
       })
   })
-
+  
   describe('userHasRole', () => {
     
     test('determines if a user has a single role', () => {
       expect.assertions(5)
-        return parsm.userHasRole(testUser, 'Administrator')
-          .then(hasRole => {
-            expect(hasRole).toBe(false)
-            return adminRole.getUsers()
-              .add(testUser)
-              .save()
-              .then(() => parsm.userHasRole(testUser, 'Administrator'))
+      return parsm.userHasRole(testUser, 'Administrator')
+        .then(hasRole => {
+          expect(hasRole).toBe(false)
+          return adminRole.getUsers()
+            .add(testUser)
+            .save()
+            .then(() => parsm.userHasRole(testUser, 'Administrator'))
+        })
+        .then(hasRole => {
+          expect(hasRole).toBe(true)
+          return parsm.userHasRole(testUser, {
+            names: ['Administrator', 'Moderator'],
+            op: 'or'
           })
-          .then(hasRole => {
-            expect(hasRole).toBe(true)
-            return parsm.userHasRole(testUser, {
+        })
+        .then(hasRoles => {
+          expect(hasRoles).toBe(true)
+          return modRole.getUsers()
+            .add(testUser)
+            .save()
+            .then(() => parsm.userHasRole(testUser, {
               names: ['Administrator', 'Moderator'],
-              op: 'or'
-            })
+              op: 'and'
+            }))
+        })
+        .then(hasRoles => {
+          expect(hasRoles).toBe(true)
+          return parsm.userHasRole(testUser, {
+            names: ['Administrator', 'Moderator'],
+            op: 'or'
           })
-          .then(hasRoles => {
-            expect(hasRoles).toBe(true)
-            return modRole.getUsers()
-              .add(testUser)
-              .save()
-              .then(() => parsm.userHasRole(testUser, {
-                names: ['Administrator', 'Moderator'],
-                op: 'and'
-              }))
-          })
-          .then(hasRoles => {
-            expect(hasRoles).toBe(true)
-            return parsm.userHasRole(testUser, {
-              names: ['Administrator', 'Moderator'],
-              op: 'or'
-            })
-          })
-          .then(hasRoles => {
-            expect(hasRoles).toBe(true)
-          })
+        })
+        .then(hasRoles => {
+          expect(hasRoles).toBe(true)
+        })
     })
-  
+    
     test('reject when invalid "user" param', () => {
       return expect(parsm.userHasRole()).rejects.toBe('invalid user')
     })
@@ -767,7 +765,7 @@ describe('Roles', () => {
       return expect(parsm.userHasRole(testUser)).rejects.toBe('invalid roles')
     })
   })
-
+  
   describe('getRole', () => {
     test('returns Role object by name', () => {
       expect.assertions(1)
@@ -777,14 +775,14 @@ describe('Roles', () => {
         })
     })
   })
-
+  
   describe('getUserRoles', () => {
     test('returns array of names of user\'s direct roles, or empty array if none', () => {
       expect.assertions(4)
       const user = new Parse.User({
-        username:'blastois',
-        password:'je9w83d',
-        email:'blast@ois.com'
+        username: 'blastois',
+        password: 'je9w83d',
+        email: 'blast@ois.com'
       })
       return user.save()
         .then(aUser => {
@@ -798,7 +796,7 @@ describe('Roles', () => {
             .then(() => parsm.getUserRoles(aUser))
             .then(roles => {
               expect(roles.length).toBe(1)
-              expect(roles[0]).toBe("Administrator")
+              expect(roles[0]).toBe('Administrator')
             })
         })
     })
@@ -825,11 +823,11 @@ describe('getClassInst', () => {
   })
   test('returns a subclass of Parse.Object with some attributes set', () => {
     const inst = parsm.getClassInst('Birds', {
-      raven:{
-        color:'black'
+      raven: {
+        color: 'black'
       },
-      dove:{
-        color:'white'
+      dove: {
+        color: 'white'
       }
     })
     expect(typeof inst).toBe('object')
@@ -846,19 +844,19 @@ describe('getClassInst', () => {
 describe('Relationships', () => {
   
   describe('Many-to-Many with Join Tables', () => {
-  
+    
     describe('getJoinTableName', () => {
       test(`returns a name for a table used to join two other tables; format: <first table name>2<second table name>`, () => {
-        expect(parsm.getJoinTableName('Employee','Company')).toBe('Employee2Company')
+        expect(parsm.getJoinTableName('Employee', 'Company')).toBe('Employee2Company')
       })
     })
-  
+    
     describe('joinWithTable', () => {
-  
+      
       describe('when called with deprecated parameter types', () => {
-  
+        
         let Ship, Fleet, Destroyer
-  
+        
         beforeAll(async (done) => {
           Ship = await parsm.getClassInst('Ship').save()
           Fleet = await parsm.getClassInst('Fleet').save()
@@ -868,7 +866,7 @@ describe('Relationships', () => {
         
         test(`creates a new class of object for joining two other classes`, () => {
           expect.assertions(5)
-          return parsm.joinWithTable({Ship:Ship, Fleet:Fleet})
+          return parsm.joinWithTable({Ship: Ship, Fleet: Fleet})
             .then(joinObj => {
               expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
               const joinedShip = joinObj.get('ship')
@@ -880,7 +878,7 @@ describe('Relationships', () => {
             })
         })
         test(`creates a new class of object for joining two other classes with metadata describing their relationship`, () => {
-          return parsm.joinWithTable({Destroyer:Destroyer, Fleet:Fleet}, {active: true})
+          return parsm.joinWithTable({Destroyer: Destroyer, Fleet: Fleet}, {active: true})
             .then(joinObj => {
               expect(parsm.isPFObject(joinObj, 'Destroyer2Fleet')).toBe(true)
               expect(joinObj.get('active')).toBe(true)
@@ -893,11 +891,11 @@ describe('Relationships', () => {
             })
         })
       })
-  
+      
       describe('when called with current parameter types', () => {
-  
+        
         let Ship, Fleet, Destroyer
-  
+        
         beforeAll(async (done) => {
           Ship = await parsm.getClassInst('Ship').save()
           Fleet = await parsm.getClassInst('Fleet').save()
@@ -935,20 +933,19 @@ describe('Relationships', () => {
       })
       
     })
-
+    
     describe('unJoinWithTable', () => {
-  
+      
       let Ship, Fleet
-  
+      
       beforeAll(async (done) => {
         Ship = await parsm.getClassInst('Ship').save()
         Fleet = await parsm.getClassInst('Fleet').save()
         done()
       })
-  
+      
       test(`when called with deprecated parameter types, removes document from a join table that points to two specific instances of Parse.Object`, () => {
         expect.assertions(10)
-        // Create a couple of different objects:
         return parsm.joinWithTable({Ship, Fleet})
           .then(joinObj => {
             expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
@@ -992,9 +989,9 @@ describe('Relationships', () => {
           .then(joinObj => {
             expect(joinObj).toBeFalsy()
           })
-    
+        
       })
-  
+      
       test(`when called with current parameter types, removes document from a join table that points to two specific instances of Parse.Object`, () => {
         expect.assertions(9)
         return parsm.joinWithTable(Ship, Fleet)
@@ -1031,15 +1028,15 @@ describe('Relationships', () => {
           .then(joinObj => {
             expect(joinObj).toBeFalsy()
           })
-    
+        
       })
-  
+      
     })
-
+    
     describe('getJoinQuery', () => {
-  
+      
       let Ship, Fleet
-  
+      
       beforeAll(async (done) => {
         Ship = await parsm.getClassInst('Ship').save()
         Fleet = await parsm.getClassInst('Fleet').save()
@@ -1048,8 +1045,7 @@ describe('Relationships', () => {
       
       test(`returns a Parse.Query on a table that joins two subclasses of Parse.Object with pointers`, () => {
         expect.assertions(13)
-        // Create a couple of different objects:
-        return parsm.joinWithTable(Ship, Fleet, {active:true, position:'flank'})
+        return parsm.joinWithTable(Ship, Fleet, {active: true, position: 'flank'})
           .then(joinObj => {
             // Verify existence of the new document in the join table:
             expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
@@ -1119,11 +1115,11 @@ describe('pfObjectMatch', () => {
   
   let otherUser
   
-  beforeAll(async(done) => {
+  beforeAll(async (done) => {
     otherUser = await new Parse.User({
-      username:'goony',
-      password:'je9w83d',
-      email:'goony@monsters.com'
+      username: 'goony',
+      password: 'je9w83d',
+      email: 'goony@monsters.com'
     }).save()
     done()
   })
@@ -1140,7 +1136,7 @@ describe('pfObjectMatch', () => {
     expect(parsm.pfObjectMatch(testUser.toPointer(), testUser)).toBe(true)
   })
   
-  test('returns true if a pointer does not point to corresponding pfObject', async() => {
+  test('returns true if a pointer does not point to corresponding pfObject', async () => {
     expect(parsm.pfObjectMatch(testUser.toPointer(), otherUser)).toBe(false)
   })
   
@@ -1159,7 +1155,7 @@ describe('isPFObject', () => {
   test('checks a valid Parse.Object', () => {
     expect(parsm.isPFObject(unsavedParseObj)).toBe(true)
   })
-  test('checks Parse.Object of a certain class', () => {
+  test('checks Parse.Object of a certain class by class name', () => {
     expect(parsm.isPFObject(unsavedParseObj, 'TheParseObj')).toBe(true)
   })
   test('ignores invalid "ofClass" parameter', () => {
@@ -1169,7 +1165,7 @@ describe('isPFObject', () => {
     expect(parsm.isPFObject(testUser, 'User')).toBe(true)
   })
   test('returns false for pointer created locally as plain object', () => {
-    expect(parsm.isPFObject({__type:'Pointer', className:'HairBall', objectId:'kjasoiuwne'})).toBe(false)
+    expect(parsm.isPFObject({__type: 'Pointer', className: 'HairBall', objectId: 'kjasoiuwne'})).toBe(false)
   })
   test('returns false for pointer created with Parse.Object.toPointer', () => {
     expect(parsm.isPFObject(savedBouquets[0].toPointer())).toBe(false)
@@ -1177,6 +1173,7 @@ describe('isPFObject', () => {
   test('returns true for Parse.Object subclass reference created with Parse.Object.createWithoutData', () => {
     expect(parsm.isPFObject(TheParseObj.createWithoutData('ihsd978h293'))).toBe(true)
   })
+  
 })
 
 describe('isPointer', () => {
@@ -1200,26 +1197,26 @@ describe('isPointer', () => {
     expect(parsm.isPointer(null)).toBe(false)
     expect(parsm.isPointer(savedParseObj)).toBe(false)
     expect(parsm.isPointer(parsm.toJsn(savedParseObj))).toBe(false)
-    expect(parsm.isPointer({__type:'Pointer',className:'HairBall'})).toBe(false)
+    expect(parsm.isPointer({__type: 'Pointer', className: 'HairBall'})).toBe(false)
     expect(parsm.isPointer(TheParseObj.createWithoutData('ihsd978h293'))).toBe(false)
   })
   test('should return true for qualifying objects', () => {
     expect(parsm.isPointer(savedParseObj.toPointer())).toBe(true)
-    expect(parsm.isPointer({className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
+    expect(parsm.isPointer({className: 'HairBall', objectId: 'kjasoiuwne'})).toBe(true)
     expect(parsm.isPointer(parsm.toJsn(savedParseObj.toPointer()))).toBe(true)
   })
   test('should return true for qualifying objects of a specified class', () => {
     expect(parsm.isPointer(savedParseObj.toPointer(), 'TheParseObj')).toBe(true)
-    expect(parsm.isPointer({className:'HairBall', objectId:'kjasoiuwne'}, 'HairBall')).toBe(true)
+    expect(parsm.isPointer({className: 'HairBall', objectId: 'kjasoiuwne'}, 'HairBall')).toBe(true)
   })
 })
 
 describe('isPFObjectOrPointer', () => {
   
-  describe('returns true for Parse.Objects',  () => {
-  
+  describe('returns true for Parse.Objects', () => {
+    
     beforeAll(setTestObjects)
-  
+    
     test('checks a valid Parse.Object', () => {
       expect(parsm.isPFObjectOrPointer(unsavedParseObj)).toBe(true)
     })
@@ -1233,7 +1230,7 @@ describe('isPFObjectOrPointer', () => {
       expect(parsm.isPFObjectOrPointer(testUser, 'User')).toBe(true)
     })
     test('returns true for pointer created locally as plain object', () => {
-      expect(parsm.isPFObjectOrPointer({__type:'Pointer', className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
+      expect(parsm.isPFObjectOrPointer({__type: 'Pointer', className: 'HairBall', objectId: 'kjasoiuwne'})).toBe(true)
     })
     test('returns false for pointer created with Parse.Object.toPointer', () => {
       expect(parsm.isPFObjectOrPointer(savedBouquets[0].toPointer())).toBe(true)
@@ -1265,17 +1262,17 @@ describe('isPFObjectOrPointer', () => {
       expect(parsm.isPFObjectOrPointer(null)).toBe(false)
       expect(parsm.isPFObjectOrPointer(savedParseObj)).toBe(true)
       expect(parsm.isPFObjectOrPointer(parsm.toJsn(savedParseObj))).toBe(false)
-      expect(parsm.isPFObjectOrPointer({__type:'Pointer',className:'HairBall'})).toBe(false)
+      expect(parsm.isPFObjectOrPointer({__type: 'Pointer', className: 'HairBall'})).toBe(false)
       expect(parsm.isPFObjectOrPointer(TheParseObj.createWithoutData('ihsd978h293'))).toBe(true)
     })
     test('should return true for qualifying objects', () => {
       expect(parsm.isPFObjectOrPointer(savedParseObj.toPointer())).toBe(true)
-      expect(parsm.isPFObjectOrPointer({className:'HairBall', objectId:'kjasoiuwne'})).toBe(true)
+      expect(parsm.isPFObjectOrPointer({className: 'HairBall', objectId: 'kjasoiuwne'})).toBe(true)
       expect(parsm.isPFObjectOrPointer(parsm.toJsn(savedParseObj.toPointer()))).toBe(true)
     })
     test('should return true for qualifying objects of a specified class', () => {
       expect(parsm.isPFObjectOrPointer(savedParseObj.toPointer(), 'TheParseObj')).toBe(true)
-      expect(parsm.isPFObjectOrPointer({className:'HairBall', objectId:'kjasoiuwne'}, 'HairBall')).toBe(true)
+      expect(parsm.isPFObjectOrPointer({className: 'HairBall', objectId: 'kjasoiuwne'}, 'HairBall')).toBe(true)
     })
   })
   
@@ -1291,8 +1288,8 @@ describe('getPFObjectClassName', () => {
     expect(parsm.getPFObjectClassName('_User')).toBe('User')
     expect(parsm.getPFObjectClassName(testUser)).toBe('User')
     expect(parsm.getPFObjectClassName('_Session')).toBe('Session')
-    expect(parsm.getPFObjectClassName({naughty:'object'})).not.toBeTruthy()
-    expect(parsm.getPFObjectClassName([1,2,3])).not.toBeTruthy()
+    expect(parsm.getPFObjectClassName({naughty: 'object'})).not.toBeTruthy()
+    expect(parsm.getPFObjectClassName([1, 2, 3])).not.toBeTruthy()
     expect(parsm.getPFObjectClassName()).not.toBeTruthy()
   })
 })
@@ -1305,9 +1302,9 @@ describe('isUser', () => {
   test('determines if the same object with some attributes set is an instance of Parse.User', () => {
     parsm.objSetMulti(user,
       {
-        username:'stanman',
-        password:'823980jdlksjd9',
-        email:'stan@theman.com'
+        username: 'stanman',
+        password: '823980jdlksjd9',
+        email: 'stan@theman.com'
       }
     )
     expect(parsm.isUser(user)).toBe(true)
@@ -1345,8 +1342,8 @@ describe('getPointer', () => {
   })
   test('generates pointers that can be fetched', () => {
     const horse = parsm.getClassInst('Horse', {
-      hair:'brown',
-      nose:'black'
+      hair: 'brown',
+      nose: 'black'
     })
     return horse.save()
       .then(obj => {
@@ -1366,12 +1363,12 @@ describe('getPointer', () => {
   test('throws error when passed invalid params', () => {
     const errMsg = 'getPointer called with non-string parameters'
     expect(() => parsm.getPointer('Horse', 23)).toThrow(errMsg)
-    expect(() => parsm.getPointer({hello:'there'}, 'asd')).toThrow(errMsg)
+    expect(() => parsm.getPointer({hello: 'there'}, 'asd')).toThrow(errMsg)
     expect(() => parsm.getPointer()).toThrow(errMsg)
   })
 })
 
-describe('copyPFObjectAttributes',  () => {
+describe('copyPFObjectAttributes', () => {
   
   test('copies attributes from one pfObject to another', () => {
     const dog1 = parsm.getClassInst('Dog', {
@@ -1424,7 +1421,7 @@ describe('classNameToParseClassName', () => {
 
 describe('_toArray', () => {
   
-  const arr = [1,2,3]
+  const arr = [1, 2, 3]
   const csv = '1,2,3'
   
   test('should return array if passed array', () => {
@@ -1432,7 +1429,7 @@ describe('_toArray', () => {
   })
   
   test('should return array of items if passed comma-separated list', () => {
-    expect(parsm._toArray(csv)).toEqual(['1','2','3'])
+    expect(parsm._toArray(csv)).toEqual(['1', '2', '3'])
   })
   
   test('should return non-array, non-string value as array with the value as the only item', () => {
@@ -1446,13 +1443,13 @@ describe('_toArray', () => {
   test('should return array of only the strings from an array of different types of values if the "type" parameter is "string"', () => {
     const mixedArray = [
       1,
-      "hello",
-      {to:"be", or:"not"},
-      "there",
+      'hello',
+      {to: 'be', or: 'not'},
+      'there',
       null,
       undefined,
       true,
-      "dude",
+      'dude',
       false
     ]
     expect(parsm._toArray(mixedArray, 'string')).toEqual(['hello', 'there', 'dude'])
