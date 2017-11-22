@@ -162,6 +162,24 @@ class Parsimonious {
   }
   
   /**
+   * Resolves thing to a Parse.Object, or attempts to retrieve from db if a pointer.
+   * Resolves as undefined otherwise.
+   * @param {(Parse.Object|Parse.Object*|string)=} thing
+   * @param {string=} className If set, and first param is a Parse.Object, resolves to the Parse.Object only if it is of this class.
+   * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
+   * @returns {Parse.Promise}
+   */
+  static getPFObject(thing, className, opts) {
+    if(this.isPFObject(thing, className)) {
+      return this.Parse.Promise.as(thing)
+    } else if(this.isPointer(thing)) {
+      return this.getObjById(thing.className, this.getId(thing), opts)
+    } else {
+      return this.Parse.Promise.as(undefined)
+    }
+  }
+  
+  /**
    * Given a value thing, return a promise that resolves to
    * - thing if thing is a clean Parse.Object,
    * - fetched Parse.Object if thing is a dirty Parse.Object,

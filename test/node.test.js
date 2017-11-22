@@ -628,6 +628,33 @@ describe('getUserById', () => {
   })
 })
 
+
+describe('getPFObject', () => {
+  
+  beforeAll(setTestObjects)
+  
+  test('resolves as the first parameter unchanged if it\'s a Parse.Object', () => {
+    return expect(parsm.getPFObject(savedBouquets[0])).resolves.toBe(savedBouquets[0])
+  })
+  
+  test('resolves as the first parameter unchanged if it\'s a Parse.Object of a certain class', () => {
+    return expect(parsm.getPFObject(savedBouquets[0], 'Bouquet')).resolves.toBe(savedBouquets[0])
+  })
+  
+  test('resolves as undefined if it\'s a Parse.Object of the wrong class', () => {
+    return expect(parsm.getPFObject(testUser, 'Bouquet')).resolves.toBeUndefined()
+  })
+  
+  test('if first parameter is a pointer, resolves as the Parse.Object from the server', () => {
+    expect.assertions(1)
+    return parsm.getPFObject(savedBouquets[0].toPointer())
+      .then(obj => {
+        expect(parsm.isPFObject(obj, 'Bouquet')).toBe(true)
+      })
+  })
+  
+})
+
 describe('fetchIfNeeded, given a value <thing>, return a promise that resolves to', () => {
   
   beforeAll(setTestObjects)
