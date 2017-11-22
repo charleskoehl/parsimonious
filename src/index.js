@@ -500,7 +500,26 @@ class Parsimonious {
     return thing instanceof this.Parse.User
   }
   
+  
+  /* COMPARISONS */
+  
+  
+  /**
+   * Return true if values both represent the same Parse.Object instance (same class and id) even if one is a pointer and the other is a Parse.Object instance.
+   * @param {Parse.Object|object} thing1
+   * @param {Parse.Object|object} thing2
+   * @returns {boolean}
+   */
+  static pfObjectMatch(thing1, thing2) {
+    return this.isPFObjectOrPointer(thing1)
+      && this.isPFObjectOrPointer(thing2)
+      && thing1.className === thing2.className
+      && this.getId(thing1) === this.getId(thing2)
+  }
+  
+  
   /* CONVERSIONS / DATA MANIPULATION */
+  
   
   /**
    * Return a json representation of a Parse.Object,

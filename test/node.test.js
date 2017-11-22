@@ -1097,6 +1097,43 @@ describe('Relationships', () => {
   
 })
 
+describe('pfObjectMatch', () => {
+  
+  let otherUser
+  
+  beforeAll(async(done) => {
+    otherUser = await new Parse.User({
+      username:'goony',
+      password:'je9w83d',
+      email:'goony@monsters.com'
+    }).save()
+    done()
+  })
+  
+  test('returns true if 2 pfObjects are the same', () => {
+    expect(parsm.pfObjectMatch(testUser, testUser)).toBe(true)
+  })
+  
+  test('returns false if 2 pfObjects are not the same', () => {
+    expect(parsm.pfObjectMatch(testUser, otherUser)).toBe(false)
+  })
+  
+  test('returns true if a pointer points to corresponding pfObject', () => {
+    expect(parsm.pfObjectMatch(testUser.toPointer(), testUser)).toBe(true)
+  })
+  
+  test('returns true if a pointer does not point to corresponding pfObject', async() => {
+    expect(parsm.pfObjectMatch(testUser.toPointer(), otherUser)).toBe(false)
+  })
+  
+  test('returns false if one or both parameters are not pfObjects or pointers', () => {
+    expect(parsm.pfObjectMatch(testUser, 'blah')).toBe(false)
+    expect(parsm.pfObjectMatch(testUser.toPointer(), 'blah')).toBe(false)
+    expect(parsm.pfObjectMatch('blah', 'blah')).toBe(false)
+  })
+  
+})
+
 describe('isPFObject', () => {
   
   beforeAll(setTestObjects)
