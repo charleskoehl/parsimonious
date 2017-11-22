@@ -712,14 +712,14 @@ class Parsimonious {
   }
   
   /**
-   * Return array from array or comma-separated string list.
-   * If passed a non-string, non-array value, returns it in an array.
-   * @param {array|string} thing
+   * Return thing if array, string[] if string, otherwise array with thing as only item, even if undefined.
+   * @param {*} thing
+   * @param {string=} type If set, only include values of this type in resulting array.
    * @returns {array}
-   * @private
    */
-  static _toArray(thing) {
-    return Array.isArray(thing) ? thing : (typeof thing === 'string' ? thing.split(',') : [thing])
+  static _toArray(thing, type) {
+    const rawArr = Array.isArray(thing) ? thing : (typeof thing === 'string' ? thing.split(',') : [thing])
+    return typeof type === 'string' ? rawArr.filter(item => typeof item === type) : rawArr
   }
   
 }

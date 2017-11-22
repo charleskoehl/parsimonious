@@ -1421,22 +1421,41 @@ describe('classNameToParseClassName', () => {
     expect(parsm.classNameToParseClassName('User')).toBe('_User')
   })
 })
-  
+
 describe('_toArray', () => {
   
-  const anArray = [5,3,'p']
+  const arr = [1,2,3]
+  const csv = '1,2,3'
   
-  test('does not convert an array; just returns it', () => {
-    expect(parsm._toArray(anArray)).toEqual(anArray)
+  test('should return array if passed array', () => {
+    expect(parsm._toArray(arr)).toBe(arr)
   })
   
-  test('converts a string to an array, splitting by commas if present', () => {
-    expect(parsm._toArray('a,b,c')).toEqual(['a','b','c'])
+  test('should return array of items if passed comma-separated list', () => {
+    expect(parsm._toArray(csv)).toEqual(['1','2','3'])
   })
   
-  test('converts any other type of value to an array with the value as the only item', () => {
-    expect(parsm._toArray({hello:'there'})).toEqual([{hello:'there'}])
-    expect(parsm._toArray(88)).toEqual([88])
+  test('should return non-array, non-string value as array with the value as the only item', () => {
+    expect(parsm._toArray(56)).toEqual([56])
+  })
+  
+  test('should return non-array, non-string value as array with the value as the only item', () => {
+    expect(parsm._toArray()).toEqual([undefined])
+  })
+  
+  test('should return array of only the strings from an array of different types of values if the "type" parameter is "string"', () => {
+    const mixedArray = [
+      1,
+      "hello",
+      {to:"be", or:"not"},
+      "there",
+      null,
+      undefined,
+      true,
+      "dude",
+      false
+    ]
+    expect(parsm._toArray(mixedArray, 'string')).toEqual(['hello', 'there', 'dude'])
   })
   
 })
