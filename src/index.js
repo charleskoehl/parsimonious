@@ -441,7 +441,7 @@ class Parsimonious {
    * @returns {boolean}
    */
   static isPFObject(thing, ofClass) {
-    return thing instanceof this.Parse.Object || typeof thing === 'object' && get(thing, '__proto__.constructor.name') === 'ParseObjectSubclass'
+    return (thing instanceof this.Parse.Object || typeof thing === 'object' && get(thing, '__proto__.constructor.name') === 'ParseObjectSubclass')
       && (typeof ofClass === 'string' ? this.getPFObjectClassName(thing) === ofClass : true)
   }
   
