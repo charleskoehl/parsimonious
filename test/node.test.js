@@ -102,10 +102,15 @@ beforeAll( () => {
 })
 
 afterAll(() => {
-  return parseServer.shutdown(() => {
-    console.log('app server has shut down gracefully')
-    mongod.stop()
-    console.log('MongodbMemoryServer stopped')
+  console.log('shutting down test environment')
+  return new Parse.Promise( (resolve, reject) => {
+    parseServer.shutdown(() => {
+      console.log('app server has shut down gracefully')
+      mongod.stop()
+      console.log('MongodbMemoryServer stopped')
+      resolve()
+    })
+      .catch(reject)
   })
 })
 
