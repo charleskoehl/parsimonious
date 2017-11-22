@@ -1084,6 +1084,23 @@ describe('Relationships', () => {
             expect(joinedFleet.id).toBe(Fleet.id)
           })
       })
+      
+      test(`works when pointers are passed as values instead of Pasrse.Objects`, async (done) => {
+        expect.assertions(5)
+        const joinObj = await parsm.getJoinQuery({
+          Ship: Ship.toPointer(),
+          Fleet: Fleet.toPointer()
+        }).first()
+        const joinedShip = joinObj.get('ship')
+        const joinedFleet = joinObj.get('fleet')
+        expect(parsm.isPFObject(joinObj, 'Ship2Fleet')).toBe(true)
+        expect(parsm.isPFObject(joinedShip, 'Ship')).toBe(true)
+        expect(joinedShip.id).toBe(Ship.id)
+        expect(parsm.isPFObject(joinedFleet, 'Fleet')).toBe(true)
+        expect(joinedFleet.id).toBe(Fleet.id)
+        done()
+      })
+      
       test(`throws on invalid classes param`, () => {
         expect(() => parsm.getJoinQuery()).toThrow()
         expect(() => parsm.getJoinQuery({Ship: null})).toThrow()
@@ -1091,6 +1108,7 @@ describe('Relationships', () => {
         expect(() => parsm.getJoinQuery({Ship: 'blah', 'Fleet': 'blah'})).toThrow()
         expect(() => parsm.getJoinQuery({Ship: 'blah', 'Fleet': null})).toThrow()
       })
+      
     })
     
   })

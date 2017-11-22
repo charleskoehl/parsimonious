@@ -286,7 +286,7 @@ class Parsimonious {
    */
   static _getJoinTableClassVars() {
     let cn1, cn2, obj1, obj2
-    if(isPlainObject(arguments[0])) { // for backwards-compatibility
+    if(isPlainObject(arguments[0])) {
       [cn1, cn2] = Object.keys(arguments[0]);
       [obj1, obj2] = [arguments[0][cn1], arguments[0][cn2]]
     } else if(this.isPFObject(arguments[0])) {
@@ -297,7 +297,7 @@ class Parsimonious {
     } else {
       throw new TypeError('_getJoinTableClassVars called with invalid parameters')
     }
-    if(cn1 && cn2 && (this.isPFObject(obj1) || this.isPFObject(obj2))) {
+    if(cn1 && cn2 && (this.isPFObjectOrPointer(obj1) || this.isPFObjectOrPointer(obj2))) {
       return {cn1, cn2, obj1, obj2}
     }
   }
@@ -422,10 +422,10 @@ class Parsimonious {
       throw new TypeError('getJoinQuery called with invalid constraints')
     }
     let equalToArgSets = []
-    if(this.isPFObject(obj1, cn1)) {
+    if(this.isPFObjectOrPointer(obj1, cn1)) {
       equalToArgSets.push([lowerFirst(cn1), obj1])
     }
-    if(this.isPFObject(obj2, cn2)) {
+    if(this.isPFObjectOrPointer(obj2, cn2)) {
       equalToArgSets.push([lowerFirst(cn2), obj2])
     }
     if(equalToArgSets.length) {
