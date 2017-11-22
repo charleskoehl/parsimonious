@@ -535,6 +535,17 @@ class Parsimonious {
   }
   
   /**
+   * Attempt to return the ID of thing if it's a Parse.Object or pointer.
+   * If thing is a string, just return it.
+   * Otherwise, return undefined.
+   * @param {*} thing
+   * @returns {string|undefined}
+   */
+  static getId(thing) {
+    return typeof thing === 'string' ? thing : (isPlainObject(thing) || this.isPFObjectOrPointer(thing) ? (thing.id || thing.objectId) : undefined)
+  }
+  
+  /**
    * Get some columns from a Parse object and return them in a plain object.
    * If keys is not an array or comma-separated string, return undefined.
    * @example

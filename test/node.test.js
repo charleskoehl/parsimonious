@@ -596,6 +596,22 @@ describe('constrainQuery', () => {
   
 })
 
+describe('getId', () => {
+  
+  test('returns same string', () => {
+    expect(parsm.getId('abc123')).toMatch('abc123')
+  })
+  
+  test('returns id of Parse.Object', () => {
+    expect(parsm.getId(testUser)).toBe(testUser.id)
+  })
+  
+  test('returns id of Parse.Object pointer', () => {
+    expect(parsm.getId(testUser.toPointer())).toBe(testUser.id)
+  })
+  
+})
+
 describe('getObjById', () => {
   test('gets a Parse object from db by id', () => {
     expect.assertions(2)
