@@ -418,7 +418,7 @@ class Parsimonious {
    */
   static getJoinQuery(classes, constraints = {}) {
     const {cn1, cn2, obj1, obj2} = this._getJoinTableClassVars.apply(this, arguments)
-    if(typeof constraints !== 'object') {
+    if(!isPlainObject(constraints)) {
       throw new TypeError('getJoinQuery called with invalid constraints')
     }
     let equalToArgSets = []
