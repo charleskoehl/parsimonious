@@ -511,7 +511,7 @@ describe('constrainQuery', () => {
       })
   })
   test('constrains a query with "select"', () => {
-    expect.assertions(6)
+    expect.assertions(7)
     const query = parsm.newQuery('Bouquet')
     parsm.constrainQuery(query, {select: [['aNum']]})
     return query.find()
@@ -522,8 +522,7 @@ describe('constrainQuery', () => {
         expect(objs[0].id).toBe(savedBouquets[0].id)
         expect(objs[9].id).toBe(savedBouquets[9].id)
         expect(objs[6].get('aNum')).toBe(6)
-        // TODO parse-mockdb module does not seem to apply Parse.Query.select function, so next line fails:
-        // expect(objs[6].get('active')).toBeUndefined()
+        expect(objs[6].get('active')).toBeUndefined()
       })
   })
   test('constrains a query with multiple constraints', () => {
