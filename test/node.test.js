@@ -1103,6 +1103,10 @@ describe('Relationships', () => {
         expect(() => parsm.getJoinQuery({Ship: 'blah', 'Fleet': 'blah'})).toThrow()
         expect(() => parsm.getJoinQuery({Ship: 'blah', 'Fleet': null})).toThrow()
       })
+  
+      test(`throws on invalid constraints param`, () => {
+        expect(() => parsm.getJoinQuery({Ship}, 'blah')).toThrow()
+      })
       
     })
     

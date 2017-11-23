@@ -3,11 +3,57 @@
 
 ## Utilities for Parse Server cloud code and JS SDK
 
-## Usage
-#### Basic:
+#### Usage example: creating and saving parse objects
 ```javascript
 const parsm = require('parsimonious')
-const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
+
+const course = await parsm.getClassInst('Course', {
+  name: 'Sociology 201'
+}).save()
+
+const student = await parsm.getClassInst('Student', {
+  name: 'Maria',
+  class: 2020
+}).save()
+```
+
+#### Usage example: many-to-many relationships with metadata
+```
+/*
+Create a many-to-many relationship between students and courses,
+and record the fact that a student completed a course,
+with date of completion and grade earned:
+*/
+
+const meta = {completed: new Date(2017, 11, 17), grade: 3.2}
+
+const opts = {sessionToken: 'r:cbd9ac93162d0ba1287970fb85d8d168'}
+
+const joinObj = await parsm.joinWithTable(student, course, meta, opts)
+
+// joinObj is now an instance of the class 'Student2Course',
+// which was created if it didn't exist.
+// The Student2Course class has pointer columns 'student' and 'course',
+// plus a date column named 'completed' and a numeric column named 'grade'.
+
+
+/*
+Find the top 10 students who have taken a particular course
+and earned a grade of at least 3:
+*/
+
+const classes = {
+   Student: null,
+   Course: course
+}
+
+const criteria = {
+  descending: 'grade',
+  greaterThanOrEqualTo: ['grade', 3],
+  limit: 10
+}
+
+parsm.getJoinQuery(classes, criteria).find()
 ```
 #### Override the Parse instance used:
 ```javascript
@@ -18,9 +64,6 @@ Parse.masterKey = 'myMasterKey'
 // Initialize parsimonious with the initialized Parse instance:
 const parsm = require('parsimonious')
 parsm.setParse(Parse)
-
-// Call the methods:
-const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
 ```
 
 [Change Log](#changelog)

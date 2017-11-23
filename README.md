@@ -3,11 +3,57 @@
 
 ## Utilities for Parse Server cloud code and JS SDK
 
-## Usage
-#### Basic:
+#### Usage example: creating and saving parse objects
 ```javascript
 const parsm = require('parsimonious')
-const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
+
+const course = await parsm.getClassInst('Course', {
+  name: 'Sociology 201'
+}).save()
+
+const student = await parsm.getClassInst('Student', {
+  name: 'Maria',
+  class: 2020
+}).save()
+```
+
+#### Usage example: many-to-many relationships with metadata
+```
+/*
+Create a many-to-many relationship between students and courses,
+and record the fact that a student completed a course,
+with date of completion and grade earned:
+*/
+
+const meta = {completed: new Date(2017, 11, 17), grade: 3.2}
+
+const opts = {sessionToken: 'r:cbd9ac93162d0ba1287970fb85d8d168'}
+
+const joinObj = await parsm.joinWithTable(student, course, meta, opts)
+
+// joinObj is now an instance of the class 'Student2Course',
+// which was created if it didn't exist.
+// The Student2Course class has pointer columns 'student' and 'course',
+// plus a date column named 'completed' and a numeric column named 'grade'.
+
+
+/*
+Find the top 10 students who have taken a particular course
+and earned a grade of at least 3:
+*/
+
+const classes = {
+   Student: null,
+   Course: course
+}
+
+const criteria = {
+  descending: 'grade',
+  greaterThanOrEqualTo: ['grade', 3],
+  limit: 10
+}
+
+parsm.getJoinQuery(classes, criteria).find()
 ```
 #### Override the Parse instance used:
 ```javascript
@@ -18,9 +64,6 @@ Parse.masterKey = 'myMasterKey'
 // Initialize parsimonious with the initialized Parse instance:
 const parsm = require('parsimonious')
 parsm.setParse(Parse)
-
-// Call the methods:
-const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
 ```
 
 [Change Log](#changelog)
@@ -37,6 +80,7 @@ const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
     * [.constrainQuery(query, constraints)](#Parsimonious.constrainQuery) ⇒ <code>Parse.Query</code>
     * [.getObjById(aClass, id, [opts])](#Parsimonious.getObjById)
     * [.getUserById(id, [opts])](#Parsimonious.getUserById) ⇒ <code>Parse.User</code>
+    * [.getPFObject([thing], [className], [opts])](#Parsimonious.getPFObject) ⇒ <code>Parse.Promise</code>
     * [.fetchIfNeeded(thing, [opts])](#Parsimonious.fetchIfNeeded) ⇒ <code>Parse.Promise</code>
     * [.getUserRoles(user, [opts])](#Parsimonious.getUserRoles) ⇒ <code>Parse.Promise</code>
     * [.userHasRole(user, roles, [opts])](#Parsimonious.userHasRole) ⇒ <code>Parse.Promise</code>
@@ -46,18 +90,23 @@ const CoolThing = parsm.getClassInst('CoolThing', {color: 'Red'})
     * [._getJoinTableClassVars()](#Parsimonious._getJoinTableClassVars) ⇒ <code>object</code>
     * [.joinWithTable(object1, object2, [metadata], [opts])](#Parsimonious.joinWithTable) ⇒ <code>Parse.Promise</code>
     * [.unJoinWithTable(object1, object2, [opts])](#Parsimonious.unJoinWithTable) ⇒ <code>Parse.Promise</code>
-    * [.getJoinQuery(classes, [opts])](#Parsimonious.getJoinQuery) ⇒ <code>Parse.Query</code>
+    * [.getJoinQuery(classes, [constraints])](#Parsimonious.getJoinQuery) ⇒ <code>Parse.Query</code>
     * [.getPointer(className, objectId)](#Parsimonious.getPointer) ⇒ <code>object</code>
     * [.isPFObject(thing, [ofClass])](#Parsimonious.isPFObject) ⇒ <code>boolean</code>
-    * [.isPointer(thing)](#Parsimonious.isPointer) ⇒ <code>boolean</code>
+    * [.isPointer(thing, [ofClass])](#Parsimonious.isPointer) ⇒ <code>boolean</code>
+    * [.isPFObjectOrPointer(thing, [ofClass])](#Parsimonious.isPFObjectOrPointer) ⇒ <code>boolean</code>
     * [.isUser(thing)](#Parsimonious.isUser) ⇒ <code>boolean</code>
+    * [.pfObjectMatch(thing1, thing2)](#Parsimonious.pfObjectMatch) ⇒ <code>boolean</code>
     * [.toJsn(thing, [deep])](#Parsimonious.toJsn) ⇒ <code>\*</code>
+    * [.getId(thing)](#Parsimonious.getId) ⇒ <code>string</code> \| <code>undefined</code>
     * [.objPick(parseObj, keys)](#Parsimonious.objPick) ⇒ <code>object</code>
     * [.objGetDeep(parseObj, path)](#Parsimonious.objGetDeep) ⇒ <code>\*</code>
     * [.objSetMulti(parseObj, dataObj, [doMerge])](#Parsimonious.objSetMulti)
+    * [.copyPFObjectAttributes(from, to, attributeNames)](#Parsimonious.copyPFObjectAttributes)
     * [.getPFObjectClassName(thing)](#Parsimonious.getPFObjectClassName) ⇒ <code>string</code>
     * [.classStringOrSpecialClass(thing)](#Parsimonious.classStringOrSpecialClass) ⇒ <code>\*</code>
     * [.classNameToParseClassName(className)](#Parsimonious.classNameToParseClassName)
+    * [._toArray(thing, [type])](#Parsimonious._toArray) ⇒ <code>array</code>
 
 <a name="new_Parsimonious_new"></a>
 
@@ -138,17 +187,19 @@ Returns the query, so you can chain this call.
 **Params**
 
 - query <code>Parse.Query</code> - The query on which to call the constraint methods
-- constraints <code>Array.&lt;object&gt;</code> - Array of plain objects containing query constraint methods and arguments
+- constraints <code>object</code> - Plain object containing query constraint methods as keys and arguments as values
 
 **Example**  
 ```js
-// Modify a query with 'startsWith,' 'limit,' and 'select' constraints,
+// Modify a query with startsWith, limit, select, equalTo, and notEqualTo constraints:
 
 const query = Parsimonious.newQuery('User')
 const constraints = {
   startsWith: ['name', 'Sal'],
   limit: 10, // If there is only one argument, does not need to be in an array
-  select: [ ['name', 'email', 'birthDate'] ] // If a constraint argument is an array, it must be within another array to indicate that its items are not individual arguments.
+  select: [ ['name', 'email', 'birthDate'] ], // If a single constraint argument is an array, it must be within another array to indicate that its items are not individual arguments.
+  equalTo: [ ['gender', 'f'], ['country', 'US'] ], // An array of 2 or more arrays indicates that the constraint method should be called once with each inner array as its arguments.
+  notEqualTo: ['company', 'IBM'] // There is just one set of parameters, so there is no need to enclose in another array.
 }
 Parsimonious.constrainQuery(query, constraints)
 
@@ -182,6 +233,19 @@ Return Parse.User instance from user id
 **Params**
 
 - id <code>string</code>
+- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
+
+<a name="Parsimonious.getPFObject"></a>
+
+### Parsimonious.getPFObject([thing], [className], [opts]) ⇒ <code>Parse.Promise</code>
+Resolves thing to a Parse.Object, or attempts to retrieve from db if a pointer.
+Resolves as undefined otherwise.
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- [thing] <code>Parse.Object</code> | <code>object</code> | <code>string</code>
+- [className] <code>string</code> - If set, and first param is a Parse.Object, resolves to the Parse.Object only if it is of this class.
 - [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
 
 <a name="Parsimonious.fetchIfNeeded"></a>
@@ -313,14 +377,14 @@ and whose values are the Parse.Object instances.)
 
 <a name="Parsimonious.getJoinQuery"></a>
 
-### Parsimonious.getJoinQuery(classes, [opts]) ⇒ <code>Parse.Query</code>
+### Parsimonious.getJoinQuery(classes, [constraints]) ⇒ <code>Parse.Query</code>
 Return a query on a many-to-many join table created by Parsimonious.joinWithTable.
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Params**
 
 - classes <code>object</code> - Must contain two keys corresponding to existing classes. At least one key's value must be a valid parse object. If the other key's value is not a valid parse object, the query retrieves all objects of the 2nd key's class that are joined to the object of the 1st class. Same for vice-versa. If both values are valid parse objects, then the query should return zero or one row from the join table.
-- [opts] <code>object</code> - (Options for Parsimonious.newQuery})
+- [constraints] <code>object</code> - (Options for Parsimonious.newQuery})
 
 **Example**  
 ```js
@@ -385,17 +449,29 @@ Return true if thing is a Parse.Object, or sub-class of Parse.Object (like Parse
 **Params**
 
 - thing <code>\*</code>
-- [ofClass] <code>string</code>
+- [ofClass] <code>string</code> - Optionally check if it's of a specific ParseObjectSubclass
 
 <a name="Parsimonious.isPointer"></a>
 
-### Parsimonious.isPointer(thing) ⇒ <code>boolean</code>
+### Parsimonious.isPointer(thing, [ofClass]) ⇒ <code>boolean</code>
 Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Params**
 
-- thing
+- thing <code>\*</code>
+- [ofClass] <code>string</code> - Optionally check if it's of a specific ParseObjectSubclass
+
+<a name="Parsimonious.isPFObjectOrPointer"></a>
+
+### Parsimonious.isPFObjectOrPointer(thing, [ofClass]) ⇒ <code>boolean</code>
+Return true if thing is a Parse.Object or pointer
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- thing <code>\*</code>
+- [ofClass] <code>string</code> - Optionally check if it's of a specific ParseObjectSubclass
 
 <a name="Parsimonious.isUser"></a>
 
@@ -407,19 +483,41 @@ Return true if thing is an instance of Parse.User.
 
 - thing <code>\*</code>
 
+<a name="Parsimonious.pfObjectMatch"></a>
+
+### Parsimonious.pfObjectMatch(thing1, thing2) ⇒ <code>boolean</code>
+Return true if values both represent the same Parse.Object instance (same class and id) even if one is a pointer and the other is a Parse.Object instance.
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- thing1 <code>Parse.Object</code> | <code>object</code>
+- thing2 <code>Parse.Object</code> | <code>object</code>
+
 <a name="Parsimonious.toJsn"></a>
 
 ### Parsimonious.toJsn(thing, [deep]) ⇒ <code>\*</code>
 Return a json representation of a Parse.Object,
-sub-class of Parse.Object (such as Parse.User),
-or plain object containing any or none of those, to json, optionally recursively.
-Does not mutate parameters.
+or of plain object that may contain Parse.Object instances,
+optionally recursively.
 
 **Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
 **Params**
 
 - thing <code>\*</code> - Value to create json from.
 - [deep] <code>boolean</code> <code> = false</code> - If true, recursively converts all Parse.Objects and sub-classes of Parse.Objects contained in any plain objects found or created during recursion.
+
+<a name="Parsimonious.getId"></a>
+
+### Parsimonious.getId(thing) ⇒ <code>string</code> \| <code>undefined</code>
+Attempt to return the ID of thing if it's a Parse.Object or pointer.
+If thing is a string, just return it.
+Otherwise, return undefined.
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- thing <code>\*</code>
 
 <a name="Parsimonious.objPick"></a>
 
@@ -511,6 +609,19 @@ Mutates the Parse object.
 - dataObj <code>object</code>
 - [doMerge] <code>boolean</code> <code> = false</code> - If true, each column value is shallow-merged with existing value
 
+<a name="Parsimonious.copyPFObjectAttributes"></a>
+
+### Parsimonious.copyPFObjectAttributes(from, to, attributeNames)
+Copy a set of attributes from one instance of Parse.Object to another.
+Mutates target Parse.Object.
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- from <code>Parse.Object</code>
+- to <code>Parse.Object</code> - Is mutated.
+- attributeNames <code>string</code> | <code>Array.&lt;string&gt;</code>
+
 <a name="Parsimonious.getPFObjectClassName"></a>
 
 ### Parsimonious.getPFObjectClassName(thing) ⇒ <code>string</code>
@@ -543,9 +654,35 @@ If className represents one of the special classes like 'User,' return prefixed 
 
 - className
 
+<a name="Parsimonious._toArray"></a>
+
+### Parsimonious._toArray(thing, [type]) ⇒ <code>array</code>
+Return thing if array, string[] if string, otherwise array with thing as only item, even if undefined.
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- thing <code>\*</code>
+- [type] <code>string</code> - If set, only include values of this type in resulting array.
+
 
 <a name="changelog"></a>
 ## Change Log
+
+### 4.4.0 - 22-11-17
+##### Changed
+* isPFObject method now checks for ParseObjectSubclass constructor as well as instanceOf Parse.Object
+* constrainQuery and getJoinQuery methods now accept multiple constraints of the same type, such as three equalTo's.
+* getJoinQuery can now be passed pointers.
+* TypeError is now thrown when invalid parameters are passed to getJoinQuery, joinWithTable, unJoinWithTable methods.
+* Switched testing platform from Mocha/Chai to Jest.
+* Switched testing version of mongodb from parse-mockdb to mongodb-memory-server.
+##### Added
+* copyPFObjectAttributes method
+* pfObjectMatch method
+* getId method
+* isPFObjectOrPointer method
+* getPFObject method
 
 ### 4.3.3 - 11-11-17
 ##### Changed

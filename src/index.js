@@ -164,7 +164,7 @@ class Parsimonious {
   /**
    * Resolves thing to a Parse.Object, or attempts to retrieve from db if a pointer.
    * Resolves as undefined otherwise.
-   * @param {(Parse.Object|Parse.Object*|string)=} thing
+   * @param {(Parse.Object|object|string)=} thing
    * @param {string=} className If set, and first param is a Parse.Object, resolves to the Parse.Object only if it is of this class.
    * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
    * @returns {Parse.Promise}
