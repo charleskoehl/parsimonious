@@ -1,6 +1,14 @@
 ## Change Log
 
-### 4.4.0 - 22-11-17
+### 4.4.0 - 24-11-17
+##### Added
+* copyPFObjectAttributes method
+* pfObjectMatch method
+* getId method
+* isPFObjectOrPointer method
+* getPFObject method
+* sortPFObjectsByKey method
+* isArrayOfPFObjects methods
 ##### Changed
 * isPFObject method now checks for ParseObjectSubclass constructor as well as instanceOf Parse.Object
 * constrainQuery and getJoinQuery methods now accept multiple constraints of the same type, such as three equalTo's.
@@ -8,12 +16,6 @@
 * TypeError is now thrown when invalid parameters are passed to getJoinQuery, joinWithTable, unJoinWithTable methods.
 * Switched testing platform from Mocha/Chai to Jest.
 * Switched testing version of mongodb from parse-mockdb to mongodb-memory-server.
-##### Added
-* copyPFObjectAttributes method
-* pfObjectMatch method
-* getId method
-* isPFObjectOrPointer method
-* getPFObject method
 
 ### 4.3.3 - 11-11-17
 ##### Changed
