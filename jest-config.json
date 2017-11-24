@@ -1,5 +1,7 @@
 {
   "setupTestFrameworkScriptFile": "./set-up-jest.js",
   "roots": ["test","src"],
-  "testEnvironment": "node"
+  "testEnvironment": "node",
+  "notify": true,
+  "silent": true
 }
