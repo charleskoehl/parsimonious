@@ -356,6 +356,27 @@ describe('objSetMulti', () => {
   
 })
 
+describe('sortPFObjectsByKey', () => {
+  
+  test('throws on invalid array param',  () => {
+    expect(() => sortPFObjectsByKey()).toThrow()
+    expect(() => sortPFObjectsByKey('blah')).toThrow()
+    expect(() => sortPFObjectsByKey([])).toThrow()
+    expect(() => sortPFObjectsByKey(['blah'])).toThrow()
+  })
+  
+  test('sorts an array of Parse.Object', () => {
+    const objs = ['a','c','b','b','d'].map(name => parsm.getClassInst('TheParseObj', {name}))
+    expect(objs[2].get('name')).toBe('b')
+    parsm.sortPFObjectsByKey(objs, 'name')
+    expect(objs[0].get('name')).toBe('a')
+    expect(objs[1].get('name')).toBe('b')
+    expect(objs[2].get('name')).toBe('b')
+    expect(objs[3].get('name')).toBe('c')
+  })
+  
+})
+
 describe('newQuery', () => {
   
   beforeAll(setTestObjects)

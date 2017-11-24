@@ -657,6 +657,30 @@ class Parsimonious {
   }
   
   /**
+   * Sort an array of Parse objects by key (column name)
+   * Mutates array.
+   * @param {Parse.Object[]=} objs
+   * @param {string} key
+   */
+  static sortPFObjectsByKey(objs, key) {
+    if(this.isArrayOfPFObjects(objs)) {
+      objs.sort( (a, b) => {
+        const aVal = a.get(key)
+        const bVal = b.get(key)
+        if(aVal < bVal) {
+          return -1
+        } else if(aVal > bVal) {
+          return 1
+        } else {
+          return 0
+        }
+      })
+    } else {
+      throw new TypeError('sortPFObjectsByKey called with invalid array of Parse.Object')
+    }
+  }
+  
+  /**
    * Copy a set of attributes from one instance of Parse.Object to another.
    * Mutates target Parse.Object.
    * @param {Parse.Object} from
