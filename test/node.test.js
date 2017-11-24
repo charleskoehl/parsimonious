@@ -18,7 +18,7 @@ const setTestObjects = async () => {
   oldBouquets = await parsm.newQuery('Bouquet').find()
   oldUser = await parsm.newQuery('User', {
     equalTo: ['username', 'foomanchoo']
-  }).first({useMasterKey:true})
+  }).first({useMasterKey: true})
   const toDelete = [...oldTheObjs, ...oldBouquets]
   if(oldUser) {
     toDelete.push(oldUser)
@@ -49,7 +49,7 @@ const setTestObjects = async () => {
  * @param {number} savedIndex
  */
 const sameBouquets = (foundBouquets, foundIndex, savedIndex) => {
-  foundBouquets.sort( (a, b) => {
+  foundBouquets.sort((a, b) => {
     const aNum = a.get('aNum')
     const bNum = b.get('aNum')
     if(aNum < bNum) {
@@ -358,7 +358,7 @@ describe('objSetMulti', () => {
 
 describe('sortPFObjectsByKey', () => {
   
-  test('throws on invalid array param',  () => {
+  test('throws on invalid array param', () => {
     expect(() => sortPFObjectsByKey()).toThrow()
     expect(() => sortPFObjectsByKey('blah')).toThrow()
     expect(() => sortPFObjectsByKey([])).toThrow()
@@ -366,7 +366,7 @@ describe('sortPFObjectsByKey', () => {
   })
   
   test('sorts an array of Parse.Object', () => {
-    const objs = ['a','c','b','d','b'].map(name => parsm.getClassInst('TheParseObj', {name}))
+    const objs = ['a', 'c', 'b', 'd', 'b'].map(name => parsm.getClassInst('TheParseObj', {name}))
     expect(objs[3].get('name')).toBe('d')
     expect(objs[4].get('name')).toBe('b')
     parsm.sortPFObjectsByKey(objs, 'name')
@@ -385,7 +385,7 @@ describe('newQuery', () => {
   
   test('returns a query that finds all instances of a Parse class when passed a custom Parse class name', () => {
     expect.assertions(3)
-    return parsm.newQuery('Bouquet', {ascending:'aNum'}).find()
+    return parsm.newQuery('Bouquet', {ascending: 'aNum'}).find()
       .then(objs => {
         expect(objs).toHaveLength(savedBouquets.length)
         expect(sameBouquets(objs, 0, 0)).toBe(true)
@@ -395,7 +395,7 @@ describe('newQuery', () => {
   
   test('returns a query that finds all instances of a Parse class when passed a custom Parse class instance', () => {
     expect.assertions(3)
-    return parsm.newQuery(new Bouquet(), {ascending:'aNum'}).find()
+    return parsm.newQuery(new Bouquet(), {ascending: 'aNum'}).find()
       .then(objs => {
         expect(objs).toHaveLength(savedBouquets.length)
         expect(sameBouquets(objs, 0, 0)).toBe(true)
@@ -405,7 +405,7 @@ describe('newQuery', () => {
   
   test('returns a query limited to first n instances of a Parse class', () => {
     expect.assertions(3)
-    return parsm.newQuery('Bouquet', {ascending:'aNum', limit: 5}).find()
+    return parsm.newQuery('Bouquet', {ascending: 'aNum', limit: 5}).find()
       .then(objs => {
         expect(objs).toHaveLength(5)
         expect(sameBouquets(objs, 0, 0)).toBe(true)
@@ -414,7 +414,7 @@ describe('newQuery', () => {
   })
   test('returns a query skipping first n instances of a Parse class', () => {
     expect.assertions(3)
-    return parsm.newQuery('Bouquet', {ascending:'aNum', skip: 5}).find()
+    return parsm.newQuery('Bouquet', {ascending: 'aNum', skip: 5}).find()
       .then(objs => {
         expect(objs).toHaveLength(5)
         expect(sameBouquets(objs, 0, 5)).toBe(true)
@@ -707,7 +707,7 @@ describe('isArrayOfPFObjects', () => {
   })
   
   test('returns false if array with no Parse.Object\'s', () => {
-    expect(parsm.isArrayOfPFObjects(['hey','there'])).resolves.toBe(false)
+    expect(parsm.isArrayOfPFObjects(['hey', 'there'])).resolves.toBe(false)
   })
   
   test('returns false if one or more items of array are not Parse.Object\'s', () => {
@@ -1156,7 +1156,7 @@ describe('Relationships', () => {
         expect(() => parsm.getJoinQuery({Ship: 'blah', 'Fleet': 'blah'})).toThrow()
         expect(() => parsm.getJoinQuery({Ship: 'blah', 'Fleet': null})).toThrow()
       })
-  
+      
       test(`throws on invalid constraints param`, () => {
         expect(() => parsm.getJoinQuery({Ship}, 'blah')).toThrow()
       })
