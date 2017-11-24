@@ -698,6 +698,27 @@ describe('getPFObject', () => {
   
 })
 
+describe('isArrayOfPFObjects', () => {
+  
+  test('returns false if not an array', () => {
+    expect(parsm.isArrayOfPFObjects('hey')).resolves.toBe(false)
+  })
+  
+  test('returns false if array with no Parse.Object\'s', () => {
+    expect(parsm.isArrayOfPFObjects(['hey','there'])).resolves.toBe(false)
+  })
+  
+  test('returns false if one or more items of array are not Parse.Object\'s', () => {
+    const corruptArray = savedBouquets.slice(0).push('hey')
+    expect(parsm.isArrayOfPFObjects(corruptArray)).resolves.toBe(false)
+  })
+  
+  test('returns true if all items of array are Parse.Objects', () => {
+    expect(parsm.isArrayOfPFObjects(savedBouquets)).resolves.toBe(true)
+  })
+  
+})
+
 describe('fetchIfNeeded, given a value <thing>, return a promise that resolves to', () => {
   
   beforeAll(setTestObjects)

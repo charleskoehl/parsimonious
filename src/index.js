@@ -462,6 +462,16 @@ class Parsimonious {
   }
   
   /**
+   * Return true if thing is array of Parse.Object
+   * @param {*} thing
+   * @param {string=} ofClass Optionally check if it's of a specific ParseObjectSubclass
+   * @returns {boolean}
+   */
+  static isArrayOfPFObjects(thing, ofClass) {
+    return Array.isArray(thing) && thing.every(item => this.isPFObject(item, ofClass))
+  }
+  
+  /**
    * Return true of thing is a valid pointer to a Parse.Object, regardless of whether the Parse.Object exists.
    * @param {*} thing
    * @param {string=} ofClass Optionally check if it's of a specific ParseObjectSubclass
