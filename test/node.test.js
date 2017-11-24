@@ -335,7 +335,7 @@ describe('objSetMulti', () => {
     })
   })
   
-  test('sets some columns on a Parse object from a plain object, merging sub-objects', () => {
+  test('sets some columns on a Parse.Oobject from a plain object, merging sub-objects', () => {
     unsavedParseObj.set('ocean', {
       size: 'large',
       color: 'blue',
@@ -366,13 +366,15 @@ describe('sortPFObjectsByKey', () => {
   })
   
   test('sorts an array of Parse.Object', () => {
-    const objs = ['a','c','b','b','d'].map(name => parsm.getClassInst('TheParseObj', {name}))
-    expect(objs[2].get('name')).toBe('b')
+    const objs = ['a','c','b','d','b'].map(name => parsm.getClassInst('TheParseObj', {name}))
+    expect(objs[3].get('name')).toBe('d')
+    expect(objs[4].get('name')).toBe('b')
     parsm.sortPFObjectsByKey(objs, 'name')
     expect(objs[0].get('name')).toBe('a')
     expect(objs[1].get('name')).toBe('b')
     expect(objs[2].get('name')).toBe('b')
     expect(objs[3].get('name')).toBe('c')
+    expect(objs[4].get('name')).toBe('d')
   })
   
 })
