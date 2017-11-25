@@ -694,6 +694,10 @@ Return thing if array, string[] if string, otherwise array with thing as only it
 <a name="changelog"></a>
 ## Change Log
 
+### 4.4.1 - 24-11-17
+##### Fixed
+* minor documentation errors
+
 ### 4.4.0 - 24-11-17
 ##### Added
 * copyPFObjectAttributes method
@@ -702,7 +706,7 @@ Return thing if array, string[] if string, otherwise array with thing as only it
 * isPFObjectOrPointer method
 * getPFObject method
 * sortPFObjectsByKey method
-* isArrayOfPFObjects methods
+* isArrayOfPFObjects method
 ##### Changed
 * isPFObject method now checks for ParseObjectSubclass constructor as well as instanceOf Parse.Object
 * constrainQuery and getJoinQuery methods now accept multiple constraints of the same type, such as three equalTo's.
