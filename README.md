@@ -7,10 +7,12 @@
 ```javascript
 const parsm = require('parsimonious')
 
+// Create an instance of 'Course' with a name attribute (also creates the class if needed).
 const course = await parsm.getClassInst('Course', {
   name: 'Sociology 201'
 }).save()
 
+// Create another with two attributes:
 const student = await parsm.getClassInst('Student', {
   name: 'Maria',
   class: 2020
@@ -53,7 +55,9 @@ const criteria = {
   limit: 10
 }
 
-parsm.getJoinQuery(classes, criteria).find()
+const joinObjs = await parsm.getJoinQuery(classes, criteria).find()
+
+// joinObjs is now an array of instances of the class 'Student2Course'
 ```
 #### Override the Parse instance used:
 ```javascript
