@@ -8,7 +8,7 @@
 * isPFObjectOrPointer method
 * getPFObject method
 * sortPFObjectsByKey method
-* isArrayOfPFObjects methods
+* isArrayOfPFObjects method
 ##### Changed
 * isPFObject method now checks for ParseObjectSubclass constructor as well as instanceOf Parse.Object
 * constrainQuery and getJoinQuery methods now accept multiple constraints of the same type, such as three equalTo's.

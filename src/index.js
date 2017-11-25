@@ -669,7 +669,7 @@ class Parsimonious {
   /**
    * Sort an array of Parse objects by key (column name)
    * Mutates array.
-   * @param {Parse.Object[]=} objs
+   * @param {object[]} [objs]
    * @param {string} key
    */
   static sortPFObjectsByKey(objs, key) {
