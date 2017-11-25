@@ -18,7 +18,7 @@ const student = await parsm.getClassInst('Student', {
 ```
 
 #### Usage example: many-to-many relationships with metadata
-```
+```javascript
 /*
 Create a many-to-many relationship between students and courses,
 and record the fact that a student completed a course,
@@ -693,6 +693,10 @@ Return thing if array, string[] if string, otherwise array with thing as only it
 
 <a name="changelog"></a>
 ## Change Log
+
+### 4.4.2 - 24-11-17
+##### Fixed
+* minor documentation errors
 
 ### 4.4.1 - 24-11-17
 ##### Fixed
