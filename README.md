@@ -7,7 +7,9 @@
 ```javascript
 const parsm = require('parsimonious')
 
-// Create an instance of 'Course' with a name attribute (also creates the class if needed).
+// Create an instance of 'Course' with a name attribute:
+// Also creates the class if needed.
+
 const course = await parsm.getClassInst('Course', {
   name: 'Sociology 201'
 }).save()
@@ -19,13 +21,12 @@ const student = await parsm.getClassInst('Student', {
 }).save()
 ```
 
-#### Usage example: many-to-many relationships with metadata
+#### Usage example: create many-to-many relationships with metadata
 ```javascript
-/*
-Create a many-to-many relationship between students and courses,
-and record the fact that a student completed a course,
-with date of completion and grade earned:
-*/
+// Create a many-to-many relationship between students and courses,
+// and record the fact that a student completed a course,
+// with date of completion and grade earned:
+
 
 const meta = {completed: new Date(2017, 11, 17), grade: 3.2}
 
@@ -37,12 +38,13 @@ const joinObj = await parsm.joinWithTable(student, course, meta, opts)
 // which was created if it didn't exist.
 // The Student2Course class has pointer columns 'student' and 'course',
 // plus a date column named 'completed' and a numeric column named 'grade'.
+```
 
+#### Usage example: search many-to-many relationships
+```javascript
 
-/*
-Find the top 10 students who have taken a particular course
-and earned a grade of at least 3:
-*/
+// Find the top 10 students who have taken a particular course
+// and earned a grade of at least 3:
 
 const classes = {
    Student: null,
@@ -52,12 +54,14 @@ const classes = {
 const criteria = {
   descending: 'grade',
   greaterThanOrEqualTo: ['grade', 3],
-  limit: 10
+  limit: 10,
+  include: 'student'
 }
 
 const joinObjs = await parsm.getJoinQuery(classes, criteria).find()
 
 // joinObjs is now an array of instances of the class 'Student2Course'
+// with details of students in the 'student' column.
 ```
 #### Override the Parse instance used:
 ```javascript
@@ -697,6 +701,10 @@ Return thing if array, string[] if string, otherwise array with thing as only it
 
 <a name="changelog"></a>
 ## Change Log
+
+### 4.4.3 - 24-11-17
+##### Changed
+* minor documentation additions
 
 ### 4.4.2 - 24-11-17
 ##### Fixed
