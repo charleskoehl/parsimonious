@@ -1,5 +1,9 @@
 ## Change Log
 
+### 4.4.3 - 24-11-17
+##### Changed
+* minor documentation additions
+
 ### 4.4.2 - 24-11-17
 ##### Fixed
 * minor documentation errors
