@@ -727,6 +727,16 @@ class Parsimonious {
   }
   
   /**
+   * Return true if any of the passed keys are dirty in parseObj
+   * @param {Parse.Object} parseObj
+   * @param {(string|string[])} keys Array of string or comma-separated string list of keys.
+   * @returns {boolean}
+   */
+  static keysAreDirty(parseObj, keys) {
+    return this.isPFObject(parseObj) && intersect(parseObj.dirtyKeys(), this._toArray(keys, 'string')).length > 0
+  }
+  
+  /**
    * Returns valid class name when passed either a subclass of Parse.Object or any string.
    * Removes the underscore if it is one of the special classes with a leading underscore.
    * Returns undefined if anything else.

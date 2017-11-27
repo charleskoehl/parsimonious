@@ -1449,6 +1449,27 @@ describe('copyPFObjectAttributes', () => {
   
 })
 
+describe('keysAreDirty', () => {
+  
+  test('should return true if any of the given array of keys are dirty in parseObj', () => {
+    expect.assertions(3)
+    return parsm.getClassInst('Dog', {
+      name: 'Banshee',
+      length: 36,
+      width: 15,
+      clean: true
+    }).save()
+      .then( dog => {
+        expect(parsm.keysAreDirty(dog, ['name','length'])).toBe(false)
+        dog.set('length', 37)
+        dog.set('width', 16)
+        expect(parsm.keysAreDirty(dog, ['length','width'])).toBe(true)
+        expect(parsm.keysAreDirty(dog, 'length,width')).toBe(true)
+      })
+  })
+  
+})
+
 describe('classStringOrSpecialClass', () => {
   test('converts the unchanged string if not a special Parse class', () => {
     expect(parsm.classStringOrSpecialClass('Horse')).toBe('Horse')
