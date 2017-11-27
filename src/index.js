@@ -735,7 +735,7 @@ class Parsimonious {
    * @return {string}
    */
   static getPFObjectClassName(thing) {
-    const str = typeof thing === 'string' ? thing : (typeof thing === 'object' ? thing.className : null)
+    const str = typeof thing === 'string' ? thing : (typeof thing === 'object' && thing.className ? thing.className : null)
     if(typeof str === 'string') {
       return str.substring(0, 1) === '_' && specialClasses.indexOf(str.substring(1)) !== -1 ? str.substring(1) : str
     }
