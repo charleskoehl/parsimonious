@@ -12,6 +12,7 @@ import omit from 'lodash/omit'
 import isPlainObject from 'lodash/isPlainObject'
 import clone from 'lodash/clone'
 import lowerFirst from 'lodash/lowerFirst'
+import intersect from 'lodash/intersection'
 import isNode from 'detect-is-node'
 
 
