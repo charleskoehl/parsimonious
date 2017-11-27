@@ -33,6 +33,39 @@ class Parsimonious {
     }
   }
   
+  
+  /* CLASSES / INSTANCES */
+  
+  
+  /**
+   * Short-hand for Parse.Object.extend(className) or a special class like Parse.User
+   * @param {string} className
+   * @returns subclass of Parse.Object
+   */
+  static getClass(className) {
+    if(typeof className === 'string') {
+      return specialClasses.indexOf(className) !== -1 ? this.Parse[className] : this.Parse.Object.extend(className)
+    } else {
+      throw new TypeError(`getClass called with ${typeof className} instead of string`)
+    }
+  }
+  
+  /**
+   * Return instance of Parse.Object class.
+   * @param {string} className Parse.Object subclass name.
+   * @param {object=} attributes Properties to set on new object.
+   * @param {object=} options Options to use when creating object.
+   * @returns {Parse.Object}
+   */
+  static getClassInst(className, attributes, options) {
+    const Cls = this.getClass(className)
+    return new Cls(attributes, options)
+  }
+  
+  
+  /* QUERIES */
+  
+  
   /**
    * Returns a new Parse.Query instance from a Parse Object class name.
    * @example
@@ -162,24 +195,6 @@ class Parsimonious {
   }
   
   /**
-   * Resolves thing to a Parse.Object, or attempts to retrieve from db if a pointer.
-   * Resolves as undefined otherwise.
-   * @param {(Parse.Object|object|string)=} thing
-   * @param {string=} className If set, and first param is a Parse.Object, resolves to the Parse.Object only if it is of this class.
-   * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-   * @returns {Parse.Promise}
-   */
-  static getPFObject(thing, className, opts) {
-    if(this.isPFObject(thing, className)) {
-      return this.Parse.Promise.as(thing)
-    } else if(this.isPointer(thing)) {
-      return this.getObjById(thing.className, this.getId(thing), opts)
-    } else {
-      return this.Parse.Promise.as(undefined)
-    }
-  }
-  
-  /**
    * Given a value thing, return a promise that resolves to
    * - thing if thing is a clean Parse.Object,
    * - fetched Parse.Object if thing is a dirty Parse.Object,
@@ -198,6 +213,10 @@ class Parsimonious {
       return this.Parse.Promise.as(thing)
     }
   }
+  
+  
+  /* ROLES */
+  
   
   static getRole(name, opts) {
     return this.newQuery('Role')
@@ -245,30 +264,9 @@ class Parsimonious {
     }
   }
   
-  /**
-   * Short-hand for Parse.Object.extend(className) or a special class like Parse.User
-   * @param {string} className
-   * @returns subclass of Parse.Object
-   */
-  static getClass(className) {
-    if(typeof className === 'string') {
-      return specialClasses.indexOf(className) !== -1 ? this.Parse[className] : this.Parse.Object.extend(className)
-    } else {
-      throw new TypeError(`getClass called with ${typeof className} instead of string`)
-    }
-  }
   
-  /**
-   * Return instance of Parse.Object class.
-   * @param {string} className Parse.Object subclass name.
-   * @param {object=} attributes Properties to set on new object.
-   * @param {object=} options Options to use when creating object.
-   * @returns {Parse.Object}
-   */
-  static getClassInst(className, attributes, options) {
-    const Cls = this.getClass(className)
-    return new Cls(attributes, options)
-  }
+  /* MANY-TO-MANY RELATIONSHIPS */
+  
   
   /**
    * Return the name of a table used to join two Parse.Object classes in a many-to-many relationship.
@@ -509,7 +507,9 @@ class Parsimonious {
     return thing instanceof this.Parse.User
   }
   
+  
   /* COMPARISONS */
+  
   
   /**
    * Return true if values both represent the same Parse.Object instance (same class and id) even if one is a pointer and the other is a Parse.Object instance.
@@ -524,7 +524,27 @@ class Parsimonious {
       && this.getId(thing1) === this.getId(thing2)
   }
   
-  /* CONVERSIONS / DATA MANIPULATION */
+  
+  /* DATA MANIPULATION */
+  
+  
+  /**
+   * Resolves thing to a Parse.Object, or attempts to retrieve from db if a pointer.
+   * Resolves as undefined otherwise.
+   * @param {(Parse.Object|object|string)=} thing
+   * @param {string=} className If set, and first param is a Parse.Object, resolves to the Parse.Object only if it is of this class.
+   * @param {object=} opts A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
+   * @returns {Parse.Promise}
+   */
+  static getPFObject(thing, className, opts) {
+    if(this.isPFObject(thing, className)) {
+      return this.Parse.Promise.as(thing)
+    } else if(this.isPointer(thing)) {
+      return this.getObjById(thing.className, this.getId(thing), opts)
+    } else {
+      return this.Parse.Promise.as(undefined)
+    }
+  }
   
   /**
    * Return a json representation of a Parse.Object,
