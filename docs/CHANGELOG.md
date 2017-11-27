@@ -1,5 +1,9 @@
 ## Change Log
 
+### 4.5.0 - 24-11-27
+##### Added
+* keysAreDirty method
+
 ### 4.4.3 - 24-11-17
 ##### Changed
 * minor documentation additions

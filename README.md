@@ -27,7 +27,6 @@ const student = await parsm.getClassInst('Student', {
 // and record the fact that a student completed a course,
 // with date of completion and grade earned:
 
-
 const meta = {completed: new Date(2017, 11, 17), grade: 3.2}
 
 const opts = {sessionToken: 'r:cbd9ac93162d0ba1287970fb85d8d168'}
@@ -84,16 +83,15 @@ parsm.setParse(Parse)
 * [Parsimonious](#Parsimonious)
     
     * [.setParse(parse)](#Parsimonious.setParse)
+    * [.getClass(className)](#Parsimonious.getClass) ⇒
+    * [.getClassInst(className, [attributes], [options])](#Parsimonious.getClassInst) ⇒ <code>Parse.Object</code>
     * [.newQuery(aClass, [constraints])](#Parsimonious.newQuery) ⇒ <code>Parse.Query</code>
     * [.constrainQuery(query, constraints)](#Parsimonious.constrainQuery) ⇒ <code>Parse.Query</code>
     * [.getObjById(aClass, id, [opts])](#Parsimonious.getObjById)
     * [.getUserById(id, [opts])](#Parsimonious.getUserById) ⇒ <code>Parse.User</code>
-    * [.getPFObject([thing], [className], [opts])](#Parsimonious.getPFObject) ⇒ <code>Parse.Promise</code>
     * [.fetchIfNeeded(thing, [opts])](#Parsimonious.fetchIfNeeded) ⇒ <code>Parse.Promise</code>
     * [.getUserRoles(user, [opts])](#Parsimonious.getUserRoles) ⇒ <code>Parse.Promise</code>
     * [.userHasRole(user, roles, [opts])](#Parsimonious.userHasRole) ⇒ <code>Parse.Promise</code>
-    * [.getClass(className)](#Parsimonious.getClass) ⇒
-    * [.getClassInst(className, [attributes], [options])](#Parsimonious.getClassInst) ⇒ <code>Parse.Object</code>
     * [.getJoinTableName(from, to)](#Parsimonious.getJoinTableName) ⇒ <code>string</code>
     * [._getJoinTableClassVars()](#Parsimonious._getJoinTableClassVars) ⇒ <code>object</code>
     * [.joinWithTable(object1, object2, [metadata], [opts])](#Parsimonious.joinWithTable) ⇒ <code>Parse.Promise</code>
@@ -106,6 +104,7 @@ parsm.setParse(Parse)
     * [.isPFObjectOrPointer(thing, [ofClass])](#Parsimonious.isPFObjectOrPointer) ⇒ <code>boolean</code>
     * [.isUser(thing)](#Parsimonious.isUser) ⇒ <code>boolean</code>
     * [.pfObjectMatch(thing1, thing2)](#Parsimonious.pfObjectMatch) ⇒ <code>boolean</code>
+    * [.getPFObject([thing], [className], [opts])](#Parsimonious.getPFObject) ⇒ <code>Parse.Promise</code>
     * [.toJsn(thing, [deep])](#Parsimonious.toJsn) ⇒ <code>\*</code>
     * [.getId(thing)](#Parsimonious.getId) ⇒ <code>string</code> \| <code>undefined</code>
     * [.objPick(parseObj, keys)](#Parsimonious.objPick) ⇒ <code>object</code>
@@ -113,6 +112,7 @@ parsm.setParse(Parse)
     * [.objSetMulti(parseObj, dataObj, [doMerge])](#Parsimonious.objSetMulti)
     * [.sortPFObjectsByKey([objs], key)](#Parsimonious.sortPFObjectsByKey)
     * [.copyPFObjectAttributes(from, to, attributeNames)](#Parsimonious.copyPFObjectAttributes)
+    * [.keysAreDirty(parseObj, keys)](#Parsimonious.keysAreDirty) ⇒ <code>boolean</code>
     * [.getPFObjectClassName(thing)](#Parsimonious.getPFObjectClassName) ⇒ <code>string</code>
     * [.classStringOrSpecialClass(thing)](#Parsimonious.classStringOrSpecialClass) ⇒ <code>\*</code>
     * [.classNameToParseClassName(className)](#Parsimonious.classNameToParseClassName)
@@ -132,6 +132,29 @@ Set the instance of the Parse JS SDK to be used by all methods:
 **Params**
 
 - parse <code>object</code> - instance of the Parse JS SDK
+
+<a name="Parsimonious.getClass"></a>
+
+### Parsimonious.getClass(className) ⇒
+Short-hand for Parse.Object.extend(className) or a special class like Parse.User
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Returns**: subclass of Parse.Object  
+**Params**
+
+- className <code>string</code>
+
+<a name="Parsimonious.getClassInst"></a>
+
+### Parsimonious.getClassInst(className, [attributes], [options]) ⇒ <code>Parse.Object</code>
+Return instance of Parse.Object class.
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- className <code>string</code> - Parse.Object subclass name.
+- [attributes] <code>object</code> - Properties to set on new object.
+- [options] <code>object</code> - Options to use when creating object.
 
 <a name="Parsimonious.newQuery"></a>
 
@@ -245,19 +268,6 @@ Return Parse.User instance from user id
 - id <code>string</code>
 - [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
 
-<a name="Parsimonious.getPFObject"></a>
-
-### Parsimonious.getPFObject([thing], [className], [opts]) ⇒ <code>Parse.Promise</code>
-Resolves thing to a Parse.Object, or attempts to retrieve from db if a pointer.
-Resolves as undefined otherwise.
-
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
-**Params**
-
-- [thing] <code>Parse.Object</code> | <code>object</code> | <code>string</code>
-- [className] <code>string</code> - If set, and first param is a Parse.Object, resolves to the Parse.Object only if it is of this class.
-- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-
 <a name="Parsimonious.fetchIfNeeded"></a>
 
 ### Parsimonious.fetchIfNeeded(thing, [opts]) ⇒ <code>Parse.Promise</code>
@@ -296,29 +306,6 @@ Check if a user has a role, or any or all of multiple roles, return a promise re
 - user <code>Parse.User</code>
 - roles <code>string</code> | <code>object</code> - Can be single role name string, or object containing 'names' key whose value is an array of role names and 'op' key with value 'and' or 'or'
 - [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
-
-<a name="Parsimonious.getClass"></a>
-
-### Parsimonious.getClass(className) ⇒
-Short-hand for Parse.Object.extend(className) or a special class like Parse.User
-
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
-**Returns**: subclass of Parse.Object  
-**Params**
-
-- className <code>string</code>
-
-<a name="Parsimonious.getClassInst"></a>
-
-### Parsimonious.getClassInst(className, [attributes], [options]) ⇒ <code>Parse.Object</code>
-Return instance of Parse.Object class.
-
-**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
-**Params**
-
-- className <code>string</code> - Parse.Object subclass name.
-- [attributes] <code>object</code> - Properties to set on new object.
-- [options] <code>object</code> - Options to use when creating object.
 
 <a name="Parsimonious.getJoinTableName"></a>
 
@@ -515,6 +502,19 @@ Return true if values both represent the same Parse.Object instance (same class 
 - thing1 <code>Parse.Object</code> | <code>object</code>
 - thing2 <code>Parse.Object</code> | <code>object</code>
 
+<a name="Parsimonious.getPFObject"></a>
+
+### Parsimonious.getPFObject([thing], [className], [opts]) ⇒ <code>Parse.Promise</code>
+Resolves thing to a Parse.Object, or attempts to retrieve from db if a pointer.
+Resolves as undefined otherwise.
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- [thing] <code>Parse.Object</code> | <code>object</code> | <code>string</code>
+- [className] <code>string</code> - If set, and first param is a Parse.Object, resolves to the Parse.Object only if it is of this class.
+- [opts] <code>object</code> - A Backbone-style options object for Parse subclass methods that read/write to database. (See Parse.Query.find).
+
 <a name="Parsimonious.toJsn"></a>
 
 ### Parsimonious.toJsn(thing, [deep]) ⇒ <code>\*</code>
@@ -655,6 +655,17 @@ Mutates target Parse.Object.
 - to <code>Parse.Object</code> - Is mutated.
 - attributeNames <code>string</code> | <code>Array.&lt;string&gt;</code>
 
+<a name="Parsimonious.keysAreDirty"></a>
+
+### Parsimonious.keysAreDirty(parseObj, keys) ⇒ <code>boolean</code>
+Return true if any of the passed keys are dirty in parseObj
+
+**Kind**: static method of [<code>Parsimonious</code>](#Parsimonious)  
+**Params**
+
+- parseObj <code>Parse.Object</code>
+- keys <code>string</code> | <code>Array.&lt;string&gt;</code> - Array of string or comma-separated string list of keys.
+
 <a name="Parsimonious.getPFObjectClassName"></a>
 
 ### Parsimonious.getPFObjectClassName(thing) ⇒ <code>string</code>
@@ -701,6 +712,10 @@ Return thing if array, string[] if string, otherwise array with thing as only it
 
 <a name="changelog"></a>
 ## Change Log
+
+### 4.5.0 - 24-11-27
+##### Added
+* keysAreDirty method
 
 ### 4.4.3 - 24-11-17
 ##### Changed
