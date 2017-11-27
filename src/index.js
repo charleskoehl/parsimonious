@@ -557,7 +557,7 @@ class Parsimonious {
    */
   static toJsn(thing, deep = false) {
     let obj
-    if(thing instanceof this.Parse.Object) {
+    if(this.isPFObject(thing)) {
       obj = thing.toJSON()
     } else if(isPlainObject(thing)) {
       obj = Object.assign({}, thing)
