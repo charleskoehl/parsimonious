@@ -1452,7 +1452,7 @@ describe('copyPFObjectAttributes', () => {
 describe('keysAreDirty', () => {
   
   test('should return true if any of the given array of keys are dirty in parseObj', () => {
-    expect.assertions(3)
+    expect.assertions(4)
     return parsm.getClassInst('Dog', {
       name: 'Banshee',
       length: 36,
@@ -1463,6 +1463,7 @@ describe('keysAreDirty', () => {
         expect(parsm.keysAreDirty(dog, ['name','length'])).toBe(false)
         dog.set('length', 37)
         dog.set('width', 16)
+        expect(parsm.keysAreDirty(dog, ['clean'])).toBe(false)
         expect(parsm.keysAreDirty(dog, ['length','width'])).toBe(true)
         expect(parsm.keysAreDirty(dog, 'length,width')).toBe(true)
       })
