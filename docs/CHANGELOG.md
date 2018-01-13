@@ -1,6 +1,10 @@
 ## Change Log
 
-### 4.5.0 - 24-11-27
+### 4.5.1 - 12-01-18
+##### Changed
+* Updated dependencies
+
+### 4.5.0 - 24-11-17
 ##### Added
 * keysAreDirty method
 
