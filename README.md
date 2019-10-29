@@ -1,8 +1,6 @@
 [![buildstatus](https://travis-ci.org/charleskoehl/parsimonious.svg?branch=master)](https://travis-ci.org/charleskoehl/parsimonious)
 [![codecov](https://codecov.io/gh/charleskoehl/parsimonious/branch/master/graph/badge.svg)](https://codecov.io/gh/charleskoehl/parsimonious)
 
-# This package is no longer maintained.
-
 ## Utilities for Parse Server cloud code and JS SDK
 
 #### Usage example: creating and saving parse objects
