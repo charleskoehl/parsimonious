@@ -52,7 +52,7 @@
     "mongodb-memory-server": "^1.6.4",
     "new-port": "^1.0.0",
     "nyc": "^11.4.1",
-    "parse-server": "^3.9.0",
+    "parse-server": "^4.3.0",
     "shx": "^0.2.2"
   }
 }
