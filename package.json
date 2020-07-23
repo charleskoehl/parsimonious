@@ -34,7 +34,7 @@
   "dependencies": {
     "detect-is-node": "^1.0.3",
     "lodash": "^4.17.4",
-    "parse": "^1.11.0"
+    "parse": "^2.15.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
